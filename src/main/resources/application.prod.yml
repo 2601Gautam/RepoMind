@@ -1,0 +1,23 @@
+# This profile activates on Render with SPRING_PROFILES_ACTIVE=prod
+spring:
+  datasource:
+    # Render injects DATABASE_URL from the Neon connection string you set
+    url: ${DATABASE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  ai:
+    openai:
+      # Groq uses the exact same API format as OpenAI, just different base-url
+      # Spring AI's OpenAI starter works with Groq without any code changes
+      base-url: https://api.groq.com/openai
+      api-key: ${GROQ_API_KEY}
+      chat:
+        model: llama3-8b-8192
+        options:
+          temperature: 0.3
+
+logging:
+  level:
+    com.repomind.repomind: INFO

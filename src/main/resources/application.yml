@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: repomind
+
+  datasource:
+    # Render injects DATABASE_URL from the Neon connection string you set
+    url: ${DATABASE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    # validate: Hibernate checks your entity classes match the actual DB tables
+    # but does NOT create or alter tables. You control schema via init.sql.
+    # Never use create-drop in production — it deletes all your data on restart.
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Temporarily disable Spring Security so you can test endpoints without auth
+  # You will properly configure this in Tier 2 when adding JWT
+  security:
+    user:
+      name: admin
+      password: admin123
