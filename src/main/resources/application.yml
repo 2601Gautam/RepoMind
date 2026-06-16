@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: repomind
+
+  datasource:
+    # Your NeonDB connection string from neon.tech dashboard
+    # Project → Connection Details → copy the "Connection string"
+    # It looks like: postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb?sslmode=require
+    url: ${DATABASE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # NeonDB free tier sleeps after inactivity
+      # These settings handle the reconnection when it wakes up
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+
+  ai:
+    # Groq for chat completions
+    # Spring AI OpenAI starter works with Groq because Groq uses
+    # the exact same API format as OpenAI — same endpoints, same JSON
+    # You just point base-url at Groq instead of OpenAI
+    openai:
+      base-url: https://api.groq.com/openai
+      api-key: ${GROQ_API_KEY}
+      chat:
+        model: llama3-8b-8192
+        options:
+          temperature: 0.3
+
+    # Nomic for embeddings — separate from chat
+    # nomic-embed-text-v1 produces exactly 768 numbers per text input
+    # This must match vector(768) in your DB schema
+    nomic:
+      api-key: ${NOMIC_API_KEY}
+      base-url: https://api-atlas.nomic.ai/v1
+      embedding:
+        model: nomic-embed-text-v1
+
+logging:
+  level:
+    com.repomind: DEBUG
+    org.springframework.ai: INFO
