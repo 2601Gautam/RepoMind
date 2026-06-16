@@ -19,7 +19,14 @@ spring:
         model: llama3-8b-8192
         options:
           temperature: 0.3
+    nomic:
+      api-key: ${NOMIC_API_KEY}
+      base-url: https://api-atlas.nomic.ai/v1
+      embedding:
+        model: nomic-embed-text-v1
+
 
 logging:
   level:
     com.repomind.repomind: DEBUG
+    org.springframework.ai: INFO

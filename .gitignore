@@ -15,7 +15,7 @@ target/
 
 
 .env
-application-prod.yml
+application-local.yml
 
 ### IntelliJ IDEA ###
 .idea
