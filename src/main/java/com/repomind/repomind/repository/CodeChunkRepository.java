@@ -14,6 +14,18 @@ public interface CodeChunkRepository extends JpaRepository<CodeChunk, UUID> {
 
     void deleteByRepositoryId(UUID repoId);
 
+    /**
+     * Projection for search results to avoid mapping pgvector's 'vector' type
+     * which Hibernate/JDBC has trouble reading as a standard float[].
+     */
+    interface CodeChunkProjection {
+        UUID getId();
+        String getFilePath();
+        String getContent();
+        String getLanguage();
+        Integer getStartLine();
+        Integer getEndLine();
+    }
 
     // Spring cannot auto-generate this query because <=> is pgvector-specific
     // nativeQuery = true means: send this SQL directly to NeonDB as-is,
@@ -29,16 +41,16 @@ public interface CodeChunkRepository extends JpaRepository<CodeChunk, UUID> {
     // CAST(:embedding AS vector) converts the String "[0.1,-0.2,...]"
     // into PostgreSQL's vector type so the <=> comparison works
     @Query(value = """
-        SELECT * FROM code_chunks
-        WHERE repo_id = CAST(:repoId AS uuid)
+        SELECT id, file_path as filePath, content, language, start_line as startLine, end_line as endLine
+        FROM code_chunks
+        WHERE repo_id = :repoId
         ORDER BY embedding <=> CAST(:embedding AS vector)
         LIMIT :limit
         """, nativeQuery = true)
-    List<CodeChunk> findTopSimilarChunks(
-            @Param("repoId") String repoId,
+    List<CodeChunkProjection> findTopSimilarChunks(
+            @Param("repoId") java.util.UUID repoId,
             @Param("embedding") String embedding,
             @Param("limit") int limit
     );
 
 }
-

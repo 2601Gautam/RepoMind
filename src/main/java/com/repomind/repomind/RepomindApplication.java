@@ -1,10 +1,17 @@
 package com.repomind.repomind;
 
+import org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        // Explicitly stop Spring from creating an OpenAI EmbeddingModel bean
+        // We use OpenAI starter ONLY for Groq chat — not for embeddings
+        // Without this exclusion, Spring finds two EmbeddingModel beans and
+        // picks OpenAI's silently, ignoring Mistral entirely
+        OpenAiEmbeddingAutoConfiguration.class
+})
 @EnableAsync
 // @EnableAsync is required for @Async to work
 // Without it Spring ignores @Async completely

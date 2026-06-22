@@ -46,7 +46,7 @@ public class CodeChunk {
     // float[] in Java → vector(768) in PostgreSQL
     // The pgvector Java client dependency you added handles this type conversion
     // These 768 numbers are what pgvector searches through for similarity
-    @Column(columnDefinition = "vector(768)")
+    @Column(columnDefinition = "vector(1024)")
     private float[] embedding;
 
     @Column(name = "created_at")

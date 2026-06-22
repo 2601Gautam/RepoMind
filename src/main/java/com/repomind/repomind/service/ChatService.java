@@ -92,10 +92,10 @@ public class ChatService {
         // Example: question = "where is login handled"
         // pgvector finds chunks from AuthService.java even if they never
         // contain the word "login" — because their meaning is similar
-        List<CodeChunk> relevantChunks;
+        List<CodeChunkRepository.CodeChunkProjection> relevantChunks;
         try {
             relevantChunks = chunkRepository.findTopSimilarChunks(
-                    repoId.toString(),
+                    repoId,
                     vectorString,
                     6
             );
@@ -123,12 +123,12 @@ public class ChatService {
         // because ChunkingService added that header — so the LLM knows
         // exactly which file and lines it is reading
         String codeContext = relevantChunks.stream()
-                .map(CodeChunk::getContent)
+                .map(CodeChunkRepository.CodeChunkProjection::getContent)
                 .collect(Collectors.joining("\n\n---\n\n"));
 
         // Collect unique file paths to show as "sources" in the frontend
         List<String> sourcePaths = relevantChunks.stream()
-                .map(CodeChunk::getFilePath)
+                .map(CodeChunkRepository.CodeChunkProjection::getFilePath)
                 .distinct()
                 .toList();
 

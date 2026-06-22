@@ -20,7 +20,6 @@ import java.util.UUID;
 // @CrossOrigin allows your React frontend (port 5173 in dev) to call this backend (port 8080)
 // Browsers block cross-origin requests by default — this annotation lifts that block
 // In production both are on the same domain so this does nothing, but it does not hurt
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 
 public class IngestionController {
 

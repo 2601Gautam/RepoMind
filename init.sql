@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS code_chunks (
     chunk_index INTEGER,     -- Which chunk within the file (0, 1, 2...)
     start_line INTEGER,      -- First line number of this chunk
     end_line INTEGER,        -- Last line number of this chunk
-    embedding vector(768),   -- 768 floats — the nomic-embed-text output dimension
+    embedding vector(1024),   -- 768 floats — the nomic-embed-text output dimension
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

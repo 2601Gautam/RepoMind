@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
+
 @Data
 public class IngestRequest {
     // @NotBlank: Spring Validation checks this before your method even runs
