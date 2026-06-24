@@ -25,8 +25,24 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password_hash", nullable = false)
+    // Nullable now — Google OAuth users have no password
+    // LOCAL users always have a password hash
+    @Column(name = "password_hash")
     private String passwordHash;
+
+    private String name;
+
+    // LOCAL = registered with email/password
+    // GOOGLE = registered via Google OAuth2
+    @Column(nullable = false)
+    @Builder.Default
+    private String provider = "LOCAL";
+
+
+    // Google's unique user ID — used to match returning Google users
+    // null for LOCAL users
+    @Column(name = "provider_id")
+    private String providerId;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -34,5 +50,6 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        if (provider == null) provider = "LOCAL";
     }
 }
