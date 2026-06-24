@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface RepoJpaRepository extends JpaRepository<RepoEntity, UUID> {
@@ -15,4 +16,11 @@ public interface RepoJpaRepository extends JpaRepository<RepoEntity, UUID> {
     // SELECT * FROM repositories ORDER BY created_at DESC
     // No SQL needed — the method name is the query
     List<RepoEntity> findAllByOrderByCreatedAtDesc();
+
+    // THIS must exist — used for dedup check in ingest endpoint
+    Optional<RepoEntity> findFirstByGithubUrlOrderByCreatedAtDesc(String githubUrl);
+
+    // THIS must exist — used to find duplicate rows for same URL
+    List<RepoEntity> findByGithubUrlAndIdNot(String githubUrl, UUID excludeId);
+
 }
