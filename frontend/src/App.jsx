@@ -16,7 +16,7 @@ function AppContent() {
     const [authPage, setAuthPage] = useState('login') // 'login' | 'register'
 
     // Handle OAuth2 callback route
-    if (window.location.pathname === '/auth/callback') {
+    if (window.location.search.includes('oauth=success')) {
         return <OAuthCallbackPage />
     }
 

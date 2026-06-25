@@ -20,19 +20,10 @@ export function AuthProvider({ children }) {
         checkAuthStatus()
     }, [])
 
-    async function checkAuthStatus() {
+    const checkAuthStatus = async () => {
         try {
-            const res = await fetch('/api/auth/me', {
-                // credentials: 'include' is REQUIRED for cookies to be sent
-                // Without this, the browser strips the jwt cookie from the request
-                credentials: 'include'
-            })
-            if (res.ok) {
-                const data = await res.json()
-                setUser(data)
-            } else {
-                setUser(null)
-            }
+            const user = await getMe() // should use BASE from client.js
+            setUser(user)
         } catch {
             setUser(null)
         } finally {

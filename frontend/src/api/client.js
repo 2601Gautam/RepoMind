@@ -60,3 +60,5 @@ export const sendMessage = (repoId, message, conversationId = null) =>
         method: 'POST',
         body: JSON.stringify({repoId,message,conversationId})
     })
+
+export const getMe = () => apiFetch(`${BASE}/auth/me`)
