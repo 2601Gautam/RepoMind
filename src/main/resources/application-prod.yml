@@ -14,6 +14,29 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            # Scopes we request from Google:
+            # openid = required for OAuth2
+            # email = user's email address
+            # profile = user's name and profile picture
+            scope: openid, email, profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          # GitHub registration — add this block
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            # GitHub scopes:
+            # read:user = access to user's public profile info
+            # user:email = access to user's email addresses
+            # Without user:email, GitHub may not return email for private accounts
+            scope: read:user, user:email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
   ai:
     openai:

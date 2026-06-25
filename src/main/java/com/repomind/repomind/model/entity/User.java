@@ -34,6 +34,7 @@ public class User {
 
     // LOCAL = registered with email/password
     // GOOGLE = registered via Google OAuth2
+    // GITHUB = registered via GitHub OAuth2
     @Column(nullable = false)
     @Builder.Default
     private String provider = "LOCAL";
