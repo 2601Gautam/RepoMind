@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
+
 export default function OAuthCallbackPage() {
     const { checkAuthStatus } = useAuth()
 
     useEffect(() => {
         checkAuthStatus().then(() => {
-            // Clean URL and go to home
             window.location.replace('/')
         })
     }, [])
