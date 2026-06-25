@@ -10,44 +10,53 @@ const BASE = import.meta.env.VITE_API_URL
     ? `${import.meta.env.VITE_API_URL}/api`
     : '/api';
 
+//Helper that adds credentials to every request
+// DRY principle - define once, use everywhere
+async function apiFetch(url, options={}){
+    const res = await fetch(url,{
+        ...options,
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+        }
+    })
+    if(!res.ok){
+        if(res.status === 401){
+            window.location.href = '/login'
+            return
+        }
+        const text = await res.text()
+        throw new Error(text || `Request failed: ${res.status}`)
+    }
+    // Handle empty responses (like 204 No Content)
+    // Without this, res.json() throws on empty body
+    const text = await res.text()
+    return text ? JSON.parse(text) : null
+
+}
+
 // Submits a GitHub URL for ingestion
 // Returns the repo object with id and status PENDING
-export async function ingestRepo(githubUrl, token = null) {
-    const res = await fetch(`${BASE}/repos/ingest`, {
+export const ingestRepo = (githubUrl, token = null) =>
+    apiFetch(`${BASE}/repos/ingest`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ githubUrl, token })
-    });
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || `Request failed: ${res.status}`);
-    }
-    return res.json();
-}
+    })
 
 // Polls this every 3 seconds to track ingestion progress
-export async function getRepoStatus(repoId) {
-    const res = await fetch(`${BASE}/repos/${repoId}/status`);
-    if (!res.ok) throw new Error('Failed to fetch status');
-    return res.json();
-}
+export const getRepoStatus = (repoId) =>
+    apiFetch(`${BASE}/repos/${repoId}/status`)
 
 // Returns all repos ever submitted — used to show the list on home page
-export async function listRepos() {
-    const res = await fetch(`${BASE}/repos`);
-    if (!res.ok) throw new Error('Failed to list repos');
-    return res.json();
-}
+export const listRepos = () =>
+    apiFetch(`${BASE}/repos`)
 
 // Sends a chat message
 // conversationId is null on first message, then you get one back and send it each time
 // This groups messages into one conversation in the DB
-export async function sendMessage(repoId, message, conversationId = null) {
-    const res = await fetch(`${BASE}/chat`, {
+export const sendMessage = (repoId, message, conversationId = null) =>
+    apiFetch(`${BASE}/chat`,{
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ repoId, message, conversationId })
-    });
-    if (!res.ok) throw new Error('Chat request failed');
-    return res.json();
-}
+        body: JSON.stringify({repoId,message,conversationId})
+    })

@@ -1,6 +1,7 @@
 package com.repomind.repomind.config;
 
 import com.repomind.repomind.security.JwtFilter;
+import com.repomind.repomind.security.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     @Value("${app.cors.allowed-origin:http://localhost:5173}")
     private String allowedOrigin;
 
@@ -64,7 +65,12 @@ public class SecurityConfig {
 
                 // Disable Spring's default login page — we have our own
                 .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable());
+                .httpBasic(basic -> basic.disable())
+                .oauth2Login(oauth2->oauth2
+                        .successHandler(oAuth2SuccessHandler)
+                        // On failure, redirect to frontend login page with error
+                        .failureUrl(allowedOrigin + "/login?error=oauth_failed")
+                );
 
         return http.build();
     }

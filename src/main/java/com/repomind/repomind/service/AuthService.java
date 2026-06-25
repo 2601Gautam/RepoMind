@@ -51,9 +51,12 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow( () -> new RuntimeException("Invalid email or password"));
 
-        //check provider - google users have no password
-        if(!"LOCAL".equals(user.getProvider())){
-            throw new RuntimeException("This account uses Google login. Please sign with Google.");
+        // Updated check — covers both OAuth providers
+        if (!"LOCAL".equals(user.getProvider())) {
+            String providerName = "GOOGLE".equals(user.getProvider()) ? "Google" : "GitHub";
+            throw new RuntimeException(
+                    "This account uses " + providerName + " login. Please sign in with " + providerName + "."
+            );
         }
 
         // passwordEncoder.matches() hashes the input and compares with stored hash
