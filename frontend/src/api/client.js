@@ -6,7 +6,7 @@
 // In development: /api proxied to localhost:8080 by Vite
 // In production: /api goes to same domain as frontend
 // VITE_API_URL is set on Render as environment variable
-const BASE = import.meta.env.VITE_API_URL
+export const BASE = import.meta.env.VITE_API_URL
     ? `${import.meta.env.VITE_API_URL}/api`
     : '/api';
 
