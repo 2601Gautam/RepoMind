@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-
+import { BASE, getMe } from '../api/client'
 // AuthContext answers the question throughout the entire app:
 // "Is there a logged-in user right now, and who are they?"
 //
@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
     }
 
     async function login(email, password) {
-        const res = await fetch('/api/auth/login', {
+        const res = await fetch('${BASE}/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',   // tells browser to accept and store the cookie
@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
     }
 
     async function register(name, email, password) {
-        const res = await fetch('/api/auth/register', {
+        const res = await fetch('${BASE}/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
     }
 
     async function logout() {
-        await fetch('/api/auth/logout', {
+        await fetch('${BASE}/auth/logout', {
             method: 'POST',
             credentials: 'include'
         })
