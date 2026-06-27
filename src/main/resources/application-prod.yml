@@ -29,8 +29,8 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           # GitHub registration — add this block
           github:
-            client-id: ${GITHUB_CLIENT_ID}
-            client-secret: ${GITHUB_CLIENT_SECRET}
+            client-id: ${GITHUB_CLIENT_ID_LOCAL}
+            client-secret: ${GITHUB_CLIENT_SECRET_LOCAL}
             # GitHub scopes:
             # read:user = access to user's public profile info
             # user:email = access to user's email addresses

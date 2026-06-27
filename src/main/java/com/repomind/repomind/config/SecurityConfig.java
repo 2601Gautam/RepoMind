@@ -49,6 +49,8 @@ public class SecurityConfig {
 
                 // Configure which endpoints need authentication
                 .authorizeHttpRequests(auth -> auth
+                        // Permit all CORS preflight OPTIONS requests
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Public endpoints — no token needed
                         .requestMatchers(
                                 "/api/auth/**",          // login, register, oauth2 callback
@@ -94,12 +96,25 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Must be exact origin — wildcards (*) do not work with credentials: true
-        config.setAllowedOrigins(List.of(allowedOrigin));
+        List<String> origins = new java.util.ArrayList<>();
+        if (allowedOrigin != null && !allowedOrigin.isBlank()) {
+            String cleanOrigin = allowedOrigin.trim();
+            if (cleanOrigin.endsWith("/")) {
+                cleanOrigin = cleanOrigin.substring(0, cleanOrigin.length() - 1);
+            }
+            origins.add(cleanOrigin);
+            origins.add(cleanOrigin + "/");
+        }
+
+        // Always allow localhost for development and local testing
+        if (!origins.contains("http://localhost:5173")) origins.add("http://localhost:5173");
+        if (!origins.contains("http://127.0.0.1:5173")) origins.add("http://127.0.0.1:5173");
+        if (!origins.contains("http://localhost:3000")) origins.add("http://localhost:3000");
+
+        config.setAllowedOrigins(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         // allowCredentials = true is required for cookies to be sent cross-origin
-        // This is what makes httpOnly cookies work between Vercel and Render
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

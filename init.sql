@@ -84,6 +84,29 @@ CREATE TABLE IF NOT EXISTS messages (
     sources TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Add Google OAuth fields to existing users table
+ALTER TABLE users ADD COLUMN IF NOT EXISTS provider VARCHAR(50) DEFAULT 'LOCAL';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS provider_id VARCHAR(255);
+ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;
+-- password_hash can now be null for Google OAuth users (they have no password)
+
+-- User repos join table
+-- This maps which users have access to which repos
+-- One repo can belong to many users (shared embeddings)
+-- One user can have many repos
+CREATE TABLE IF NOT EXISTS user_repos (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    repo_id UUID NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Prevent duplicate entries: one user cannot have the same repo twice
+    UNIQUE(user_id, repo_id)
+);
+
+CREATE INDEX IF NOT EXISTS user_repos_user_id_idx ON user_repos(user_id);
+CREATE INDEX IF NOT EXISTS user_repos_repo_id_idx ON user_repos(repo_id);
+
 --
 -- VECTOR INDEX
 -- Without this index, every similarity search does a full table scan —

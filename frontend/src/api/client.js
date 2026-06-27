@@ -23,8 +23,11 @@ async function apiFetch(url, options={}){
     })
     if(!res.ok){
         if(res.status === 401){
-            window.location.href = '/login'
-            return
+            if (url.endsWith('/auth/me')) {
+                throw new Error('Unauthorized');
+            }
+            window.location.href = '/';
+            return;
         }
         const text = await res.text()
         throw new Error(text || `Request failed: ${res.status}`)
