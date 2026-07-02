@@ -65,3 +65,13 @@ export const sendMessage = (repoId, message, conversationId = null) =>
     })
 
 export const getMe = () => apiFetch(`${BASE}/auth/me`)
+
+export const analyzeError = (errorText, repoId = null, additionalContext = null) =>
+    apiFetch(`${BASE}/debug/analyze`, {
+        method: "POST",
+        body: JSON.stringify({
+            errorText,
+            repoId,
+            additionalContext
+        })
+    });

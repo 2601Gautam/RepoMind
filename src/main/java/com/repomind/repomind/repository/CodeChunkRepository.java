@@ -18,6 +18,7 @@ public interface CodeChunkRepository extends JpaRepository<CodeChunk, UUID> {
      * Projection for search results to avoid mapping pgvector's 'vector' type
      * which Hibernate/JDBC has trouble reading as a standard float[].
      */
+
     interface CodeChunkProjection {
         UUID getId();
         String getFilePath();
