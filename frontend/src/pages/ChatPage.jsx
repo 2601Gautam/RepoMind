@@ -4,6 +4,7 @@ import MessageList from '../components/chat/MessageList'
 import ChatInput from '../components/chat/ChatInput'
 import InterviewPage from './InterviewPage'
 
+import DebugPage from './DebugPage'
 // ChatPage owns message state and API logic only
 // No JSX for individual messages, no scroll refs, no input state
 export default function ChatPage({ repo, onBack }) {
@@ -16,7 +17,11 @@ export default function ChatPage({ repo, onBack }) {
     if (showInterview) {
         return <InterviewPage repo={repo} onBack={() => setShowInterview(false)} />
     }
+    const [showDebug, setShowDebug] = useState(false)
 
+    if(showDebug) {
+        return <DebugPage repo={repo} onBack={() => setShowDebug(false)} />
+    }
     async function handleSend(text) {
         setMessages(prev => [...prev, { role: 'user', content: text }])
         setLoading(true)
@@ -41,6 +46,12 @@ export default function ChatPage({ repo, onBack }) {
     return (
         <div className="flex flex-col h-[calc(100vh-65px)]">
             <div className="flex items-center gap-3 py-4 border-b border-gray-800 shrink-0">
+                <button
+                    onClick={() => setShowDebug(true)}
+                    className="text-xs bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-white px-3 py-1.5 rounded-lg transition-colors"
+                >
+                    Debug
+                </button>
                 <button
                     onClick={onBack}
                     className="text-sm text-gray-400 hover:text-white transition-colors"

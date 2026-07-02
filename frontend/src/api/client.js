@@ -74,3 +74,12 @@ export const generateInterview = (repoId, difficulty) =>
 
 export const getInterviewSessions = () =>
     apiFetch(`${BASE}/interview/sessions`)
+export const analyzeError = (errorText, repoId = null, additionalContext = null) =>
+    apiFetch(`${BASE}/debug/analyze`, {
+        method: "POST",
+        body: JSON.stringify({
+            errorText,
+            repoId,
+            additionalContext
+        })
+    });
