@@ -12,12 +12,12 @@ export default function ChatPage({ repo, onBack }) {
     const [loading, setLoading] = useState(false)
     const [conversationId, setConversationId] = useState(null)
     const [showInterview, setShowInterview] = useState(false)
+    const [showDebug, setShowDebug] = useState(false)
 
     // Conditionally render:
     if (showInterview) {
         return <InterviewPage repo={repo} onBack={() => setShowInterview(false)} />
     }
-    const [showDebug, setShowDebug] = useState(false)
 
     if(showDebug) {
         return <DebugPage repo={repo} onBack={() => setShowDebug(false)} />
