@@ -65,3 +65,12 @@ export const sendMessage = (repoId, message, conversationId = null) =>
     })
 
 export const getMe = () => apiFetch(`${BASE}/auth/me`)
+
+export const generateInterview = (repoId, difficulty) =>
+    apiFetch(`${BASE}/interview/generate`, {
+        method: 'POST',
+        body: JSON.stringify({ repoId, difficulty })
+    })
+
+export const getInterviewSessions = () =>
+    apiFetch(`${BASE}/interview/sessions`)

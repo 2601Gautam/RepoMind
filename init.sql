@@ -104,6 +104,26 @@ CREATE TABLE IF NOT EXISTS user_repos (
     UNIQUE(user_id, repo_id)
 );
 
+
+CREATE TABLE IF NOT EXISTS interview_sessions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    repo_id UUID REFERENCES repositories(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    difficulty VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS interview_questions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    session_id UUID REFERENCES interview_sessions(id) ON DELETE CASCADE,
+    question TEXT NOT NULL,
+    expected_answer TEXT NOT NULL,
+    difficulty VARCHAR(20) NOT NULL,
+    concept_tested VARCHAR(255),
+    question_order INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS user_repos_user_id_idx ON user_repos(user_id);
 CREATE INDEX IF NOT EXISTS user_repos_repo_id_idx ON user_repos(repo_id);
 
