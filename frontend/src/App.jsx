@@ -1,4 +1,4 @@
-import { useState , userEffect} from 'react'
+import { useState , useEffect} from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Header from './components/layout/Header'
 import IngestPage from './pages/IngestPage'
