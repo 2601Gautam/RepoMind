@@ -56,6 +56,15 @@ function AppContent() {
 }
 
 export default function App() {
+    useEffect(() => {
+    const keepAlive = setInterval(() => {
+        fetch(`${import.meta.env.VITE_API_URL}/api/repos`, {
+            credentials: 'include'
+        }).catch(() => {}) // silently ignore errors
+    }, 14 * 60 * 1000) // 14 minutes
+
+    return () => clearInterval(keepAlive)
+}, [])
     return (
         // AuthProvider wraps everything so useAuth() works anywhere in the tree
         <AuthProvider>
