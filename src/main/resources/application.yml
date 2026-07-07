@@ -1,7 +1,10 @@
 spring:
   application:
     name: repomind
-
+  config:
+    import: optional:file:.env[.properties]
+  profiles:
+    active: local
   jpa:
     hibernate:
       ddl-auto: validate
@@ -19,6 +22,9 @@ app:
     secret: ${JWT_SECRET}
     # Token valid for 7 days in milliseconds (604800000 = 7*24*60*60*1000)
     expiration: 604800000
+  cookie:
+    secure: true
+    same-site: None
 
   cors:
     # Your Vercel frontend URL — update after deployment
