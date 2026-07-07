@@ -37,13 +37,25 @@ spring:
             # Without user:email, GitHub may not return email for private accounts
             scope: read:user, user:email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  data:
+    redis:
+      url: ${REDIS_URL}
+
+
+  # spring cache backed by redis
+  # @Cachbeable will use redis as the cache provider
+    cache:
+        type: redis
+        redis:
+          # Cache entries expire after 5 minutes
+            time-to-live: 300000 # 10 minutes in milliseconds
 
   ai:
     openai:
-      base-url: https://api.groq.com/openai/v1
+      base-url: https://api.groq.com/openai
       api-key: ${GROQ_API_KEY}
       chat:
-        model: meta-llama/llama-4-scout-17b-16e-instruct
+        model: {GROQ_CHAT_MODEL:meta-llama/llama-4-scout-17b-16e-instruct}
         options:
           temperature: 0.3
       # Tell Spring AI: do NOT create an OpenAI embedding bean
@@ -56,6 +68,17 @@ spring:
       embedding:
         options:
           model: mistral-embed
+#app level config for model routing
+#Changing models required only envrionment varible change, no code chnage
+app:
+  models:
+    # Fast model for chat — high volume, needs low latency
+    chat: ${GROQ_CHAT_MODEL:meta-llama/llama-4-scout-17b-16e-instruct}
+    #smarter model for debug - needs reasoning ability, lower volume
+    reasoning: ${GROQ_REASONING_MODEL:meta-llama/llama3-70b-8192}
+    #Realiable JSON model for interviews - needs format adherence
+    structured: ${GROQ_STRUCTURED_MODEL:meta-llama/mixtral-8x7b-32768}
+
 
 logging:
   level:
