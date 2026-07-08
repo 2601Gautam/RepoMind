@@ -1,5 +1,6 @@
 package com.repomind.repomind.service.ingestion;
 
+import com.repomind.repomind.controller.CacheService;
 import com.repomind.repomind.model.entity.CodeChunk;
 import com.repomind.repomind.model.entity.RepoEntity;
 import com.repomind.repomind.repository.CodeChunkRepository;
@@ -23,7 +24,7 @@ public class IngestionService {
     private final EmbeddingService embeddingService;
     private final RepoJpaRepository repoRepository;
     private final CodeChunkRepository chunkRepository;
-
+    private final CacheService cacheService;
     // @Async: Spring picks a thread from a thread pool and runs this method there
     // The thread that handled your HTTP request is freed immediately
     // The client gets the 202 response and starts polling /status
@@ -120,6 +121,7 @@ public class IngestionService {
             }
             // ── 5. Mark as READY ─────────────────────────────────────────────
             repo.setStatus(RepoEntity.IngestionStatus.READY);
+            cacheService.evictUserReposCache();
             repo.setProcessedFiles(processedCount);
             repo.setTotalChunks(chunkCount);
             repoRepository.save(repo);
@@ -129,6 +131,7 @@ public class IngestionService {
             // Top-level failure: clone failed, no files found, DB connection issue
             log.error("Ingestion failed for repo {}: {}", repoId, e.getMessage(), e);
             repo.setStatus(RepoEntity.IngestionStatus.FAILED);
+            cacheService.evictUserReposCache();
             repo.setErrorMessage(e.getMessage());
             repoRepository.save(repo);
             throw new RuntimeException(e);

@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 // @EnableAsync is required for @Async to work
 // Without it Spring ignores @Async completely
 // The method runs synchronously and your HTTP request hangs for 10 minutes
+@EnableCaching // activate @Cacheable , @CacheEvict annotations
 public class RepomindApplication {
 
 	public static void main(String[] args) {

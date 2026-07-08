@@ -14,6 +14,8 @@ import com.repomind.repomind.service.ingestion.IngestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -110,6 +112,10 @@ public class IngestionController {
 
     // Replace listAll to return only THIS user's repos:
     @GetMapping
+    @Cacheable(value = "userRepos",key = "#currentUser.id")
+    // @Cacheable: first call queries DB, result stored in Redis for 5 min
+// Subsequent calls within 5 min return from Redis instantly
+// Cache key is per-user so User A never sees User B's repos
     public ResponseEntity<List<RepoStatusResponse>> listAll(
             @AuthenticationPrincipal User currentUser){
 

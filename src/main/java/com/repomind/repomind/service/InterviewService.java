@@ -15,15 +15,16 @@ import jakarta.persistence.SecondaryTable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class InterviewService {
+
     private final ChatClient chatClient;
     private final RepoJpaRepository repoRepository;
     private final CodeChunkRepository chunkRepository;
@@ -31,6 +32,25 @@ public class InterviewService {
     private final InterviewQuestionRepository questionRepository;
     private final EmbeddingService embeddingService;
     private final ObjectMapper objectMapper;
+
+    public InterviewService(
+            @Qualifier("structuredChatClient") ChatClient chatClient,
+            RepoJpaRepository repoRepository,
+            CodeChunkRepository chunkRepository,
+            InterviewSessionRepository sessionRepository,
+            InterviewQuestionRepository questionRepository,
+            ObjectMapper objectMapper,
+            EmbeddingService embeddingService)
+    {
+        this.chatClient = chatClient;
+        this.repoRepository = repoRepository;
+        this.chunkRepository = chunkRepository;
+        this.sessionRepository = sessionRepository;
+        this.questionRepository = questionRepository;
+        this.objectMapper = objectMapper;
+        this.embeddingService = embeddingService;
+    }
+
 
     public InterviewSessionDto generateQuestions(InterviewRequest request , User currentUser){
 

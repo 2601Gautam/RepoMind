@@ -2,13 +2,20 @@ package com.repomind.repomind.controller;
 
 import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.ChatRequest;
+import com.repomind.repomind.model.entity.Conversation;
+import com.repomind.repomind.model.entity.User;
 import com.repomind.repomind.service.ChatService;
+import com.repomind.repomind.service.ConversationMemoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -18,46 +25,38 @@ import java.util.UUID;
 @Slf4j
 public class ChatController {
     private final ChatService chatService;
+    private final ConversationMemoryService memoryService;
 
     @RateLimit(requests = 10, windowSeconds = 60)
-    @PostMapping
-    public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request){
+    // produces = TEXT_EVENT_STREAM_VALUE tells Spring:
+    // return type Flux<String> should be written as SSE, not buffered
+    // The browser receives each Flux emission as a separate SSE event
+    // This is what makes the "typing" effect work
+    @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> chat(@RequestBody ChatRequest request,
+    @AuthenticationPrincipal User currentUser){
 
         // Basic validation — return 400 if required fields are missing
-        if (request.getRepoId() == null) {
-            return ResponseEntity.badRequest().build();
+        if (request.getRepoId() == null || request.getMessage() == null || request.getMessage().isBlank()) {
+            return Flux.just("{\"type\":\"error\",\"content\":\"Invalid request\"}");
         }
-        if (request.getMessage() == null || request.getMessage().isBlank()) {
-            return ResponseEntity.badRequest().build();
-        }
+        log.debug("Chat request from user {} for repo {}", currentUser.getId(), request.getRepoId());
 
-        try {
-            ChatService.ChatResult result = chatService.chat(
-                    request.getRepoId(),
-                    request.getMessage(),
-                    request.getConversationId()  // null on first message, UUID after that
-            );
-
-            return ResponseEntity.ok(new ChatResponse(
-                    result.answer(),
-                    result.sources(),
-                    result.conversationId()
-            ));
-
-        } catch (RuntimeException e) {
-            // Return 400 with the error message so frontend can display it
-            // Example: "Repository is not ready yet. Current status: PROCESSING"
-//            log.error("Chat error: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(
-                    new ChatResponse(e.getMessage(), List.of(), null)
-            );
-        }
+        return chatService.streamChat(
+                request.getRepoId(),
+                request.getMessage(),
+                request.getConversationId(),
+                currentUser
+        );
     }
 
-    public record ChatResponse(
-            String answer,
-            List<String> sources,
-            UUID conversationId
-    ) {}
+    // Clear conversation memory — "Start new conversation" button
+    @DeleteMapping("/conversations/{conversationId}")
+    public ResponseEntity<?> clearConversation(
+            @PathVariable UUID conversationId,
+            @AuthenticationPrincipal User currentUser) {
+        memoryService.clearConversation(conversationId);
+        return ResponseEntity.ok(Map.of("message", "Conversation cleared"));
+    }
 
 }
