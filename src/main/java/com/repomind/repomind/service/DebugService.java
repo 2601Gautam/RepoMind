@@ -9,7 +9,9 @@ import com.repomind.repomind.service.ingestion.EmbeddingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -18,153 +20,129 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class DebugService {
 
     private final ChatClient chatClient;
     private final EmbeddingService embeddingService;
     private final CodeChunkRepository chunkRepository;
-    private final ObjectMapper objectMapper;
 
-    public DebugResponse analyzeError(DebugRequest request){
-        //find relevant code if a repo was provided
-        //this is the same RAG pattern from tier1 chat
-        //The error message itseld becomes the search query
-        String relevantCode = "";
+    // Explicit constructor required because @Qualifier cannot be used
+    // with @RequiredArgsConstructor — Lombok does not support field-level qualifiers
+    public DebugService(
+            @Qualifier("reasoningChatClient") ChatClient chatClient,
+            EmbeddingService embeddingService,
+            CodeChunkRepository chunkRepository
+    ){
+        this.chatClient = chatClient;
+        this.embeddingService = embeddingService;
+        this.chunkRepository = chunkRepository;
+    }
+
+    // Returns Flux<String> for SSE streaming
+    // Same pattern as ChatService — token by token delivery
+    public Flux<String> streamAnalysis(DebugRequest request){
+
+        //FInd relavant code if repo provided
         List<String> relevantFiles = List.of();
+        String codeSection = "";
 
-        if(request.getRepoId() != null) {
-            // Embed the error text to find semantically similar code chunks
-            // "NullPointerException in UserService" will match UserService.java chunks
+        if(request.getRepoId()!= null){
             float[] errorEmbedding = embeddingService.embed(request.getErrorText());
             String vectorString = embeddingService.toVectorString(errorEmbedding);
 
-            List<CodeChunkRepository.CodeChunkProjection> chunks = chunkRepository.findTopSimilarChunks(
-                    request.getRepoId(),
-                    vectorString,
-                    5   // top 5 relevant chunks — fewer than chat because error analysis
-                    // needs focused context, not broad context
-            );
+            List<CodeChunkRepository.CodeChunkProjection> chunks = chunkRepository
+                    .findTopSimilarChunks(request.getRepoId(),vectorString,5);
 
-            if (!chunks.isEmpty()) {
-                relevantCode = chunks.stream()
+            if(!chunks.isEmpty()){
+                codeSection = """
+                        RELEVANT CODE FROM REPOSITORY:
+                        %s
+                        """.formatted(chunks.stream()
                         .map(CodeChunkRepository.CodeChunkProjection::getContent)
-                        .collect(Collectors.joining("\n\n---\n\n"));
+                        .collect(Collectors.joining("\n\n---\n\n"))
+                );
 
                 relevantFiles = chunks.stream()
                         .map(CodeChunkRepository.CodeChunkProjection::getFilePath)
                         .distinct()
                         .toList();
-
-                log.debug("Found {} relevant chunks for error analysis,", chunks.size());
             }
         }
 
-            //Build The Prompt
-            String prompt = buildDebugPrompt(
-                    request.getErrorText(),
-                    relevantCode,
-                    request.getAdditionalContext()
-            );
+        String prompt = buildDebugPrompt(request.getErrorText(), codeSection, request.getAdditionalContext());
 
-            log.info("Analyzing error: {}",
-                    request.getErrorText().substring(0,Math.min(100, request.getErrorText().length())));
+        log.info("Streaming debug analysis for error: {}",
+                request.getErrorText().substring(0, Math.min(80, request.getErrorText().length())));
+        final List<String> finalRelevantFiles = relevantFiles;
 
-            String rawResponse = chatClient.prompt()
-                    .user(prompt)
-                    .call()
-                    .content();
+        // Stream the response as plain text with section headers
+        // Frontend splits on ## headers to render colored sections
+        // This works better than JSON for streaming - no parse error on partial content
 
-            return parseDebugResponse(rawResponse,relevantFiles);
+        Flux<String> tokenStream = chatClient.prompt()
+                .user(prompt)
+                .stream()
+                .content()
+                .map(token -> formatToken(token));
+
+        Flux<String> startEvent = Flux.just(formatEvent("start", ""));
+        Flux<String> sourcesEvent = Flux.just(formatSources(finalRelevantFiles));
+        Flux<String> doneEvent = Flux.just(formatEvent("done", ""));
+        return Flux.concat(startEvent, tokenStream, sourcesEvent, doneEvent)
+                .onErrorResume(e -> {
+                    log.error("Debug stream error: {}", e.getMessage());
+                    return Flux.just(formatEvent("error", "Analysis failed. Please try again."));
+                });
     }
-    private String buildDebugPrompt(String errorText, String relevantCode, String additionalContext){
 
-        String codeSection = relevantCode.isBlank() ? "" : """
-                RELEVANT CODE FROM THE REPOSITORY:
-                %s
-                """.formatted(relevantCode);
+    private String buildDebugPrompt(String errorText, String codeSection, String additionalContext){
 
         String contextSection = (additionalContext != null && !additionalContext.isBlank())
-        ? "ADDITIONAL CONTEXT: " + additionalContext + "\n\n"
-        : "";
+                ? "\nADDITIONAL CONTEXT: " + additionalContext + "\n"
+                : "";
 
         return """
-                You are an expert software engineer debugging a technical error.
-                 
-                ERROR TO ANALYZE:
-                %s
-                
-                %s%s
-                
-                analyze this error and provide:
-                1. The root in one clear sentence
-                2. A plain English explanation of why this error occurs
-                3. A concrete fix - what to change and where (include code if relevant)
-                4. How to prevent this types of error in future
-                
-                CRITICAL: Respond with ONLY valid JSON. No markdown. No explanation outside the JSON.
-                Start with { and end with }.
-                
-                Use exactly this structure:
-                            {
-                              "rootCause": "One sentence identifying the exact cause",
-                              "explanation": "Plain English explanation of why this error happens",
-                              "suggestedFix": "Concrete steps to fix it, with code examples if helpful",
-                              "preventionTip": "How to prevent this class of error in future"
-                            }
-                """.formatted(errorText,codeSection,contextSection);
+            You are an expert software engineer debugging a technical error.
+            Analyze this error thoroughly and provide a structured response.
+            
+            ERROR:
+            %s
+            %s%s
+            
+            Respond in this EXACT format with these EXACT section headers.
+            Use markdown for code examples. Be specific and actionable.
+            
+            ## Root Cause
+            [One clear sentence identifying the exact cause]
+            
+            ## Explanation
+            [Plain English explanation of why this error occurs]
+            
+            ## Suggested Fix
+            [Concrete steps with code examples if applicable]
+            
+            ## Prevention
+            [How to prevent this class of error in future]
+            """.formatted(errorText,codeSection,contextSection);
     }
 
-    private DebugResponse parseDebugResponse(String rawResponse, List<String> relevantFiles){
-        try{
-            //clean llm formating
-            String cleaned = rawResponse
-                    .replaceAll("(?s)```json\\*","")
-                    .replaceAll("(?s)```\\s*","")
-                    .trim();
+    private String formatToken(String token) {
+        String escaped = token
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n");
+        return "{\"type\":\"token\",\"content\":\"" + escaped + "\"}";
+    }
 
-            //find JSON object boundaries
-            int start = cleaned.indexOf("{");
-            int end = cleaned.lastIndexOf("}");
+    private String formatEvent(String type, String content) {
+        return "{\"type\":\"" + type + "\",\"content\":\"" + content + "\"}";
+    }
 
-            if(start==-1 || end == -1)
-            {
-                // LLM failed to follow JSON format — return a fallback response
-                // using the raw text as the explanation rather than crashing
-                log.warn("LLM did not return valid JSON for debug response");
-                return DebugResponse.builder()
-                        .rootCause("Unable To parse structured response")
-                        .explanation(cleaned)
-                        .suggestedFix("Please try again")
-                        .preventionTip("")
-                        .relevantFiles(relevantFiles)
-                        .build();
-            }
-
-            String jsonOnly = cleaned.substring(start,end + 1);
-//            readTree() parses the JSON string and creates a tree structure.
-            JsonNode node = objectMapper.readTree(jsonOnly);
-
-            return DebugResponse.builder()
-                    .rootCause(node.path("rootCause").asText(""))
-                    .explanation(node.path("explanation").asText(""))
-                    .suggestedFix(node.path("suggestedFix").asText(""))
-                    .preventionTip(node.path("preventionTip").asText(""))
-                    .relevantFiles(relevantFiles)
-                    .build();
-        } catch (Exception e) {
-           log.error("Failed to parse debug response: {}", e.getMessage());
-           //return the raw response as explanation rather than throwing
-            // Better UX: user gets something userfull even if parsing fails
-
-            return DebugResponse.builder()
-                    .rootCause("Error analysis completed")
-                    .explanation(rawResponse)
-                    .suggestedFix("")
-                    .preventionTip("")
-                    .relevantFiles(relevantFiles)
-                    .build();
-        }
+    private String formatSources(List<String> files) {
+        String filesJson = files.stream()
+                .map(f -> "\"" + f.replace("\"", "\\\"") + "\"")
+                .collect(Collectors.joining(",", "[", "]"));
+        return "{\"type\":\"sources\",\"files\":" + filesJson + "}";
     }
 }

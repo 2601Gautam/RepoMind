@@ -1,5 +1,6 @@
 package com.repomind.repomind.controller;
 
+import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.ChatRequest;
 import com.repomind.repomind.model.entity.Conversation;
 import com.repomind.repomind.model.entity.User;
@@ -26,6 +27,7 @@ public class ChatController {
     private final ChatService chatService;
     private final ConversationMemoryService memoryService;
 
+    @RateLimit(requests = 10, windowSeconds = 60)
     // produces = TEXT_EVENT_STREAM_VALUE tells Spring:
     // return type Flux<String> should be written as SSE, not buffered
     // The browser receives each Flux emission as a separate SSE event

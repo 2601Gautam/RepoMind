@@ -4,6 +4,8 @@ import com.repomind.repomind.dto.request.LoginRequest;
 import com.repomind.repomind.dto.request.RegisterRequest;
 import com.repomind.repomind.dto.response.AuthResponse;
 import com.repomind.repomind.model.entity.User;
+import com.repomind.repomind.repository.ConversationRepository;
+import com.repomind.repomind.repository.UserRepoRepository;
 import com.repomind.repomind.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,6 +23,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final UserRepoRepository userRepoRepository;
+    private final ConversationRepository conversationRepository;
 
     @Value("${app.jwt.expiration:604800000}")
     private int jwtExpiration;
@@ -101,5 +105,24 @@ public class AuthController {
         // Without this, the browser blocks the cookie when Vercel calls Render
         response.addHeader("set-Cookie",
                 String.format("jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",token,jwtExpiration/1000));
+    }
+
+    @GetMapping("profile/stats")
+    public ResponseEntity<?> getProfileStats(@AuthenticationPrincipal User user){
+        if(user == null) return ResponseEntity.status(401).build();
+
+        //Count user's repos,conversations, and chunks
+        long repoCount = userRepoRepository.countByUserId(user.getId());
+        long conversationCount = conversationRepository.countByUserId(user.getId());
+
+        return ResponseEntity.ok(Map.of(
+                "userId", user.getId(),
+                "email", user.getEmail(),
+                "name", user.getName(),
+                "provider", user.getProvider(),
+                "reposAnalyzed", repoCount,
+                "conversationsStarted", conversationCount,
+                "memberSince", user.getCreatedAt()
+        ));
     }
 }

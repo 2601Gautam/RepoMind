@@ -1,6 +1,7 @@
 package com.repomind.repomind.controller;
 
 
+import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.IngestRequest;
 import com.repomind.repomind.dto.response.RepoStatusResponse;
 import com.repomind.repomind.model.entity.RepoEntity;
@@ -37,6 +38,7 @@ public class IngestionController {
     private final RepoJpaRepository repoRepository;
     private final CodeChunkRepository chunkRepository;
 
+    @RateLimit(requests = 2, windowSeconds = 3600)  // 2 per hour
     @PostMapping("/ingest")
     public ResponseEntity<RepoStatusResponse> ingest(@Valid @RequestBody IngestRequest request,
                                                      @AuthenticationPrincipal User currentUser){

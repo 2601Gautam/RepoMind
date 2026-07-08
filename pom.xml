@@ -134,19 +134,62 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
+        <!--
+     Spring Data Redis: gives you RedisTemplate and @Cacheable support
+     Used for: storing conversation history in memory for instant retrieval
+     Why Redis over DB: Redis is in-memory, reading chat history adds ~1ms
+     Reading from PostgreSQL for every message adds ~20-50ms
+ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
         <!--
-    Spring WebFlux: required for Flux<String> reactive streaming
-    We use ONLY the reactive types (Flux) for SSE — not full reactive architecture
-    The rest of your app stays Spring MVC (blocking), only the streaming
-    endpoints use Flux as the return type
--->
+            Spring WebFlux: required for Flux<String> reactive streaming
+            We use ONLY the reactive types (Flux) for SSE — not full reactive architecture
+            The rest of your app stays Spring MVC (blocking), only the streaming
+            endpoints use Flux as the return type
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!--
+            Bucket4j Core: token bucket algorithm for rate limiting
+            Runs inside Spring Boot — no separate service needed
+            Each user gets a "bucket" of tokens that refills over time
+            When bucket is empty, requests are rejected with 429
+        -->
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j_jdk17-core</artifactId>
+            <version>8.14.0</version>
+        </dependency>
+
+        <!--
+            Bucket4j Redis: stores rate limit buckets in Redis
+            Without this, buckets are in-memory and reset on every app restart
+            Also required for multiple server instances (Render can scale)
+            Depends on the Redis dependency Dev 1 already added to pom.xml
+        -->
+
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j_jdk17-lettuce</artifactId>
+            <version>8.14.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <version>3.5.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <version>3.2.5</version>
         </dependency>
     </dependencies>
 
