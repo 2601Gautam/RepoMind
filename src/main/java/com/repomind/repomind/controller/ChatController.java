@@ -1,5 +1,6 @@
 package com.repomind.repomind.controller;
 
+import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.ChatRequest;
 import com.repomind.repomind.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class ChatController {
     private final ChatService chatService;
 
+    @RateLimit(requests = 10, windowSeconds = 60)
     @PostMapping
     public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request){
 

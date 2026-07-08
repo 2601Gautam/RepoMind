@@ -1,5 +1,6 @@
 package com.repomind.repomind.controller;
 
+import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.InterviewRequest;
 import com.repomind.repomind.dto.response.InterviewSessionDto;
 import com.repomind.repomind.model.entity.User;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class InterviewController {
     private final InterviewService interviewService;
     // Generate new interview questions for a repo
+    @RateLimit(requests = 3, windowSeconds = 60)
     @PostMapping("/generate")
     public ResponseEntity<?> generate(
             @Valid @RequestBody InterviewRequest request,

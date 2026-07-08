@@ -21,7 +21,7 @@ public interface UserRepoRepository extends JpaRepository<UserRepo, UUID> {
     // Used during dedup: if user submits a URL they already have, return existing
     boolean existsByUserIdAndRepoId(UUID userId, UUID repoId);
 
-
+    long countByUserId(UUID userId);
     // Find the join record — used when we need to delete access
     Optional<UserRepo> findByUserIdAndRepoId(UUID userId, UUID repoId);
 }
