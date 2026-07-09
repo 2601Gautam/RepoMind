@@ -1,14 +1,13 @@
-import { useState } from 'react'
 import { analyzeError } from '../api/client'
 import ReactMarkdown from 'react-markdown'
-import React from 'react'
+import { useState } from 'react'
 
 export default function DebugPage({ repo, onBack }) {
-    const [errorText, setErrorText] = React.useState('');
-    const [context, setContext] = React.useState('');
-    const [result, setResult] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState('');
+    const [errorText, setErrorText] = useState('')
+    const [context, setContext] = useState('')
+    const [result, setResult] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
 
     async function handleAnalyze() {
         if(!errorText.trim()) {
