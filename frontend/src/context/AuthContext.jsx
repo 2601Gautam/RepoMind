@@ -9,18 +9,12 @@ import { BASE, getMe } from '../api/client'
 // through every component level
 const AuthContext = createContext(null)
 
+
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null)       // null = not logged in
     const [loading, setLoading] = useState(true) // true = still checking auth status
 
-    // On app load, check if user is already logged in
-    // The /api/auth/me endpoint reads the httpOnly cookie and returns user info
-    // This is how we restore the session after a page refresh
-    useEffect(() => {
-        checkAuthStatus()
-    }, [])
-
-    const checkAuthStatus = async () => {
+    async function checkAuthStatus() {
         try {
             const user = await getMe() // should use BASE from client.js
             setUser(user)
@@ -30,6 +24,36 @@ export function AuthProvider({ children }) {
             setLoading(false)
         }
     }
+
+    // On app load, check if user is already logged in
+    // The /api/auth/me endpoint reads the httpOnly cookie and returns user info
+    // This is how we restore the session after a page refresh
+    useEffect(() => {
+        let active = true
+
+        async function loadUser() {
+            try {
+                const user = await getMe()
+                if (active) {
+                    setUser(user)
+                }
+            } catch {
+                if (active) {
+                    setUser(null)
+                }
+            } finally {
+                if (active) {
+                    setLoading(false)
+                }
+            }
+        }
+
+        loadUser()
+
+        return () => {
+            active = false
+        }
+    }, [])
 
     async function login(email, password) {
         const res = await fetch(`${BASE}/auth/login`, {
@@ -56,7 +80,7 @@ export function AuthProvider({ children }) {
         })
         if (!res.ok) {
             const data = await res.json()
-            throw new Error(data.error || 'Registration failed')
+            throw new Error(data.message || data.error || 'Registration failed')
         }
         const data = await res.json()
         setUser(data)
@@ -108,6 +132,7 @@ export function AuthProvider({ children }) {
 
 // Custom hook — any component calls useAuth() to access auth state
 // Throws if used outside AuthProvider — catches setup mistakes early
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     const context = useContext(AuthContext)
     if (!context) throw new Error('useAuth must be used inside AuthProvider')
