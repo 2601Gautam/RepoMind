@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { listRepos, ingestRepo, getRepoStatus, RateLimitError } from '../api/client'
-import NavBar from '../components/layout/Navbar'
+import NavBar from '../components/layout/NavBar'
 import RepoCard from '../components/repo/RepoCard'
 import RepoUrlInput from '../components/repo/RepoUrlInput'
 import IngestionProgress from '../components/repo/IngestionProgress'
