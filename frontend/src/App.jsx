@@ -1,74 +1,85 @@
-import { useState , useEffect} from 'react'
+import { useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider, useAuth } from './context/AuthContext'
-import Header from './components/layout/Header'
-import IngestPage from './pages/IngestPage'
-import ChatPage from './pages/ChatPage'
+// Pages
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import OAuthCallbackPage from './pages/OAuthCallbackPage'
+import DashboardPage from './pages/DashboardPage'
+import ChatPage from './pages/ChatPage'
+import InterviewPage from './pages/InterviewPage'
+import DebugPage from './pages/DebugPage'
+import ProfilePage from './pages/ProfilePage'
 
 // AppContent is separate from App so it can use useAuth()
 // useAuth() requires being inside AuthProvider
 // If AppContent was inside App directly, AuthProvider would not wrap it yet
-function AppContent() {
-    const { user, loading, logout } = useAuth()
-    const [selectedRepo, setSelectedRepo] = useState(null)
-    const [authPage, setAuthPage] = useState('login') // 'login' | 'register'
 
-    // Handle OAuth2 callback route
-    if (window.location.search.includes('oauth=success')) {
-        return <OAuthCallbackPage />
-    }
 
-    // Show loading spinner while checking auth status on page load
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-        )
-    }
+// Inner component so it can access useAuth()
+// App wraps with AuthProvider — AppRoutes lives inside it
+function AppRoutes() {
+    const { user } = useAuth()
 
-    // Not logged in — show auth pages
-    if (!user) {
-        return authPage === 'login'
-            ? <LoginPage onNavigateToRegister={() => setAuthPage('register')} />
-            : <RegisterPage onNavigateToLogin={() => setAuthPage('login')} />
-    }
+    // Keep-alive: pings backend every 14 minutes to prevent Render free tier sleep
+    // Only runs when a user is logged in — no point pinging when nobody is using it
+    // Without this, first request after 15 minutes of idle takes 30-50 seconds
+    useEffect(() => {
+        if (!user) return
 
-    // Logged in — show main app
+        const BASE = import.meta.env.VITE_API_URL || ''
+        const ping = () => {
+            fetch(`${BASE}/api/repos?page=0&size=1`, {
+                credentials: 'include'
+            }).catch(() => {})
+        }
+
+        const interval = setInterval(ping, 14 * 60 * 1000)
+        return () => clearInterval(interval)
+    }, [user])
+
     return (
-        <div className="min-h-screen bg-gray-950 text-white overflow-hidden">
-            <Header
-                repoName={selectedRepo?.repoName}
-                onLogoClick={() => setSelectedRepo(null)}
-                user={user}
-                onLogout={logout}
-            />
-            <main className="max-w-4xl mx-auto px-6">
-                {selectedRepo
-                    ? <ChatPage repo={selectedRepo} onBack={() => setSelectedRepo(null)} />
-                    : <IngestPage onSelect={setSelectedRepo} />
-                }
-            </main>
-        </div>
+        <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/auth/callback" element={<OAuthCallbackPage />} />
+
+            {/* Protected routes */}
+            <Route path="/dashboard" element={
+                <ProtectedRoute><DashboardPage /></ProtectedRoute>
+            } />
+            <Route path="/chat/:repoId" element={
+                <ProtectedRoute><ChatPage /></ProtectedRoute>
+            } />
+            <Route path="/interview/:repoId" element={
+                <ProtectedRoute><InterviewPage /></ProtectedRoute>
+            } />
+            <Route path="/debug/:repoId" element={
+                <ProtectedRoute><DebugPage /></ProtectedRoute>
+            } />
+            <Route path="/debug" element={
+                <ProtectedRoute><DebugPage /></ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+                <ProtectedRoute><ProfilePage /></ProtectedRoute>
+            } />
+            {/* Catch-all: logged in → dashboard, not logged in → landing */}
+            <Route path="*" element={
+                <Navigate to="/dashboard" replace />
+            } />
+        </Routes>
     )
 }
 
 export default function App() {
-    useEffect(() => {
-    const keepAlive = setInterval(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/api/repos`, {
-            credentials: 'include'
-        }).catch(() => {}) // silently ignore errors
-    }, 14 * 60 * 1000) // 14 minutes
-
-    return () => clearInterval(keepAlive)
-}, [])
     return (
         // AuthProvider wraps everything so useAuth() works anywhere in the tree
         <AuthProvider>
-            <AppContent />
+            <AppRoutes />
         </AuthProvider>
     )
 }
