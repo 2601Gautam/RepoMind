@@ -79,7 +79,7 @@ export default function LoginPage() {
                         <div className="flex-1 border-t border-gray-700" />
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleLogin} className="space-y-4">
                         <div>
                             <label className="block text-sm text-gray-400 mb-1.5">Email</label>
                             <input type="email" value={email} onChange={e => setEmail(e.target.value)}

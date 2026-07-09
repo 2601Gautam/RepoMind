@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 })
 @EnableAsync
 @EnableAspectJAutoProxy
-@EnableCaching
 // @EnableAsync is required for @Async to work
 // Without it Spring ignores @Async completely
 // The method runs synchronously and your HTTP request hangs for 10 minutes

@@ -70,7 +70,7 @@ export default function RegisterPage() {
                         <div className="flex-1 border-t border-gray-700" />
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleRegister} className="space-y-4">
                         <div>
                             <label className="block text-sm text-gray-400 mb-1.5">Full Name</label>
                             <input type="text" value={name} onChange={e => setName(e.target.value)}

@@ -73,12 +73,12 @@ function DebugSection({ variant, title, children, onCopy, streaming }) {
 
 export default function DebugPage() {
     const { repoId } = useParams() // undefined on /debug standalone route
-    const [errorText, setErrorText] = React.useState('');
-    const [context, setContext] = React.useState('');
+    const [errorText, setErrorText] = useState('');
+    const [context, setContext] = useState('');
     const [streamedText, setStreamedText] = useState('')
     const [sources , setSources] = useState([])
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const [done, setDone] = useState(false)
     const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
     const streamedRef = useRef('')  // Ref to accumulate without re-renders
@@ -150,7 +150,8 @@ export default function DebugPage() {
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).catch(() => {})
     }
-<div className="min-h-screen bg-gray-950 text-white">
+    return (
+        <div className="min-h-screen bg-gray-950 text-white">
             <NavBar repoName={repoId ? undefined : undefined} />
 
             <main className="max-w-3xl mx-auto px-6 py-8 space-y-6">

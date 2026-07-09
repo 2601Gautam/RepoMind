@@ -55,7 +55,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",          // login, register, oauth2 callback
                                 "/oauth2/**",            // Google OAuth2 redirect URLs
-                                "/login/oauth2/**"       // Spring's OAuth2 callback path
+                                "/login/oauth2/**",      // Spring's OAuth2 callback path
+                                "/error"
                         ).permitAll()
                         // Everything else requires a valid JWT
                         .anyRequest().authenticated()

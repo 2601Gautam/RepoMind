@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import ProtectedRoute from './components/ProtectedRoute'
+import ProtectedRoute from './components/common/ProtectedRoute'
 import { AuthProvider, useAuth } from './context/AuthContext'
 // Pages
 import LandingPage from './pages/LandingPage'
