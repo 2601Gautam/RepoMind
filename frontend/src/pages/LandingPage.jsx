@@ -1,26 +1,30 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-// Feature card for the landing page features section
+// Feature card - Clean and professional
 function FeatureCard({ icon, title, description }) {
     return (
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 space-y-3 hover:border-gray-600 transition-colors">
-            <div className="text-3xl">{icon}</div>
-            <h3 className="font-semibold text-white">{title}</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">{description}</p>
+        <div className="bg-white border border-neutral-200 rounded-lg p-8 space-y-4 hover:shadow-md transition-shadow duration-200 hover:border-primary-300">
+            <div className="text-4xl">{icon}</div>
+            <h3 className="font-semibold text-lg text-neutral-900">{title}</h3>
+            <p className="text-sm text-neutral-600 leading-relaxed">{description}</p>
         </div>
     )
 }
 
-// Step card for the how-it-works section
+// Step card - Minimalist with numbered circles
 function StepCard({ number, title, description }) {
     return (
-        <div className="text-center space-y-3">
-            <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-sm flex items-center justify-center mx-auto">
-                {number}
+        <div className="space-y-5 text-left">
+            <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-600 to-primary-700 text-white font-semibold text-lg flex items-center justify-center flex-shrink-0">
+                    {number}
+                </div>
+                <div className="flex-1 pt-1">
+                    <h3 className="font-semibold text-neutral-900 mb-2">{title}</h3>
+                    <p className="text-neutral-600 text-sm leading-relaxed">{description}</p>
+                </div>
             </div>
-            <h3 className="font-semibold text-white">{title}</h3>
-            <p className="text-sm text-gray-400">{description}</p>
         </div>
     )
 }
@@ -29,26 +33,31 @@ export default function LandingPage() {
     const { user } = useAuth()
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white">
-            {/* Nav */}
-            <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm">
-                <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <span className="text-lg font-bold text-blue-400">RepoMind</span>
-                    <div className="flex items-center gap-3">
+        <div className="min-h-screen bg-neutral-50 text-neutral-900">
+            {/* ===== NAVIGATION ===== */}
+            <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-200">
+                <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center">
+                            <span className="text-white font-bold text-lg">R</span>
+                        </div>
+                        <span className="text-lg font-bold text-neutral-900">RepoMind</span>
+                    </div>
+                    <div className="flex items-center gap-4">
                         {user ? (
                             <Link to="/dashboard"
-                                className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                                className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
                                 Dashboard
                             </Link>
                         ) : (
                             <>
                                 <Link to="/login"
-                                    className="text-sm text-gray-400 hover:text-white transition-colors">
+                                    className="px-4 py-2 text-neutral-600 hover:text-neutral-900 transition-colors font-medium text-sm">
                                     Sign in
                                 </Link>
                                 <Link to="/register"
-                                    className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                                    Get Started Free
+                                    className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
+                                    Get Started
                                 </Link>
                             </>
                         )}
@@ -56,101 +65,188 @@ export default function LandingPage() {
                 </div>
             </header>
 
-            {/* Hero */}
-            <section className="max-w-4xl mx-auto px-6 py-24 text-center space-y-8">
-                <div className="space-y-4">
-                    <div className="inline-flex items-center gap-2 bg-blue-600/10 border border-blue-600/20 rounded-full px-4 py-1.5 text-sm text-blue-400">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                        AI-powered code understanding
+            {/* ===== HERO SECTION ===== */}
+            <section className="bg-white py-20 md:py-32">
+                <div className="max-w-4xl mx-auto px-6 space-y-10">
+                    {/* Badge */}
+                    <div className="flex justify-center">
+                        <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-full px-4 py-2 text-sm">
+                            <span className="w-2 h-2 rounded-full bg-primary-600 animate-pulse" />
+                            <span className="text-primary-700 font-medium">AI-powered code understanding</span>
+                        </div>
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
-                        Chat with any{' '}
-                        <span className="text-blue-400">GitHub repository</span>
-                        {' '}using AI
-                    </h1>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                        Understand codebases instantly. Generate interview questions.
-                        Debug errors with full code context.
-                    </p>
-                </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Link to="/register"
-                        className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-8 py-3 rounded-xl transition-colors text-lg">
-                        Get Started Free
-                    </Link>
-                    <Link to="/login"
-                        className="border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white font-medium px-8 py-3 rounded-xl transition-colors text-lg">
-                        Sign In
-                    </Link>
-                </div>
-
-                {/* Mock terminal showing a GitHub URL being analyzed */}
-                <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 max-w-xl mx-auto text-left">
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className="w-3 h-3 rounded-full bg-red-500 opacity-60" />
-                        <div className="w-3 h-3 rounded-full bg-yellow-500 opacity-60" />
-                        <div className="w-3 h-3 rounded-full bg-green-500 opacity-60" />
-                        <span className="text-xs text-gray-500 ml-2">RepoMind</span>
+                    {/* Headline */}
+                    <div className="space-y-6 text-center">
+                        <h1 className="text-5xl md:text-6xl font-bold text-neutral-900 leading-tight">
+                            Chat with your{' '}
+                            <span className="bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+                                GitHub repository
+                            </span>
+                        </h1>
+                        <p className="text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto leading-relaxed">
+                            Understand codebases in seconds. Ask questions in English. Get answers grounded in your actual code.
+                        </p>
                     </div>
-                    <div className="space-y-2 font-mono text-sm">
-                        <p className="text-gray-500">$ Analyze repository...</p>
-                        <p className="text-blue-400">github.com/spring-projects/spring-boot</p>
-                        <p className="text-gray-400">✓ Indexed 2,847 chunks from 312 files</p>
-                        <p className="text-green-400">Ready to chat →</p>
+
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                        <Link to="/register"
+                            className="px-8 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md text-center">
+                            Get Started Free
+                        </Link>
+                        <Link to="/login"
+                            className="px-8 py-3 bg-white border-2 border-neutral-300 text-neutral-900 rounded-lg font-semibold hover:border-primary-600 hover:text-primary-600 transition-colors text-center">
+                            Sign In
+                        </Link>
+                    </div>
+
+                    {/* Demo Box - Code-like display */}
+                    <div className="pt-8">
+                        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6 max-w-lg mx-auto">
+                            <div className="flex items-center gap-2 mb-4 pb-4 border-b border-neutral-800">
+                                <div className="w-3 h-3 rounded-full bg-red-500" />
+                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                <div className="w-3 h-3 rounded-full bg-green-500" />
+                                <span className="text-xs text-neutral-500 ml-3">RepoMind Analysis</span>
+                            </div>
+                            <div className="space-y-3 font-mono text-sm">
+                                <p className="text-neutral-500">$ repomind analyze</p>
+                                <p className="text-primary-400">github.com/torvalds/linux</p>
+                                <p className="text-green-400">✓ Indexed 68,000+ files</p>
+                                <p className="text-green-400">✓ Created semantic embeddings</p>
+                                <p className="text-neutral-400">Ready for questions →</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* How it works */}
-            <section className="border-t border-gray-800 py-20">
-                <div className="max-w-4xl mx-auto px-6 space-y-12">
-                    <h2 className="text-3xl font-bold text-center text-white">How it works</h2>
+            {/* ===== HOW IT WORKS ===== */}
+            <section className="py-20 md:py-32 bg-neutral-50">
+                <div className="max-w-4xl mx-auto px-6 space-y-16">
+                    <div className="text-center space-y-4">
+                        <h2 className="text-4xl font-bold text-neutral-900">How it works</h2>
+                        <p className="text-lg text-neutral-600">Three simple steps to understand any codebase</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <StepCard
+                            number="1"
+                            title="Paste a GitHub URL"
+                            description="Share any public repository. We support private repos with a GitHub token. No installation needed."
+                        />
+                        <StepCard
+                            number="2"
+                            title="We index everything"
+                            description="RepoMind analyzes every file, builds semantic embeddings, and creates a searchable knowledge base of your code."
+                        />
+                        <StepCard
+                            number="3"
+                            title="Chat with your code"
+                            description="Ask questions in natural language. Get precise answers with file references, line numbers, and context."
+                        />
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== FEATURES ===== */}
+            <section className="py-20 md:py-32 bg-white">
+                <div className="max-w-5xl mx-auto px-6 space-y-16">
+                    <div className="text-center space-y-4">
+                        <h2 className="text-4xl font-bold text-neutral-900">Powerful features</h2>
+                        <p className="text-lg text-neutral-600">Everything you need to understand code faster</p>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <StepCard number="1" title="Paste a GitHub URL"
-                            description="Submit any public repository URL. Private repos supported with a GitHub token." />
-                        <StepCard number="2" title="AI indexes the codebase"
-                            description="RepoMind reads every file, creates semantic embeddings, and builds a searchable knowledge base." />
-                        <StepCard number="3" title="Chat, interview, debug"
-                            description="Ask questions in plain English and get answers grounded in the actual source code." />
+                        <FeatureCard
+                            icon="💬"
+                            title="Smart Code Chat"
+                            description="Ask questions about architecture, dependencies, performance, and more. Get answers rooted in actual code."
+                        />
+                        <FeatureCard
+                            icon="🎯"
+                            title="Interview Prep"
+                            description="Generate project-specific interview questions at any difficulty level. Learn by explaining your own code."
+                        />
+                        <FeatureCard
+                            icon="🐛"
+                            title="Debugging Made Easy"
+                            description="Paste error messages and get root cause analysis with suggested fixes from your codebase context."
+                        />
+                        <FeatureCard
+                            icon="📊"
+                            title="Code Analysis"
+                            description="Understand codebase structure, dependencies, and patterns instantly without manual documentation."
+                        />
+                        <FeatureCard
+                            icon="⚡"
+                            title="Lightning Fast"
+                            description="Semantic search powered by AI means answers come back in seconds, not minutes."
+                        />
+                        <FeatureCard
+                            icon="🔒"
+                            title="Privacy First"
+                            description="Your code stays private. We process and store embeddings securely. No data sharing with third parties."
+                        />
                     </div>
                 </div>
             </section>
 
-            {/* Features */}
-            <section className="border-t border-gray-800 py-20">
-                <div className="max-w-4xl mx-auto px-6 space-y-12">
-                    <h2 className="text-3xl font-bold text-center text-white">Features</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <FeatureCard icon="💬" title="Chat with Code"
-                            description="Ask any question about the codebase. Get answers with exact file references and line numbers." />
-                        <FeatureCard icon="🎯" title="Interview Prep"
-                            description="Generate project-specific interview questions at beginner, intermediate, or advanced level." />
-                        <FeatureCard icon="🐛" title="Debug Assistant"
-                            description="Paste errors and stack traces. Get root cause analysis with suggested fixes grounded in your actual code." />
+            {/* ===== USE CASES ===== */}
+            <section className="py-20 md:py-32 bg-neutral-50">
+                <div className="max-w-4xl mx-auto px-6">
+                    <div className="text-center space-y-4 mb-16">
+                        <h2 className="text-4xl font-bold text-neutral-900">Built for developers</h2>
+                        <p className="text-lg text-neutral-600">Whether you&apos;re onboarding or diving deep, RepoMind helps</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="bg-white p-8 rounded-lg border border-neutral-200">
+                            <h3 className="text-xl font-semibold text-neutral-900 mb-3">New Team Members</h3>
+                            <p className="text-neutral-600">Onboard 3x faster by asking questions about unfamiliar codebases. Learn patterns by example.</p>
+                        </div>
+                        <div className="bg-white p-8 rounded-lg border border-neutral-200">
+                            <h3 className="text-xl font-semibold text-neutral-900 mb-3">Code Interviews</h3>
+                            <p className="text-neutral-600">Prepare smarter with auto-generated, project-specific interview questions and discussion points.</p>
+                        </div>
+                        <div className="bg-white p-8 rounded-lg border border-neutral-200">
+                            <h3 className="text-xl font-semibold text-neutral-900 mb-3">Technical Debt</h3>
+                            <p className="text-neutral-600">Understand the full scope of legacy systems before refactoring. Identify improvement opportunities.</p>
+                        </div>
+                        <div className="bg-white p-8 rounded-lg border border-neutral-200">
+                            <h3 className="text-xl font-semibold text-neutral-900 mb-3">Debugging</h3>
+                            <p className="text-neutral-600">Paste stack traces and error logs. Get context-aware debugging help from your actual code.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* CTA */}
-            <section className="border-t border-gray-800 py-20">
-                <div className="max-w-2xl mx-auto px-6 text-center space-y-6">
-                    <h2 className="text-3xl font-bold text-white">
-                        Ready to understand your codebase?
+            {/* ===== FINAL CTA ===== */}
+            <section className="py-20 md:py-32 bg-gradient-to-r from-primary-600 to-primary-700">
+                <div className="max-w-3xl mx-auto px-6 text-center space-y-8">
+                    <h2 className="text-4xl font-bold text-white leading-tight">
+                        Start understanding your codebase today
                     </h2>
-                    <p className="text-gray-400">Free to use. No credit card required.</p>
+                    <p className="text-lg text-primary-100">
+                        Free to use. No credit card required. Analyze any public GitHub repository in seconds.
+                    </p>
                     <Link to="/register"
-                        className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-medium px-8 py-3 rounded-xl transition-colors text-lg">
+                        className="inline-block px-8 py-4 bg-white text-primary-600 rounded-lg font-semibold hover:bg-neutral-100 transition-colors shadow-lg">
                         Get Started Free
                     </Link>
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="border-t border-gray-800 py-8">
-                <div className="max-w-5xl mx-auto px-6 text-center">
-                    <p className="text-sm text-gray-500">
-                        RepoMind — AI-powered code understanding
+            {/* ===== FOOTER ===== */}
+            <footer className="bg-neutral-900 text-neutral-400 py-12">
+                <div className="max-w-6xl mx-auto px-6 text-center space-y-4">
+                    <p className="text-lg font-semibold text-white">RepoMind</p>
+                    <p className="text-sm">
+                        AI-powered code understanding. Chat with your GitHub repositories.
+                    </p>
+                    <p className="text-xs text-neutral-500 pt-4">
+                        © {new Date().getFullYear()} RepoMind. All rights reserved.
                     </p>
                 </div>
             </footer>

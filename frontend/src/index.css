@@ -1,15 +1,31 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Base resets that Tailwind doesn't handle */
+/* Professional SaaS Theme - Purple & Light */
+:root {
+  --primary-600: #9333ea;
+  --primary-700: #7e22ce;
+  --neutral-900: #1a1a1a;
+  --neutral-800: #2b2b2b;
+  --neutral-200: #e5e5e5;
+  --neutral-100: #f5f5f5;
+}
+
+/* Base resets */
+html {
+  background-color: #fafafa;
+}
+
 body {
   margin: 0;
-  background-color: #030712;
-  color: #f9fafb;
+  background-color: #fafafa;
+  color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 #root {
   min-height: 100vh;
+  background-color: #fafafa;
 }
 
 /* Smooth scrolling */
@@ -17,17 +33,75 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar for dark theme */
+/* Custom scrollbar - light theme */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #111827;
+  background: #f5f5f5;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 3px;
+  background: #d4d4d8;
+  border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #a3a3a3;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  color: #1a1a1a;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+p {
+  color: #575757;
+  line-height: 1.6;
+}
+
+/* Link styling */
+a {
+  color: #9333ea;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #7e22ce;
+}
+
+/* Button base styles */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
+}
+
+/* Input styles */
+input, textarea, select {
+  border-color: #e5e5e5;
+  color: #1a1a1a;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #737373;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
 }
