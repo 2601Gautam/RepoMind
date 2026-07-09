@@ -1,29 +1,20 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { BASE, getMe } from '../api/client'
-// AuthContext answers the question throughout the entire app:
-// "Is there a logged-in user right now, and who are they?"
-//
-// Using Context instead of prop-drilling means:
-// Any component anywhere in the tree can call useAuth()
-// and get the current user — no need to pass user as a prop
-// through every component level
+
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null)       // null = not logged in
-    const [loading, setLoading] = useState(true) // true = still checking auth status
+    const [user, setUser] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    // On app load, check if user is already logged in
-    // The /api/auth/me endpoint reads the httpOnly cookie and returns user info
-    // This is how we restore the session after a page refresh
     useEffect(() => {
         checkAuthStatus()
     }, [])
 
-    const checkAuthStatus = async () => {
+    async function checkAuthStatus() {
         try {
-            const user = await getMe() // should use BASE from client.js
-            setUser(user)
+            const data = await getMe()
+            setUser(data)
         } catch {
             setUser(null)
         } finally {
@@ -35,12 +26,12 @@ export function AuthProvider({ children }) {
         const res = await fetch(`${BASE}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',   // tells browser to accept and store the cookie
+            credentials: 'include',
             body: JSON.stringify({ email, password })
         })
         if (!res.ok) {
-            const data = await res.json()
-            throw new Error(data.error || 'Login failed')
+            const data = await res.json().catch(() => ({}))
+            throw new Error(data.message || data.error || 'Login failed')
         }
         const data = await res.json()
         setUser(data)
@@ -55,8 +46,8 @@ export function AuthProvider({ children }) {
             body: JSON.stringify({ name, email, password })
         })
         if (!res.ok) {
-            const data = await res.json()
-            throw new Error(data.error || 'Registration failed')
+            const data = await res.json().catch(() => ({}))
+            throw new Error(data.message || data.error || 'Registration failed')
         }
         const data = await res.json()
         setUser(data)
@@ -71,34 +62,21 @@ export function AuthProvider({ children }) {
         setUser(null)
     }
 
-    // loginWithGoogle redirects the browser to Spring's OAuth2 endpoint
-    // Spring handles the Google redirect, callback, and cookie setting
-    // After success, Google redirects to /auth/callback which calls checkAuthStatus
-    // In development: backend is on 8080
-    // In production: backend is on Render
-    const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+    const BACKEND = import.meta.env.VITE_API_URL || ''
 
-    // Replace both functions:
     function loginWithGoogle() {
-        // Must navigate directly to backend — cannot go through Vite proxy
-        // OAuth2 flow requires real browser redirect, not a proxied fetch call
-        window.location.href = `${BACKEND_URL}/oauth2/authorization/google`
+        window.location.href = `${BACKEND}/oauth2/authorization/google`
     }
 
     function loginWithGitHub() {
-        window.location.href = `${BACKEND_URL}/oauth2/authorization/github`
+        window.location.href = `${BACKEND}/oauth2/authorization/github`
     }
-
 
     return (
         <AuthContext.Provider value={{
-            user,
-            loading,
-            login,
-            register,
-            logout,
-            loginWithGoogle,
-            loginWithGitHub,
+            user, loading,
+            login, register, logout,
+            loginWithGoogle, loginWithGitHub,
             checkAuthStatus
         }}>
             {children}
@@ -106,8 +84,6 @@ export function AuthProvider({ children }) {
     )
 }
 
-// Custom hook — any component calls useAuth() to access auth state
-// Throws if used outside AuthProvider — catches setup mistakes early
 export function useAuth() {
     const context = useContext(AuthContext)
     if (!context) throw new Error('useAuth must be used inside AuthProvider')

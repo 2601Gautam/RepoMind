@@ -1,160 +1,286 @@
-import { useState } from 'react'
-import { analyzeError } from '../api/client'
+import { useState, useRef } from 'react'
+import { useParams } from 'react-router-dom'
+import { streamDebug, RateLimitError } from '../api/client'
+import NavBar from '../components/layout/NavBar'
 import ReactMarkdown from 'react-markdown'
-import React from 'react'
+import remarkGfm from 'remark-gfm'
+import RateLimitBanner from '../components/common/RateLimitBanner'
+import LoadingSpinner from '../components/common/LoadingSpinner'
 
-export default function DebugPage({ repo, onBack }) {
-    const [errorText, setErrorText] = React.useState('');
-    const [context, setContext] = React.useState('');
-    const [result, setResult] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState('');
+// Parses the streaming plain text into named sections
+// Backend DebugService sends: "## Root Cause\n...\n## Explanation\n..."
+// This function accumulates text and splits at ## headers as they arrive
+// Returns partial sections — called on every new token so UI updates live
 
-    async function handleAnalyze() {
-        if(!errorText.trim()) {
-            setError('Please enter an error message to analyze.');
-            return;
-        }
-        setLoading(true);
-        setError('');
-        setResult(null);
-        try {
-            const res = await analyzeError(errorText, repo?.id || null, context || null);
-            setResult(res);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+function parseSections(text) {
+    const sections = { rootCause: '', explanation: '', suggestedFix: '', prevention: '' }
+    const headerMap = {
+        '## Root Cause':    'rootCause',
+        '## Explanation':   'explanation',
+        '## Suggested Fix': 'suggestedFix',
+        '## Prevention':    'prevention'
     }
 
+    let currentKey = null
+    for (const line of text.split('\n')) {
+        const matched = Object.keys(headerMap).find(h => line.trim().startsWith(h))
+        if (matched) {
+            currentKey = headerMap[matched]
+        } else if (currentKey) {
+            sections[currentKey] += line + '\n'
+        }
+    }
+    return sections
+}
+
+// Individual result section card
+// Shows different color based on variant
+
+function DebugSection({ variant, title, children, onCopy, streaming }) {
+    const styles = {
+        danger:  'bg-red-950/30 border-red-800/40',
+        neutral: 'bg-gray-900 border-gray-700',
+        success: 'bg-green-950/20 border-green-800/30',
+        info:    'bg-blue-950/20 border-blue-800/30'
+    }
+    const titleColors = {
+        danger: 'text-red-400', neutral: 'text-gray-400',
+        success: 'text-green-400', info: 'text-blue-400'
+    }
     return (
-        <div className = "max-w-3xl mx-auto py-8 space-y-6">
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={onBack}
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                >
-                    &larr; Back
-                </button>
-            <div>
-            <h2 className = "text-xl font-semibold text-white">Debug Assistant</h2>
-            {repo && (
-                <p className="text-xs text-gray-500">
-                    Using context from {repo.repoName}
+        <div className={`border rounded-lg p-4 ${styles[variant]}`}>
+            <div className="flex items-center justify-between mb-2">
+                <p className={`text-xs font-medium uppercase tracking-wider ${titleColors[variant]}`}>
+                    {title}
                 </p>
+                {onCopy && !streaming && (
+                    <button onClick={onCopy}
+                        className="text-xs text-gray-500 hover:text-white transition-colors">
+                        Copy
+                    </button>
+                )}
+            </div>
+            <div className="prose prose-invert prose-sm max-w-none text-gray-300">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+                {/* Pulsing cursor shown while this section is actively streaming */}
+                {streaming && (
+                    <span className="inline-block w-2 h-3.5 bg-current animate-pulse ml-0.5 rounded-sm opacity-70" />
                 )}
             </div>
         </div>
+    )
+}
 
-{/*          Error input*/}
-        <div className="space-y-3">
-            <label className="block text-sm text-gray-400">
-                Paste your error message or stack trace
-            </label>
-            <textarea
-                value={errorText}
-                onChange={(e) => setErrorText(e.target.value)}
-                placeholder= {`Example:\nNullPointerException at com.example.AuthService.login(AuthService.java:47)\n\nor paste your full stack trace here`}
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors resize-none"
-                rows={8}
-            />
+export default function DebugPage() {
+    const { repoId } = useParams() // undefined on /debug standalone route
+    const [errorText, setErrorText] = React.useState('');
+    const [context, setContext] = React.useState('');
+    const [streamedText, setStreamedText] = useState('')
+    const [sources , setSources] = useState([])
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState('');
+    const [done, setDone] = useState(false)
+    const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
+    const streamedRef = useRef('')  // Ref to accumulate without re-renders
 
-        <div>
-            <label className="block text-sm text-gray-400 mb-1.5">
-                Additional context (optional)
-            </label>
-            <textarea
-                value={context}
-                onChange={(e) => setContext(e.target.value)}
-                placeholder="e.g. This happens when user tries to login with Google"
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-                rows={4}
-            />
-        </div>
 
-        <button
-            onClick = {handleAnalyze}
-            disabled={loading || !errorText.trim()}
-            className= "w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg transition-colors"
-        >
-         {loading ? 'Analyzing...' : 'Analyze Error'}
-        </button>
+    async function handleAnalyze() {
+        if (!errorText.trim()) return
+                setLoading(true)
+                setError('')
+                setStreamedText('')
+                setSources([])
+                setDone(false)
+                setRateLimitSeconds(null)
+                streamedRef.current = ''
+        await streamDebug(
+            errorText,
+            repoId || null,
+            context || null,
 
-        {error && <p className = "text-red-400 text-sm">{error}</p>}
-        </div>
+            // onEvent — called for each SSE event from DebugService
+            (event) => {
+                switch (event.type) {
+                    case 'token':
+                        // Accumulate in ref to avoid closure issues
+                        // Then set state to trigger re-render
+                        streamedRef.current += event.content
+                        setStreamedText(streamedRef.current)
+                        break
 
-        {/*Loading */}
-        {loading && (
-            <div className="text-center py-6 space-y-2">
-                <div className="w-7 h-7 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto " />
-                <p className="text-gray-400 text-sm">Analyzing your error...</p>
-            </div>
-        )}
+                    case 'sources':
+                        // Debug SSE sends "files" key (not "sources") as a JSON array
+                        setSources(event.files || [])
+                        break
 
-        {/* Result */}
-        {result && !loading && (
-            <div className="space-y-4">
-            {/* Root cause - most prominent*/}
-            <div className="bg-red-950/30 border border-red-800/40 rounded-lg p-4">
-            <p className = "text-xs text-red-400 font-medium mb-1 uppercase tracking-wider">
-                Root Cause
-            </p>
-            <p className="text-white text-sm">{result.rootCause}</p>
-           </div>
+                    case 'done':
+                        setLoading(false)
+                        setDone(true)
+                        break
 
-           {/* Explanation */}
-           <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-               <p className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wider">
-                      Explanation
-                  </p>
-                  <div className="prose prose-invert prose-sm max-w-none">
-                       <ReactMarkdown>{result.explanation}</ReactMarkdown>
-                  </div>
-           </div>
+                    case 'error':
+                        setError(event.content || 'Analysis failed. Please try again.')
+                        setLoading(false)
+                        break
+                }
+            },
+             // onError — network-level failure
+            (err) => {
+                if (err instanceof RateLimitError) {
+                    setRateLimitSeconds(err.retryAfterSeconds)
+                } else {
+                    setError(err.message)
+                }
+                setLoading(false)
+            }
+        )
+    }
+    const sections = parseSections(streamedText)
+    const hasContent = streamedText.length > 0
 
-              {/* Suggested Fix */}
-              <div className="bg-green-950/20 border border-green-800/30 rounded-lg p-4">
-                    <p className="text-xs text-green-400 font-medium mb-2 uppercase tracking-wider">
-                        Suggested Fix
-                    </p>
-                    <div className="prose prose-invert prose-sm max-w-none">
-                        <ReactMarkdown>{result.suggestedFix}</ReactMarkdown>
-                    </div>
-              </div>
+    // Determine which section is currently being streamed
+    // Used to show/hide the pulsing cursor per section
+    const activeSection = !done && hasContent
+        ? sections.prevention ? 'prevention'
+        : sections.suggestedFix ? 'suggestedFix'
+        : sections.explanation ? 'explanation'
+        : sections.rootCause ? 'rootCause'
+        : null
+        : null
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).catch(() => {})
+    }
+<div className="min-h-screen bg-gray-950 text-white">
+            <NavBar repoName={repoId ? undefined : undefined} />
 
-            {/*  Prevention tip  */}
-            {result.preventionTip && (
-                <div className="bg-blue-950/20 border border-blue-800/30 rounded-lg p-4">
-                    <p className="text-xs text-blue-400 font-medium mb-2 uppercase tracking-wider">
-                        Prevention
-                    </p>
-                    <div className="text-gray-300 text-sm">
-                        {result.preventionTip}
-                    </div>
+            <main className="max-w-3xl mx-auto px-6 py-8 space-y-6">
+                <div>
+                    <h2 className="text-xl font-semibold">Debug Assistant</h2>
+                    {repoId && (
+                        <p className="text-sm text-gray-500 mt-1">
+                            Using codebase context for better analysis
+                        </p>
+                    )}
                 </div>
-            )}
 
-            {/*  Relevant files*/}
-            {result.relevantFiles?.length > 0 && (
-                <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                    <p className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wider">
-                        Relevant Files
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                        {result.relevantFiles.map((file, index) => (
-                            <span
-                                key={index}
-                                className="text-xs font-mono text-blue-400 bg-blue-400/10 border border-blue-400/20 px-2 py-0.5 rounded"
+                {/* Input section */}
+                <div className="space-y-3">
+                    <div>
+                        <label className="block text-sm text-gray-400 mb-1.5">
+                            Error message or stack trace
+                        </label>
+                        <textarea
+                            value={errorText}
+                            onChange={e => setErrorText(e.target.value)}
+                            placeholder={"Paste your error here...\n\nExample:\nNullPointerException at AuthService.java:47\n  at UserController.login(UserController.java:23)"}
+                            rows={8}
+                            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-gray-400 mb-1.5">
+                            Additional context <span className="text-gray-600">(optional)</span>
+                        </label>
+                        <input
+                            value={context}
+                            onChange={e => setContext(e.target.value)}
+                            placeholder="e.g. This happens when user tries to log in with Google"
+                            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                        />
+                    </div>
+
+                    <button
+                        onClick={handleAnalyze}
+                        disabled={loading || !errorText.trim() || !!rateLimitSeconds}
+                        className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg transition-colors"
+                    >
+                        {loading ? 'Analyzing...' : 'Analyze Error'}
+                    </button>
+
+                    {error && <p className="text-red-400 text-sm">{error}</p>}
+
+                    {rateLimitSeconds && (
+                        <RateLimitBanner
+                            seconds={rateLimitSeconds}
+                            onDismiss={() => setRateLimitSeconds(null)}
+                        />
+                    )}
+                </div>
+
+                {/* Loading state — before first token arrives */}
+                {loading && !hasContent && (
+                    <div className="flex flex-col items-center gap-3 py-8">
+                        <LoadingSpinner size="md" />
+                        <p className="text-gray-400 text-sm">Analyzing your error...</p>
+                    </div>
+                )}
+
+                {/* Results — sections appear one by one as streaming progresses */}
+                {hasContent && (
+                    <div className="space-y-4">
+                        {sections.rootCause.trim() && (
+                            <DebugSection variant="danger" title="Root Cause"
+                                streaming={activeSection === 'rootCause'}>
+                                {sections.rootCause.trim()}
+                            </DebugSection>
+                        )}
+
+                        {sections.explanation.trim() && (
+                            <DebugSection variant="neutral" title="Explanation"
+                                streaming={activeSection === 'explanation'}>
+                                {sections.explanation.trim()}
+                            </DebugSection>
+                        )}
+
+                        {sections.suggestedFix.trim() && (
+                            <DebugSection variant="success" title="Suggested Fix"
+                                streaming={activeSection === 'suggestedFix'}
+                                onCopy={() => copyToClipboard(sections.suggestedFix.trim())}>
+                                {sections.suggestedFix.trim()}
+                            </DebugSection>
+                        )}
+
+                        {sections.prevention.trim() && (
+                            <DebugSection variant="info" title="Prevention"
+                                streaming={activeSection === 'prevention'}>
+                                {sections.prevention.trim()}
+                            </DebugSection>
+                        )}
+
+                        {/* Source files — appear after streaming completes */}
+                        {sources.length > 0 && (
+                            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+                                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">
+                                    Relevant Files
+                                </p>
+                                <div className="flex flex-wrap gap-1">
+                                    {sources.map((f, i) => (
+                                        <span key={i}
+                                            className="text-xs font-mono text-blue-400 bg-blue-400/10 border border-blue-400/20 px-2 py-0.5 rounded">
+                                            {f}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Retry button after analysis completes */}
+                        {done && (
+                            <button
+                                onClick={() => {
+                                    setStreamedText('')
+                                    setSources([])
+                                    setDone(false)
+                                }}
+                                className="w-full text-sm text-gray-400 hover:text-white border border-gray-700 py-2 rounded-lg transition-colors"
                             >
-                                {file}
-                            </span>
-                        ))}
+                                Analyze Again
+                            </button>
+                        )}
                     </div>
-                </div>
-        )}
-</div>
-)}
-</div>
-);
+                )}
+            </main>
+        </div>
+    )
 }
