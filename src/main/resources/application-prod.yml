@@ -52,10 +52,10 @@ spring:
 
   ai:
     openai:
-      base-url: https://api.groq.com/openai
+      base-url: https://api.groq.com/openai/v1
       api-key: ${GROQ_API_KEY}
       chat:
-        model: {GROQ_CHAT_MODEL:meta-llama/llama-4-scout-17b-16e-instruct}
+        model: ${GROQ_CHAT_MODEL:meta-llama/llama-4-scout-17b-16e-instruct}
         options:
           temperature: 0.3
       # Tell Spring AI: do NOT create an OpenAI embedding bean
