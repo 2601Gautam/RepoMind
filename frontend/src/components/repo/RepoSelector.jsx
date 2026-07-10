@@ -44,7 +44,7 @@ const TOOL_META = {
     interview: {
         label: 'Interview',
         description: 'Generate custom mock interview questions based on the codebase.',
-        color: 'sky',
+        color: 'violet',
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                 <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
