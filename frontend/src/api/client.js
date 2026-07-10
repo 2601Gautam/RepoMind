@@ -115,6 +115,9 @@ export const generateInterview = (repoId, difficulty) =>
 export const getInterviewSessions = () =>
     apiFetch(`${BASE}/interview/sessions`)
 
+export const getInterviewSession = (sessionId) =>
+    apiFetch(`${BASE}/interview/sessions/${sessionId}`)
+
 
 
 // ── SSE Streaming — Chat ──────────────────────────────────────────────────
