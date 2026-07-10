@@ -34,6 +34,21 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    // By default OncePerRequestFilter SKIPS itself on ASYNC dispatches
+    // (e.g. Tomcat's async re-dispatch used to finish streaming/SSE responses like
+    // the Flux<String> chat endpoint). Spring Security's own filters (e.g.
+    // AuthorizationFilter) DO run again on that async dispatch, but on a thread
+    // whose SecurityContextHolder is empty because we never re-ran here.
+    // That mismatch causes an AuthorizationDeniedException after the response is
+    // already committed, which shows up as an unhandled/uncatchable error in logs.
+    // Returning false forces this filter to also run on the async dispatch so the
+    // SecurityContext is present on whichever thread completes the stream
+
+    @Override
+    protected boolean shouldNotFilterAsyncDispatch() {
+        return false;
+    }
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
