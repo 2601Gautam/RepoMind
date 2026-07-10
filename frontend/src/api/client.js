@@ -78,11 +78,14 @@ export const getProfileStats = () => apiFetch(`${BASE}/auth/profile/stats`)
 //------Repos---------------------------------------
 
 // Backend now returns PagedResponse: {content:[], page:0, totalPages:N, ...}
-export const listRepos = (page = 0, size = 10) =>
+export const listRepos = (page = 0, size = 12) =>
     apiFetch(`${BASE}/repos?page=${page}&size=${size}`)
 
 export const getRepoStatus = (repoId) =>
     apiFetch(`${BASE}/repos/${repoId}/status`)
+
+export const deleteRepo = (repoId) =>
+    apiFetch(`${BASE}/repos/${repoId}`, { method: 'DELETE' })
 
 export const ingestRepo = (githubUrl, token = null) =>
     apiFetch(`${BASE}/repos/ingest`, {

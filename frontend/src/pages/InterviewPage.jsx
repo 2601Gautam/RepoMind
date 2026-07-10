@@ -4,6 +4,7 @@ import { generateInterview, getRepoStatus, RateLimitError } from '../api/client'
 import NavBar from '../components/layout/NavBar'
 import RateLimitBanner from '../components/common/RateLimitBanner'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import RepoSelector from '../components/repo/RepoSelector'
 
 const DIFFICULTIES = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED']
 // Individual question card with answer toggle
@@ -44,6 +45,10 @@ function QuestionCard({ question, index }) {
 }
 export default function InterviewPage() {
     const { repoId } = useParams()
+
+    // No repo selected — show picker
+    if (!repoId) return <RepoSelector tool="interview" />
+
     const [repo, setRepo] = useState(null)
     const [difficulty, setDifficulty] = useState('INTERMEDIATE')
     const [session, setSession] = useState(null)

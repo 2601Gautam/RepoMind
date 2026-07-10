@@ -6,9 +6,14 @@ import MessageList from '../components/chat/MessageList'
 import ChatInput from '../components/chat/ChatInput'
 import RateLimitBanner from '../components/common/RateLimitBanner'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import RepoSelector from '../components/repo/RepoSelector'
 
 export default function ChatPage() {
     const { repoId } = useParams()
+
+    // No repo selected — show picker
+    if (!repoId) return <RepoSelector tool="chat" />
+
     const [repo, setRepo] = useState(null)
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(false)

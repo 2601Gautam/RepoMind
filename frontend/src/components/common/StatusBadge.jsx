@@ -1,16 +1,17 @@
 // Status badge used on repo cards and anywhere else status needs display
 // Automatically picks color based on status string
 const STATUS_STYLES = {
-    READY:      'text-green-400 bg-green-400/10 border-green-400/20',
-    PROCESSING: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-    PENDING:    'text-gray-400 bg-gray-400/10 border-gray-400/20',
-    FAILED:     'text-red-400 bg-red-400/10 border-red-400/20'
+    READY:      'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+    PROCESSING: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+    PENDING:    'text-[#888] bg-white/[0.03] border-white/[0.08]',
+    FAILED:     'text-rose-400 bg-rose-500/10 border-rose-500/20'
 }
 
 export default function StatusBadge({ status }) {
     const style = STATUS_STYLES[status] || STATUS_STYLES.PENDING
     return (
-        <span className={`text-xs border px-2 py-0.5 rounded-full shrink-0 ${style}`}>
+        <span className={`text-[11px] font-semibold uppercase tracking-wider border px-2.5 py-0.5 rounded-full shrink-0 flex items-center ${style}`}>
+            {status === 'PROCESSING' && <span className="w-1.5 h-1.5 bg-amber-400 rounded-full mr-1.5 animate-pulse" />}
             {status}
         </span>
     )

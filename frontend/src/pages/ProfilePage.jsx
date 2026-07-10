@@ -1,30 +1,29 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getProfileStats } from '../api/client'
 import NavBar from '../components/layout/NavBar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 
-// Stat card used in the stats grid
 function StatCard({ label, value, loading }) {
     return (
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 text-center">
+        <div className="bg-[#050505] border border-white/[0.06] rounded-xl p-5 text-center">
             {loading ? (
                 <div className="flex justify-center py-2">
                     <LoadingSpinner size="sm" />
                 </div>
             ) : (
-                <p className="text-3xl font-bold text-blue-400">{value ?? '—'}</p>
+                <p className="text-2xl font-bold text-white">{value ?? '—'}</p>
             )}
-            <p className="text-sm text-gray-400 mt-1">{label}</p>
+            <p className="text-[13px] text-[#666] mt-1">{label}</p>
         </div>
     )
 }
 
 const PROVIDER_STYLES = {
-    LOCAL:  'text-gray-400 bg-gray-400/10 border-gray-400/20',
-    GOOGLE: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-    GITHUB: 'text-purple-400 bg-purple-400/10 border-purple-400/20'
+    LOCAL:  'text-[#888] bg-white/[0.03] border-white/[0.08]',
+    GOOGLE: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    GITHUB: 'text-violet-400 bg-violet-500/10 border-violet-500/20'
 }
 
 export default function ProfilePage() {
@@ -45,7 +44,6 @@ export default function ProfilePage() {
         navigate('/')
     }
 
-    // Generate initials from name or first char of email
     const initials = user?.name
         ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
         : user?.email?.[0]?.toUpperCase() || '?'
@@ -59,67 +57,51 @@ export default function ProfilePage() {
         : null
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white">
+        <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col">
             <NavBar />
 
-            <main className="max-w-2xl mx-auto px-6 py-8 space-y-6">
-                <h2 className="text-xl font-semibold">Profile</h2>
+            <main className="flex-1 max-w-xl mx-auto w-full px-6 py-12 space-y-6">
 
                 {/* Identity card */}
-                <div className="bg-gray-900 border border-gray-700 rounded-xl p-6">
-                    <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-xl font-bold shrink-0">
-                            {initials}
-                        </div>
-                        <div className="space-y-1 min-w-0">
-                            <p className="font-semibold text-lg text-white">
-                                {user?.name || 'No name set'}
-                            </p>
-                            <p className="text-gray-400 text-sm truncate">{user?.email}</p>
-                            <span className={`text-xs border px-2 py-0.5 rounded-full inline-block ${providerStyle}`}>
-                                {user?.provider || 'LOCAL'}
-                            </span>
-                        </div>
+                <div className="bg-[#050505] border border-white/[0.06] rounded-2xl p-6 flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-full bg-[#1a1a1a] border border-white/[0.1] flex items-center justify-center text-lg font-bold text-gray-200 shrink-0">
+                        {initials}
+                    </div>
+                    <div className="min-w-0 space-y-1">
+                        <p className="font-semibold text-white text-[17px] leading-tight">
+                            {user?.name || 'No name set'}
+                        </p>
+                        <p className="text-[#666] text-sm truncate">{user?.email}</p>
+                        <span className={`text-[11px] font-semibold uppercase tracking-wider border px-2 py-0.5 rounded-full inline-block ${providerStyle}`}>
+                            {user?.provider || 'Email'}
+                        </span>
                     </div>
                 </div>
 
-                {/* Stats grid */}
-                <div className="grid grid-cols-2 gap-4">
-                    <StatCard
-                        label="Repositories Analyzed"
-                        value={stats?.reposAnalyzed}
-                        loading={loadingStats}
-                    />
-                    <StatCard
-                        label="Conversations Started"
-                        value={stats?.conversationsStarted}
-                        loading={loadingStats}
-                    />
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-3">
+                    <StatCard label="Repositories Analyzed" value={stats?.reposAnalyzed} loading={loadingStats} />
+                    <StatCard label="Conversations Started" value={stats?.conversationsStarted} loading={loadingStats} />
                 </div>
 
                 {/* Member since */}
                 {memberSince && (
-                    <div className="bg-gray-900 border border-gray-700 rounded-xl p-5">
-                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Member Since</p>
-                        <p className="text-white">{memberSince}</p>
+                    <div className="bg-[#050505] border border-white/[0.06] rounded-xl px-5 py-4 flex items-center justify-between">
+                        <span className="text-[13px] text-[#666]">Member since</span>
+                        <span className="text-[13px] text-gray-300 font-medium">{memberSince}</span>
                     </div>
                 )}
 
-                {/* Account actions */}
-                <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 space-y-3">
-                    <p className="text-sm font-medium text-gray-300">Account</p>
-                    <div className="flex flex-col gap-2">
-                        <Link to="/dashboard"
-                            className="text-sm text-gray-400 hover:text-white transition-colors">
-                            ← Back to Dashboard
-                        </Link>
-                        <button onClick={handleLogout}
-                            className="text-sm text-red-400 hover:text-red-300 transition-colors text-left">
-                            Sign out
-                        </button>
-                    </div>
+                {/* Sign out */}
+                <div className="pt-2">
+                    <button
+                        onClick={handleLogout}
+                        className="w-full py-3 rounded-xl border border-white/[0.06] text-[14px] font-medium text-[#888] hover:text-white hover:border-white/[0.15] hover:bg-white/[0.03] transition-all duration-150"
+                    >
+                        Sign out
+                    </button>
                 </div>
             </main>
         </div>
     )
-}
+}

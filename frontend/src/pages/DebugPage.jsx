@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import RateLimitBanner from '../components/common/RateLimitBanner'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import RepoSelector from '../components/repo/RepoSelector'
 
 // Parses the streaming plain text into named sections
 // Backend DebugService sends: "## Root Cause\n...\n## Explanation\n..."
@@ -73,6 +74,10 @@ function DebugSection({ variant, title, children, onCopy, streaming }) {
 
 export default function DebugPage() {
     const { repoId } = useParams() // undefined on /debug standalone route
+
+    // No repo selected — show picker
+    if (!repoId) return <RepoSelector tool="debug" />
+
     const [errorText, setErrorText] = useState('');
     const [context, setContext] = useState('');
     const [streamedText, setStreamedText] = useState('')

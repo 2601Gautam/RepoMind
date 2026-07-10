@@ -40,6 +40,7 @@ public class IngestionController {
 
     @RateLimit(requests = 2, windowSeconds = 3600)  // 2 per hour
     @PostMapping("/ingest")
+    @CacheEvict(value = "userRepos", key = "#currentUser.id")
     public ResponseEntity<RepoStatusResponse> ingest(@Valid @RequestBody IngestRequest request,
                                                      @AuthenticationPrincipal User currentUser){
         // @Valid triggers the @NotBlank and @Pattern checks on IngestRequest
@@ -125,6 +126,24 @@ public class IngestionController {
                 .map(this::toDto)
                 .toList();
         return ResponseEntity.ok(list);
+    }
+
+    // Remove this user's access to a repo.
+    // If no other users have access, delete the repo entity entirely.
+    @DeleteMapping("/{repoId}")
+    @CacheEvict(value = "userRepos", key = "#currentUser.id")
+    public ResponseEntity<Void> removeRepo(@PathVariable UUID repoId,
+                                           @AuthenticationPrincipal User currentUser) {
+        userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), repoId)
+                .ifPresent(userRepoRepository::delete);
+
+        // If nobody else has this repo, clean it up entirely
+        if (userRepoRepository.countByRepoId(repoId) == 0) {
+            chunkRepository.deleteByRepositoryId(repoId);
+            repoRepository.deleteById(repoId);
+        }
+
+        return ResponseEntity.noContent().build();
     }
 
     // Helper — grants a user access to a repo, ignoring if they already have it

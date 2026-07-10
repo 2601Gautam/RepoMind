@@ -12,6 +12,8 @@ import ChatPage from './pages/ChatPage'
 import InterviewPage from './pages/InterviewPage'
 import DebugPage from './pages/DebugPage'
 import ProfilePage from './pages/ProfilePage'
+import AllReposPage from './pages/AllReposPage'
+import DashboardLayout from './components/layout/DashboardLayout'
 
 // AppContent is separate from App so it can use useAuth()
 // useAuth() requires being inside AuthProvider
@@ -50,22 +52,31 @@ function AppRoutes() {
 
             {/* Protected routes */}
             <Route path="/dashboard" element={
-                <ProtectedRoute><DashboardPage /></ProtectedRoute>
+                <ProtectedRoute><DashboardLayout><DashboardPage /></DashboardLayout></ProtectedRoute>
+            } />
+            <Route path="/repositories" element={
+                <ProtectedRoute><DashboardLayout><AllReposPage /></DashboardLayout></ProtectedRoute>
+            } />
+            <Route path="/chat" element={
+                <ProtectedRoute><DashboardLayout><ChatPage /></DashboardLayout></ProtectedRoute>
             } />
             <Route path="/chat/:repoId" element={
-                <ProtectedRoute><ChatPage /></ProtectedRoute>
+                <ProtectedRoute><DashboardLayout><ChatPage /></DashboardLayout></ProtectedRoute>
+            } />
+            <Route path="/interview" element={
+                <ProtectedRoute><DashboardLayout><InterviewPage /></DashboardLayout></ProtectedRoute>
             } />
             <Route path="/interview/:repoId" element={
-                <ProtectedRoute><InterviewPage /></ProtectedRoute>
-            } />
-            <Route path="/debug/:repoId" element={
-                <ProtectedRoute><DebugPage /></ProtectedRoute>
+                <ProtectedRoute><DashboardLayout><InterviewPage /></DashboardLayout></ProtectedRoute>
             } />
             <Route path="/debug" element={
-                <ProtectedRoute><DebugPage /></ProtectedRoute>
+                <ProtectedRoute><DashboardLayout><DebugPage /></DashboardLayout></ProtectedRoute>
+            } />
+            <Route path="/debug/:repoId" element={
+                <ProtectedRoute><DashboardLayout><DebugPage /></DashboardLayout></ProtectedRoute>
             } />
             <Route path="/profile" element={
-                <ProtectedRoute><ProfilePage /></ProtectedRoute>
+                <ProtectedRoute><DashboardLayout><ProfilePage /></DashboardLayout></ProtectedRoute>
             } />
             {/* Catch-all: logged in → dashboard, not logged in → landing */}
             <Route path="*" element={

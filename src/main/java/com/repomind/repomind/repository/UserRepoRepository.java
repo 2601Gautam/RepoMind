@@ -22,6 +22,7 @@ public interface UserRepoRepository extends JpaRepository<UserRepo, UUID> {
     boolean existsByUserIdAndRepoId(UUID userId, UUID repoId);
 
     long countByUserId(UUID userId);
+    long countByRepoId(UUID repoId);
     // Find the join record — used when we need to delete access
     Optional<UserRepo> findByUserIdAndRepoId(UUID userId, UUID repoId);
 }
