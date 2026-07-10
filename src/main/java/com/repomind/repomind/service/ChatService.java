@@ -62,11 +62,12 @@ public class ChatService {
         log.debug("Loaded {} messages from conversation history", history.size());
 
         // step4 : Embed question and find relevant code chunks
-        float[] questionVector = embeddingService.embed(userQuestion);
+        String retrievalQuery = buildRetrievalQuery(history, userQuestion);
+        float[] questionVector = embeddingService.embed(retrievalQuery);
         String vectorString = embeddingService.toVectorString(questionVector);
 
         List<CodeChunkRepository.CodeChunkProjection> relevantChunks =
-                chunkRepository.findTopSimilarChunks(repoId,vectorString,15);
+                chunkRepository.findTopSimilarChunks(repoId,vectorString,8);
 
         if(relevantChunks.isEmpty()){
             // Return a Flux that emits one event and completes
@@ -173,6 +174,20 @@ public class ChatService {
                 Flux.just(formatSseEvent("done","",conversationId,null))
         );
     }
+    // Folds the last exchange (if any) into the current question before embedding it.
+// Cheap, no extra LLM call. For a more accurate fix later, consider an actual
+// "condense question" LLM call (rewrite the follow-up into a standalone question
+// given the history) — this is the pattern used by most RAG chat implementations.
+    private String buildRetrievalQuery(List<ConversationMemoryService.MemoryMessage> history, String userQuestion) {
+        if (history.isEmpty()) {
+            return userQuestion;
+        }
+        int fromIndex = Math.max(0, history.size() - 2); // last user+assistant turn
+        String recentContext = history.subList(fromIndex, history.size()).stream()
+                .map(ConversationMemoryService.MemoryMessage::content)
+                .collect(Collectors.joining(" "));
+        return recentContext + " " + userQuestion;
+    }
 
     private Conversation resolveConversation(UUID conversationId, RepoEntity repo, User currentUser) {
         if (conversationId == null) {
@@ -221,11 +236,6 @@ public class ChatService {
                 .findByRepositoryIdAndUserIdOrderByCreatedAtDesc(repoId, currentUser.getId())
                 .stream()
                 .findFirst();
-
-        // Step 2: fall back to repo-only lookup (old rows where user_id was NULL)
-        if (found.isEmpty()) {
-            found = conversationRepository.findLatestByRepositoryId(repoId);
-        }
 
         return found.map(conversation -> {
             List<Message> msgs = messageRepository

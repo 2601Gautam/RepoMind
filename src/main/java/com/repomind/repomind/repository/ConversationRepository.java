@@ -31,12 +31,4 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
             @Param("repoId") UUID repoId,
             @Param("userId") UUID userId);
 
-    // Fallback: find latest conversation by repo only (covers old rows where user_id was NULL)
-    @Query(value = """
-            SELECT * FROM conversations
-            WHERE repo_id = :repoId
-            ORDER BY created_at DESC
-            LIMIT 1
-            """, nativeQuery = true)
-    Optional<Conversation> findLatestByRepositoryId(@Param("repoId") UUID repoId);
 }
