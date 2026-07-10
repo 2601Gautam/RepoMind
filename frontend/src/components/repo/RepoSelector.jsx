@@ -68,14 +68,28 @@ export default function RepoSelector({ tool }) {
     const colors = COLOR_CLASSES[meta.color]
 
     const [repos, setRepos] = useState([])
+    const [recentRepos, setRecentRepos] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
+    const [isStackHovered, setIsStackHovered] = useState(false)
 
     useEffect(() => {
         listRepos(0, 100)
             .then(data => {
                 const list = Array.isArray(data) ? data : (data.content || [])
                 setRepos(list)
+
+                // Load recent chats from localStorage
+                try {
+                    const recentIds = JSON.parse(localStorage.getItem('recent_chat_repos') || '[]')
+                    const matched = recentIds
+                        .map(id => list.find(r => r.id === id))
+                        .filter(Boolean)
+                        .filter(r => r.status === 'READY')
+                    setRecentRepos(matched)
+                } catch (e) {
+                    console.error('Failed to parse recent repos:', e)
+                }
             })
             .catch(console.error)
             .finally(() => setLoading(false))
@@ -98,24 +112,72 @@ export default function RepoSelector({ tool }) {
             <div className="max-w-2xl mx-auto px-6 pt-14 pb-20">
 
                 {/* Header */}
-                <div className="flex items-center gap-4 mb-8">
-                    <div className={`w-11 h-11 rounded-xl border flex items-center justify-center ${colors.bg} ${colors.border} ${colors.text}`}>
+                <div className="flex items-center gap-4 mb-10">
+                    <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center shadow-lg ${colors.bg} ${colors.border} ${colors.text}`}>
                         {meta.icon}
                     </div>
                     <div>
-                        <h1 className="text-[22px] font-extrabold tracking-tight text-white">{meta.label}</h1>
-                        <p className="text-[13px] text-neutral-500 mt-0.5">{meta.description}</p>
+                        <h1 className="text-[24px] font-extrabold tracking-tight text-white">{meta.label}</h1>
+                        <p className="text-[13.5px] text-neutral-500 mt-0.5 leading-relaxed">{meta.description}</p>
                     </div>
                 </div>
 
+                {/* Recent repos stack - ONLY for chat tool and when there are recent chats */}
+                {tool === 'chat' && recentRepos.length > 0 && (
+                    <div className="mb-12">
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-5">
+                            Recent Chats
+                        </p>
+                        <div 
+                            className="relative flex flex-col transition-all duration-300"
+                            onMouseEnter={() => setIsStackHovered(true)}
+                            onMouseLeave={() => setIsStackHovered(false)}
+                            style={{
+                                // Add buffer height to prevent layout jumps when expanding
+                                minHeight: isStackHovered ? `${recentRepos.length * 80}px` : '100px'
+                            }}
+                        >
+                            {recentRepos.map((repo, idx) => {
+                                const slug = repo.githubUrl?.replace('https://github.com/', '') ?? ''
+                                const name = repo.repoName ?? slug.split('/').pop() ?? 'Unknown'
+                                const isFirst = idx === 0
+
+                                return (
+                                    <div
+                                        key={repo.id}
+                                        onClick={() => launch(repo.id)}
+                                        className={`group cursor-pointer rounded-2xl p-4.5 border border-white/[0.06] bg-[#0c0c0e] hover:bg-[#111116] hover:border-violet-500/40 shadow-2xl flex items-center justify-between relative transition-all duration-500 ease-out`}
+                                        style={{
+                                            marginTop: isFirst ? '0' : (isStackHovered ? '12px' : '-48px'),
+                                            zIndex: 10 - idx,
+                                            transform: isStackHovered ? 'scale(1) translateY(0)' : `scale(${1 - idx * 0.035}) translateY(${idx * 2}px)`,
+                                            opacity: isStackHovered ? 1 : (1 - idx * 0.15)
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-4 min-w-0">
+                                            <div className="w-9 h-9 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 group-hover:scale-105 transition-transform shrink-0">
+                                                {meta.icon}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="truncate text-[14px] font-bold text-white/90 group-hover:text-white transition-colors">{name}</p>
+                                                <p className="truncate text-[11px] text-neutral-600 font-mono mt-0.5">{slug}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )}
+
                 {/* Choose repo label */}
-                <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-600 mb-3">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">
                     Choose a repository to start
                 </p>
 
                 {/* Search */}
-                <div className="relative mb-4">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-600">
+                <div className="relative mb-6">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500">
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
@@ -124,7 +186,7 @@ export default function RepoSelector({ tool }) {
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Search repositories…"
-                        className="w-full bg-[#0d0d0f] border border-white/[0.06] rounded-xl pl-9 pr-4 py-2.5 text-[13px] text-white placeholder-neutral-600 focus:outline-none focus:border-white/[0.14] transition-colors"
+                        className="w-full bg-[#0c0c0e] border border-white/[0.06] rounded-xl pl-11 pr-4 py-3 text-[13.5px] text-white placeholder-neutral-500 focus:outline-none focus:border-violet-500/40 focus:ring-1 focus:ring-violet-500/20 transition-all duration-200"
                     />
                 </div>
 
@@ -140,21 +202,21 @@ export default function RepoSelector({ tool }) {
                                 <path d="M12 5v14M5 12h14" />
                             </svg>
                         </div>
-                        <p className="text-[13px] font-semibold text-neutral-500">No repositories yet</p>
-                        <p className="mt-1 text-[11.5px] text-neutral-700 max-w-xs leading-relaxed">
+                        <p className="text-[13.5px] font-bold text-neutral-400">No repositories yet</p>
+                        <p className="mt-1 text-[12px] text-neutral-600 max-w-xs leading-relaxed">
                             Go to the Dashboard, paste a GitHub URL, and wait for indexing to finish.
                         </p>
                         <button
                             onClick={() => navigate('/dashboard')}
-                            className="cursor-pointer mt-5 text-[12px] font-medium px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.07] text-neutral-400 hover:text-white hover:border-white/[0.12] transition-all"
+                            className="cursor-pointer mt-5 text-[12.5px] font-medium px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.07] text-neutral-400 hover:text-white hover:border-white/[0.12] transition-all"
                         >
                             Go to Dashboard →
                         </button>
                     </div>
                 ) : (
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                         {readyRepos.length === 0 && (
-                            <p className="text-[12px] text-amber-500/70 bg-amber-500/5 border border-amber-500/10 rounded-lg px-3 py-2 mb-3">
+                            <p className="text-[12.5px] text-amber-500/70 bg-amber-500/5 border border-amber-500/10 rounded-xl px-3.5 py-2.5 mb-4">
                                 No repositories are fully indexed yet. Wait for indexing to complete, then come back.
                             </p>
                         )}
@@ -170,35 +232,30 @@ export default function RepoSelector({ tool }) {
                                     key={repo.id}
                                     onClick={() => canLaunch && launch(repo.id)}
                                     disabled={!canLaunch}
-                                    className={`w-full text-left flex items-center justify-between gap-4 rounded-xl px-4 py-3.5 border transition-all duration-150 ${
+                                    className={`w-full text-left flex items-center justify-between gap-4 rounded-xl px-5 py-4 border transition-all duration-200 ${
                                         canLaunch
-                                            ? `cursor-pointer bg-[#0d0d0f] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#111113]`
-                                            : 'cursor-not-allowed bg-[#0a0a0c] border-white/[0.04] opacity-50'
+                                            ? `cursor-pointer bg-[#0c0c0e] border-white/[0.06] hover:border-violet-500/20 hover:bg-[#101014] shadow-md hover:shadow-violet-500/[0.02]`
+                                            : 'cursor-not-allowed bg-[#08080a] border-white/[0.03] opacity-40'
                                     }`}
                                 >
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 shrink-0 text-neutral-600">
+                                    <div className="flex items-center gap-3.5 min-w-0">
+                                        <svg viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 shrink-0 text-neutral-600">
                                             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
                                         </svg>
                                         <div className="min-w-0">
-                                            <p className="truncate text-[13px] font-semibold text-white/85 tracking-tight">{name}</p>
+                                            <p className="truncate text-[13.5px] font-bold text-white/95 tracking-tight">{name}</p>
                                             <p className="truncate text-[10.5px] text-neutral-600 font-mono mt-0.5">{slug}</p>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-3 shrink-0">
+                                    <div className="flex items-center gap-3.5 shrink-0">
                                         {repo.totalFiles > 0 && repo.status === 'READY' && (
-                                            <span className="hidden sm:inline text-[11px] text-neutral-700">{repo.totalFiles.toLocaleString()} files</span>
+                                            <span className="hidden sm:inline text-[11.5px] text-neutral-600 font-medium">{repo.totalFiles.toLocaleString()} files</span>
                                         )}
-                                        <span className={`flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider ${st.text}`}>
+                                        <span className={`flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wider ${st.text}`}>
                                             <span className={`inline-block h-1.5 w-1.5 rounded-full ${st.dot}`} />
                                             {st.label}
                                         </span>
-                                        {canLaunch && (
-                                            <span className={`text-[11.5px] font-medium border rounded-lg px-2.5 py-1 transition-colors ${colors.btn}`}>
-                                                Open →
-                                            </span>
-                                        )}
                                     </div>
                                 </button>
                             )

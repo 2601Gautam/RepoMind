@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const RevealOnScroll = ({ children, delay = 0 }) => {
@@ -40,12 +40,19 @@ const RevealOnScroll = ({ children, delay = 0 }) => {
 }
 
 export default function LandingPage() {
-    const { user } = useAuth()
+    const { user, loading } = useAuth()
+    const navigate = useNavigate()
     const [logoText, setLogoText] = useState('')
     const [isTyping, setIsTyping] = useState(true)
     const [activeDemo, setActiveDemo] = useState('ingest') // 'ingest', 'chat', 'interview', 'debug'
     const [activeStep, setActiveStep] = useState('1') // '1', '2', '3'
     const [showScrollTop, setShowScrollTop] = useState(false)
+
+    useEffect(() => {
+        if (!loading && user) {
+            navigate('/dashboard', { replace: true })
+        }
+    }, [user, loading, navigate])
 
     // Removed auto-play timer, slider is now purely interactive
 
@@ -170,11 +177,17 @@ export default function LandingPage() {
             {/* ── Navbar ── */}
             <header className="relative z-50 sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-2xl">
                 <div className="max-w-6xl mx-auto px-8 h-14 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-0.5 select-none">
+                    <Link to="/" className="flex items-center gap-2 select-none group">
+                        <div className="w-7 h-7 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(139,92,246,0.35)] group-hover:shadow-[0_0_18px_rgba(139,92,246,0.5)] transition-all">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="16 18 22 12 16 6" />
+                                <polyline points="8 6 2 12 8 18" />
+                            </svg>
+                        </div>
                         <span className="font-mono text-2xl font-bold text-white tracking-tight leading-none">
                             {logoText}
                         </span>
-                        <span className={`inline-block w-[2px] h-[22px] bg-violet-400 ml-px transition-opacity duration-75 ${isTyping ? 'opacity-100' : 'opacity-30'} animate-pulse`} />
+                        <span className={`inline-block w-[2px] h-[22px] bg-violet-400 transition-opacity duration-75 ${isTyping ? 'opacity-100' : 'opacity-30'} animate-pulse`} />
                     </Link>
 
                     <nav className="flex items-center gap-1">
@@ -390,8 +403,16 @@ export default function LandingPage() {
                     <RevealOnScroll>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
                         <div className="col-span-2 md:col-span-1">
-                            <span className="font-mono text-xl font-bold text-white tracking-tight">RepoMind</span>
-                            <p className="mt-4 text-[13px] text-[#6b7280] leading-relaxed max-w-[200px]">
+                            <div className="flex items-center gap-2 mb-4 select-none">
+                                <div className="w-6 h-6 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-md flex items-center justify-center shadow-[0_0_8px_rgba(139,92,246,0.25)]">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="16 18 22 12 16 6" />
+                                        <polyline points="8 6 2 12 8 18" />
+                                    </svg>
+                                </div>
+                                <span className="font-mono text-xl font-bold text-white tracking-tight">RepoMind</span>
+                            </div>
+                            <p className="text-[13px] text-[#6b7280] leading-relaxed max-w-[200px]">
                                 AI-powered code understanding and intelligent search for modern engineering teams.
                             </p>
                         </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -19,13 +19,19 @@ const GitHubIcon = () => (
 )
 
 export default function LoginPage() {
-    const { login, loginWithGoogle, loginWithGitHub} = useAuth()
+    const { user, loading: authLoading, login, loginWithGoogle, loginWithGitHub } = useAuth()
     const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        if (!authLoading && user) {
+            navigate('/dashboard', { replace: true })
+        }
+    }, [user, authLoading, navigate])
 
      // Check for OAuth error in URL params — Spring redirects here on OAuth failure
     const oauthError = new URLSearchParams(window.location.search).get('error')
@@ -75,7 +81,13 @@ export default function LoginPage() {
 
             <div className="w-full max-w-md space-y-10 relative z-10 animate-fade-up">
                 <div className="text-center flex flex-col items-center">
-                    <Link to="/" className="inline-block pb-1 group">
+                    <Link to="/" className="inline-flex flex-col items-center gap-3 group select-none">
+                        <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-[0_0_16px_rgba(139,92,246,0.3)] group-hover:shadow-[0_0_24px_rgba(139,92,246,0.45)] transition-all duration-300">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="16 18 22 12 16 6" />
+                                <polyline points="8 6 2 12 8 18" />
+                            </svg>
+                        </div>
                         <span className="text-3xl md:text-4xl font-extrabold text-white tracking-tighter leading-none font-sans">
                             RepoMind
                         </span>

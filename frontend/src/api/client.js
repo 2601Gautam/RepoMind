@@ -93,6 +93,17 @@ export const ingestRepo = (githubUrl, token = null) =>
         body: JSON.stringify({ githubUrl, token })
     })
 
+// Returns {conversationId, messages:[{role,content,sources}]} or null if no history yet
+export const getChatHistory = async (repoId) => {
+    const res = await fetch(`${BASE}/chat/history/${repoId}`, {
+        credentials: 'include'
+    })
+    if (res.status === 204 || res.status === 404) return null   // no history yet
+    if (res.status === 401) { window.location.href = '/login'; return null }
+    if (!res.ok) throw new Error(`Failed to load chat history: ${res.status}`)
+    return res.json()
+}
+
 // ── Interview ──────────────────────────────────────────────────────────────
 
 export const generateInterview = (repoId, difficulty) =>

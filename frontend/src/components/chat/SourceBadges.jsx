@@ -1,19 +1,24 @@
-// Shown under every assistant message that has source files
-// Separated so MessageBubble stays clean — just renders <SourceBadges sources={...} />
+// Shown under completed assistant messages when sources are available
 export default function SourceBadges({ sources }) {
     if (!sources?.length) return null
 
     return (
-        <div className="mt-3 pt-2 border-t border-gray-700">
-            <p className="text-xs text-gray-400 mb-1.5">Sources:</p>
-            <div className="flex flex-wrap gap-1">
-                {sources.map((src, i) => (
-                    <span key={i}
-                        className="text-xs font-mono text-blue-400 bg-blue-400/10 border border-blue-400/20 px-2 py-0.5 rounded">
-                        {src}
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-600 self-center mr-1">
+                Sources
+            </span>
+            {sources.map((src, i) => {
+                const filename = src.split('/').pop()
+                return (
+                    <span
+                        key={i}
+                        title={src}
+                        className="text-[10.5px] font-mono text-violet-300 bg-violet-500/8 border border-violet-500/15 px-2 py-0.5 rounded-lg truncate max-w-[180px]"
+                    >
+                        {filename}
                     </span>
-                ))}
-            </div>
+                )
+            })}
         </div>
     )
 }

@@ -1,5 +1,6 @@
 package com.repomind.repomind.service;
 
+import com.repomind.repomind.dto.response.ChatHistoryResponse;
 import com.repomind.repomind.model.entity.*;
 import com.repomind.repomind.repository.CodeChunkRepository;
 import com.repomind.repomind.repository.ConversationRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -48,8 +50,8 @@ public class ChatService {
             throw new RuntimeException("Repository is not ready. Status: " + repo.getStatus());
         }
 
-        //Step2: Get or create converstaition
-        Conversation conversation = resolveConversation(conversationId,repo);
+        //Step2: Get or create conversation (user-scoped)
+        Conversation conversation = resolveConversation(conversationId, repo, currentUser);
 
         //step3 : Load conversationHistory from redis
         //this is what we gives to LLM "memory" of previous messages
@@ -64,7 +66,7 @@ public class ChatService {
         String vectorString = embeddingService.toVectorString(questionVector);
 
         List<CodeChunkRepository.CodeChunkProjection> relevantChunks =
-                chunkRepository.findTopSimilarChunks(repoId,vectorString,6);
+                chunkRepository.findTopSimilarChunks(repoId,vectorString,15);
 
         if(relevantChunks.isEmpty()){
             // Return a Flux that emits one event and completes
@@ -172,10 +174,10 @@ public class ChatService {
         );
     }
 
-    private Conversation resolveConversation(UUID conversationId, RepoEntity repo) {
+    private Conversation resolveConversation(UUID conversationId, RepoEntity repo, User currentUser) {
         if (conversationId == null) {
             return conversationRepository.save(
-                    Conversation.builder().repository(repo).build()
+                    Conversation.builder().repository(repo).user(currentUser).build()
             );
         }
         return conversationRepository.findById(conversationId)
@@ -201,5 +203,48 @@ public class ChatService {
             // User already received their answer via stream
             log.warn("Failed to persist messages to DB: {}", e.getMessage());
         }
+    }
+
+    /**
+     * Returns the most recent conversation (and its messages) for a given user+repo pair.
+     * Called on page load so the frontend can restore the chat without using localStorage.
+     *
+     * Strategy:
+     *  1. Try the user-scoped query first (conversations saved with user_id — new data).
+     *  2. Fall back to the latest conversation for the repo regardless of user_id
+     *     (covers old conversations created before user_id was tracked).
+     * Returns empty Optional if no conversation/messages exist yet.
+     */
+    public Optional<ChatHistoryResponse> getChatHistory(UUID repoId, User currentUser) {
+        // Step 1: prefer the user-scoped conversation (accurate, new data)
+        Optional<Conversation> found = conversationRepository
+                .findByRepositoryIdAndUserIdOrderByCreatedAtDesc(repoId, currentUser.getId())
+                .stream()
+                .findFirst();
+
+        // Step 2: fall back to repo-only lookup (old rows where user_id was NULL)
+        if (found.isEmpty()) {
+            found = conversationRepository.findLatestByRepositoryId(repoId);
+        }
+
+        return found.map(conversation -> {
+            List<Message> msgs = messageRepository
+                    .findByConversationIdOrderByCreatedAtAsc(conversation.getId());
+
+            if (msgs.isEmpty()) return null;   // conversation exists but has no saved messages
+
+            List<ChatHistoryResponse.MessageDto> dtos = msgs.stream()
+                    .map(m -> ChatHistoryResponse.MessageDto.builder()
+                            .role(m.getRole())
+                            .content(m.getContent())
+                            .sources(m.getSources())
+                            .build())
+                    .collect(Collectors.toList());
+
+            return ChatHistoryResponse.builder()
+                    .conversationId(conversation.getId())
+                    .messages(dtos)
+                    .build();
+        }).filter(r -> r != null);
     }
 }

@@ -26,6 +26,11 @@ public class Conversation {
     @JoinColumn(name = "repo_id")
     private RepoEntity repository;
 
+    // user_id column already exists in the DB schema
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

@@ -2,6 +2,7 @@ package com.repomind.repomind.controller;
 
 import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.ChatRequest;
+import com.repomind.repomind.dto.response.ChatHistoryResponse;
 import com.repomind.repomind.model.entity.Conversation;
 import com.repomind.repomind.model.entity.User;
 import com.repomind.repomind.service.ChatService;
@@ -48,6 +49,21 @@ public class ChatController {
                 request.getConversationId(),
                 currentUser
         );
+    }
+
+    /**
+     * GET /api/chat/history/{repoId}
+     * Returns the most recent conversation + messages for the current user + repo.
+     * Called by the frontend on page load to restore chat history from the database.
+     * Returns 204 No Content if no conversation exists yet.
+     */
+    @GetMapping("/history/{repoId}")
+    public ResponseEntity<ChatHistoryResponse> getChatHistory(
+            @PathVariable UUID repoId,
+            @AuthenticationPrincipal User currentUser) {
+        return chatService.getChatHistory(repoId, currentUser)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
     }
 
     // Clear conversation memory — "Start new conversation" button

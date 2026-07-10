@@ -23,7 +23,7 @@ public class PromptBuilder {
             3. If the answer is not visible in the provided code, say exactly:
                "This is not covered in the provided code context."
             4. Format code examples using markdown code blocks with the language name
-            5. Be specific and concise — developers prefer precision over length
+            5. Answer in a detailed, explanatory manner — break down complex logic step-by-step and explain the "why" behind the code, not just the "what".
             6. When referencing previous conversation context, be explicit about it
             """;
     }
