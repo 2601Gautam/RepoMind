@@ -104,6 +104,11 @@ export const getChatHistory = async (repoId) => {
     return res.json()
 }
 
+export const clearChatConversation = (conversationId) =>
+    apiFetch(`${BASE}/chat/conversations/${conversationId}`, {
+        method: 'DELETE'
+    })
+
 // ── Interview ──────────────────────────────────────────────────────────────
 
 export const generateInterview = (repoId, difficulty) =>

@@ -7,6 +7,7 @@ import com.repomind.repomind.repository.ConversationRepository;
 import com.repomind.repomind.repository.MessageRepository;
 import com.repomind.repomind.repository.RepoJpaRepository;
 import com.repomind.repomind.service.ingestion.EmbeddingService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -257,4 +258,14 @@ public class ChatService {
                     .build();
         }).filter(r -> r != null);
     }
+
+    @Transactional
+    public void clearConversation(UUID conversationId, User currentUser){
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .filter(c->c.getUser()!=null && c.getUser().getId().equals(currentUser.getId()))
+                .orElseThrow(()-> new RuntimeException("Conversation not found: " + conversationId));
+        conversationRepository.deleteById(conversationId);
+        memoryService.clearConversation(conversationId);
+    }
+
 }
