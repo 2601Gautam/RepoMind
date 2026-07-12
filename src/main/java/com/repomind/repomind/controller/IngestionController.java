@@ -104,9 +104,11 @@ public class IngestionController {
     }
 
     @GetMapping("/{repoId}/status")
-    public ResponseEntity<RepoStatusResponse> getStatus(@PathVariable UUID repoId)
+    public ResponseEntity<RepoStatusResponse> getStatus(@PathVariable UUID repoId,
+                                                        @AuthenticationPrincipal User currentUser)
     {
-        return repoRepository.findById(repoId)
+        return userRepoRepository.findByUserIdAndRepoId(currentUser.getId(),repoId)
+                .flatMap(userRepo -> repoRepository.findById(repoId))
                 .map(repo -> ResponseEntity.ok(toDto(repo)))
                 .orElse(ResponseEntity.notFound().build());
     }

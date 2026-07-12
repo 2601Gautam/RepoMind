@@ -9,7 +9,9 @@ import LoadingSpinner from '../components/common/LoadingSpinner'
 import RateLimitBanner from '../components/common/RateLimitBanner'
 import EmptyState from '../components/common/EmptyState'
 
-const LS_KEY = 'repomind_active_repo'
+function getLsKey(userId) {
+    return `repomind_active_repo:${userId}`
+}
 
 export default function DashboardPage() {
     const { user } = useAuth()
@@ -25,7 +27,8 @@ export default function DashboardPage() {
     useEffect(() => {
         async function restoreActive() {
             try {
-                const saved = localStorage.getItem(LS_KEY)
+                if(!user)return;
+                const saved = localStorage.getItem(getLsKey(user.id))
                 if (saved) {
                     const parsed = JSON.parse(saved)
                     setActiveRepo(parsed)
@@ -33,7 +36,7 @@ export default function DashboardPage() {
                     const fresh = await getRepoStatus(parsed.id)
                     const updated = { ...parsed, ...fresh }
                     setActiveRepo(updated)
-                    localStorage.setItem(LS_KEY, JSON.stringify(updated))
+                    localStorage.setItem(getLsKey(user.id), JSON.stringify(updated))
                     // If still in progress, start polling
                     if (fresh.status === 'PROCESSING' || fresh.status === 'PENDING') {
                         setCurrent(fresh)
@@ -45,7 +48,7 @@ export default function DashboardPage() {
                     const list = Array.isArray(data) ? data : (data.content || [])
                     if (list.length > 0) {
                         setActiveRepo(list[0])
-                        localStorage.setItem(LS_KEY, JSON.stringify(list[0]))
+                        localStorage.setItem(getLsKey(user.id), JSON.stringify(list[0]))
                         if (list[0].status === 'PROCESSING' || list[0].status === 'PENDING') {
                             setCurrent(list[0])
                             startPolling(list[0].id)
@@ -60,7 +63,7 @@ export default function DashboardPage() {
         }
         restoreActive()
         return () => { if (pollRef.current) clearInterval(pollRef.current) }
-    }, [])
+    }, [user])
 
     function startPolling(repoId) {
         if (pollRef.current) clearInterval(pollRef.current)
@@ -69,7 +72,7 @@ export default function DashboardPage() {
                 const updated = await getRepoStatus(repoId)
                 setActiveRepo(prev => {
                     const merged = { ...prev, ...updated }
-                    localStorage.setItem(LS_KEY, JSON.stringify(merged))
+                    localStorage.setItem(getLsKey(user.id), JSON.stringify(merged))
                     return merged
                 })
                 setCurrent(updated)
@@ -90,7 +93,7 @@ export default function DashboardPage() {
             const repo = await ingestRepo(url, token)
             setActiveRepo(repo)
             setCurrent(repo)
-            localStorage.setItem(LS_KEY, JSON.stringify(repo))
+            localStorage.setItem(getLsKey(user.id), JSON.stringify(repo))
             startPolling(repo.id)
         } catch (e) {
             if (e instanceof RateLimitError) {
@@ -106,7 +109,7 @@ export default function DashboardPage() {
     async function handleRemove(repoId) {
         setActiveRepo(null)
         setCurrent(null)
-        localStorage.removeItem(LS_KEY)
+        localStorage.removeItem(getLsKey(user.id))
         if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
         try {
             await deleteRepo(repoId)
@@ -197,7 +200,7 @@ export default function DashboardPage() {
                                 onClick={() => {
                                     setActiveRepo(null)
                                     setCurrent(null)
-                                    localStorage.removeItem(LS_KEY)
+                                    localStorage.removeItem(getLsKey(user.id))
                                     if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
                                 }}
                                 className="cursor-pointer text-[11px] text-neutral-600 hover:text-neutral-400 transition-colors"

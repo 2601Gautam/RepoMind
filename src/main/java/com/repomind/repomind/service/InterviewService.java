@@ -227,7 +227,7 @@ public class InterviewService {
                 DIFFICULTY LEVEL: %s
                 %s
     
-                Generate exactly 10 interview questions specific to THIS project.
+                Generate exactly 5 interview questions specific to THIS project.
                 The questions must reference actual files, classes, or patterns visible in the code above.
                 Do NOT generate generic programming questions.
     

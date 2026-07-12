@@ -223,7 +223,7 @@ export default function InterviewPage() {
                                     }`}
                                 >
                                     <div className="space-y-1">
-                                        <p className="text-[12.5px] font-semibold tracking-tight">10 Questions Prep</p>
+                                        <p className="text-[12.5px] font-semibold tracking-tight">5 Questions Prep</p>
                                         <p className="text-[10px] text-neutral-500 font-mono">{formattedDate}</p>
                                     </div>
                                     <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border shrink-0 ${
@@ -346,7 +346,7 @@ export default function InterviewPage() {
                                     <div className="flex items-center justify-between">
                                         {/* Fuchsia-violet text gradient question tracker */}
                                         <span className="text-[10px] font-mono tracking-widest font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                                            QUESTION {currentQuestionIdx + 1} OF 10
+                                            QUESTION {currentQuestionIdx + 1} OF 5
                                         </span>
                                         {activeQuestion.conceptTested && (
                                             <span className="text-[9.5px] text-neutral-500 bg-white/[0.02] border border-white/[0.05] px-2 py-0.5 rounded">
@@ -440,7 +440,7 @@ export default function InterviewPage() {
 
                         {/* Dot progress indicators styled like landing page */}
                         <div className="flex justify-center gap-1.5 mt-2">
-                            {Array.from({ length: 10 }).map((_, i) => (
+                            {Array.from({ length: 5 }).map((_, i) => (
                                 <button
                                     key={i}
                                     onClick={() => {
@@ -466,7 +466,7 @@ export default function InterviewPage() {
                             <div>
                                 <h3 className="text-sm font-semibold text-white/95">Configure Mock Interview</h3>
                                 <p className="text-[12.5px] text-neutral-500 mt-1">
-                                    Generate 10 codebase-specific questions to review design patterns and logic.
+                                    Generate 5 codebase-specific questions to review design patterns and logic.
                                 </p>
                             </div>
 
@@ -491,7 +491,7 @@ export default function InterviewPage() {
                             <button onClick={handleGenerate}
                                 disabled={loading || !!rateLimitSeconds}
                                 className="w-full bg-white/[0.06] border border-white/[0.1] text-white/80 hover:bg-white/[0.1] hover:text-white font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer text-xs">
-                                {loading ? 'Preparing Prep Deck...' : 'Generate 10 Questions'}
+                                {loading ? 'Preparing Prep Deck...' : 'Generate 5 Questions'}
                             </button>
 
                             {error && (
