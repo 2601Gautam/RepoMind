@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { streamChat, getRepoStatus, getChatHistory, RateLimitError } from '../api/client'
+import { streamChat, getRepoStatus, getChatHistory, clearChatConversation, RateLimitError } from '../api/client'
 import NavBar from '../components/layout/NavBar'
 import MessageList from '../components/chat/MessageList'
 import ChatInput from '../components/chat/ChatInput'
@@ -194,7 +194,14 @@ function ChatPageInner({ repoId }) {
                     <div className="flex items-center gap-1.5 shrink-0">
                         {messages.length > 0 && (
                             <button
-                                onClick={() => {
+                                onClick={async () => {
+                                    if (conversationId) {
+                                        try {
+                                            await clearChatConversation(conversationId)
+                                        } catch (e) {
+                                            console.error('Failed to clear database conversation:', e)
+                                        }
+                                    }
                                     setMessages([])
                                     setConversationId(null)
                                 }}

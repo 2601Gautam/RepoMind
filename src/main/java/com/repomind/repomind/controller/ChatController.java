@@ -71,7 +71,7 @@ public class ChatController {
     public ResponseEntity<?> clearConversation(
             @PathVariable UUID conversationId,
             @AuthenticationPrincipal User currentUser) {
-        memoryService.clearConversation(conversationId);
+        chatService.clearConversation(conversationId,currentUser);
         return ResponseEntity.ok(Map.of("message", "Conversation cleared"));
     }
 
