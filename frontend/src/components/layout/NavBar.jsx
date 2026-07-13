@@ -1,17 +1,17 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 // Wordmark logo
 function Logo() {
     return (
         <Link to="/dashboard" className="flex items-center gap-2 group shrink-0 select-none">
-            <div className="w-6 h-6 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-md flex items-center justify-center shadow-[0_0_8px_rgba(139,92,246,0.25)] group-hover:shadow-[0_0_12px_rgba(139,92,246,0.4)] transition-all">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-6.5 h-6.5 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(139,92,246,0.3)] group-hover:shadow-[0_0_15px_rgba(139,92,246,0.5)] transition-all duration-300">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="16 18 22 12 16 6" />
                     <polyline points="8 6 2 12 8 18" />
                 </svg>
             </div>
-            <span className="text-[13px] font-semibold text-white/70 group-hover:text-white/90 tracking-tight transition-colors">
+            <span className="text-[13.5px] font-bold text-white group-hover:text-violet-300 tracking-tight transition-colors duration-300">
                 RepoMind
             </span>
         </Link>
@@ -21,15 +21,16 @@ function Logo() {
 // Breadcrumb chevron
 function Chevron() {
     return (
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 text-neutral-700 shrink-0">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 text-neutral-600 shrink-0">
             <path d="M6 3.5l4.5 4.5-4.5 4.5" />
         </svg>
     )
 }
 
-export default function NavBar({ repoName }) {
+export default function NavBar({ repoName, action }) {
     const { user } = useAuth()
     const location = useLocation()
+    const { repoId } = useParams()
 
     const initials = user?.name
         ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -53,48 +54,99 @@ export default function NavBar({ repoName }) {
         : null
 
     return (
-        <header className="sticky top-0 z-40 h-13 flex items-center justify-between px-5 sm:px-7 bg-[#06060a]/80 backdrop-blur-xl border-b border-white/[0.04]">
+        <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-5 sm:px-8 bg-[#07070b]/90 backdrop-blur-xl border-b border-white/[0.04]">
 
             {/* ── Left: Logo + breadcrumb ─────────────────────────────── */}
-            <div className="flex items-center gap-2 text-[13px] min-w-0">
+            <div className="flex items-center gap-3 text-[13px] min-w-0 flex-1">
                 <Logo />
 
                 {!isHome && (
                     <>
                         <Chevron />
-                        {/* Repo segment — shown when a repo is active */}
+                        {/* Repo segment — links to dashboard */}
                         {repoName && (
                             <>
-                                <span className="text-neutral-400 font-medium truncate max-w-[160px]">
-                                    {repoName}
-                                </span>
+                                {repoId ? (
+                                    <Link to="/dashboard" className="text-neutral-400 hover:text-white font-medium truncate max-w-[150px] transition-colors duration-200">
+                                        {repoName}
+                                    </Link>
+                                ) : (
+                                    <span className="text-neutral-400 font-medium truncate max-w-[150px]">
+                                        {repoName}
+                                    </span>
+                                )}
                                 {pageLabel && <Chevron />}
                             </>
                         )}
                         {/* Page segment */}
                         {pageLabel && (
-                            <span className="text-neutral-600 font-medium">
-                                {pageLabel}
-                            </span>
+                            repoId ? (
+                                <Link to={`/${pageLabel.toLowerCase()}/${repoId}`} className="text-neutral-500 hover:text-neutral-300 font-semibold transition-colors duration-200">
+                                    {pageLabel}
+                                </Link>
+                            ) : (
+                                <span className="text-neutral-500 font-semibold">
+                                    {pageLabel}
+                                </span>
+                            )
                         )}
                     </>
                 )}
             </div>
 
-            {/* ── Right: profile pill ─────────────────────────────────── */}
-            <Link
-                to="/profile"
-                title={user?.name || user?.email}
-                className="group flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.1] transition-all duration-150 shrink-0"
-            >
-                {/* Avatar */}
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-700 to-violet-900 flex items-center justify-center text-[9px] font-bold text-white/80 select-none">
-                    {initials}
+            {/* ── Center: Unified Quick Tool Navigation (when repo context is present) ── */}
+            {repoId && (
+                <div className="hidden sm:flex items-center bg-white/[0.02] border border-white/[0.05] p-1 rounded-xl gap-0.5 mx-4">
+                    <Link
+                        to={`/chat/${repoId}`}
+                        className={`text-[11.5px] px-3.5 py-1.5 rounded-lg transition-all duration-200 font-semibold ${
+                            isChat
+                                ? 'bg-white/[0.08] border-white/[0.08] text-white shadow-sm'
+                                : 'text-neutral-500 hover:text-neutral-300'
+                        }`}
+                    >
+                        Chat
+                    </Link>
+                    <Link
+                        to={`/interview/${repoId}`}
+                        className={`text-[11.5px] px-3.5 py-1.5 rounded-lg transition-all duration-200 font-semibold ${
+                            isInterview
+                                ? 'bg-white/[0.08] border-white/[0.08] text-white shadow-sm'
+                                : 'text-neutral-500 hover:text-neutral-300'
+                        }`}
+                    >
+                        Interview
+                    </Link>
+                    <Link
+                        to={`/debug/${repoId}`}
+                        className={`text-[11.5px] px-3.5 py-1.5 rounded-lg transition-all duration-200 font-semibold ${
+                            isDebug
+                                ? 'bg-white/[0.08] border-white/[0.08] text-white shadow-sm'
+                                : 'text-neutral-500 hover:text-neutral-300'
+                        }`}
+                    >
+                        Debug
+                    </Link>
                 </div>
-                <span className="text-[12px] font-medium text-neutral-500 group-hover:text-neutral-300 transition-colors pr-0.5 hidden sm:block">
-                    {firstName}
-                </span>
-            </Link>
+            )}
+
+            {/* ── Right: Custom action + Profile pill ─────────────────── */}
+            <div className="flex items-center gap-3 shrink-0">
+                {action && <div className="flex items-center">{action}</div>}
+                
+                <Link
+                    to="/profile"
+                    title={user?.name || user?.email}
+                    className="group flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.1] transition-all duration-150"
+                >
+                    <div className="w-5.5 h-5.5 rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-700 flex items-center justify-center text-[10px] font-bold text-white/95 select-none">
+                        {initials}
+                    </div>
+                    <span className="text-[12px] font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors pr-0.5 hidden md:block">
+                        {firstName}
+                    </span>
+                </Link>
+            </div>
         </header>
     )
 }
