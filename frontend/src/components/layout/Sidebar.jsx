@@ -91,7 +91,7 @@ const navItems = [
     }
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen = true, onToggle }) {
     const location = useLocation()
 
     function isActive(path) {
@@ -100,10 +100,10 @@ export default function Sidebar() {
     }
 
     return (
-        <aside className="w-60 fixed inset-y-0 left-0 bg-[#060608] border-r border-white/[0.04] flex flex-col z-40">
+        <aside className={`fixed inset-y-0 left-0 bg-[#060608] border-r border-white/[0.04] flex flex-col z-40 transition-all duration-300 ${isOpen ? 'w-60' : 'w-[72px]'}`}>
             {/* Logo */}
-            <div className="h-[60px] flex items-center px-5 shrink-0 border-b border-white/[0.04]">
-                <Link to="/dashboard" className="flex items-center gap-2.5 group">
+            <div className="h-[60px] flex items-center justify-between px-5 shrink-0 border-b border-white/[0.04]">
+                <Link to="/dashboard" className={`flex items-center gap-2.5 group ${isOpen ? '' : 'hidden'}`}>
                     <div className="w-7 h-7 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(139,92,246,0.35)] group-hover:shadow-[0_0_18px_rgba(139,92,246,0.5)] transition-all">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="16 18 22 12 16 6" />
@@ -112,34 +112,57 @@ export default function Sidebar() {
                     </div>
                     <span className="text-[15px] font-bold text-white tracking-tight">RepoMind</span>
                 </Link>
+                {/* Toggle Button */}
+                <button 
+                    onClick={onToggle} 
+                    className={`cursor-pointer p-1.5 rounded-lg text-neutral-500 hover:text-white hover:bg-white/[0.06] transition-colors ${isOpen ? '' : 'mx-auto'}`}
+                    title={isOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                        {isOpen ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        )}
+                    </svg>
+                </button>
             </div>
 
             {/* Navigation groups */}
-            <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
+            <nav className={`flex-1 ${isOpen ? 'px-3 py-4' : 'px-2 py-4'} space-y-5 overflow-y-auto`}>
                 {navItems.map((group) => (
                     <div key={group.group}>
-                        <p className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-neutral-600 px-2.5 mb-1.5">
-                            {group.group}
-                        </p>
-                        <div className="space-y-0.5">
+                        {isOpen && (
+                            <p className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-neutral-600 px-2.5 mb-1.5">
+                                {group.group}
+                            </p>
+                        )}
+                        <div className="space-y-1">
                             {group.items.map((item) => {
                                 const active = isActive(item.path)
                                 return (
                                     <Link
                                         key={item.name}
                                         to={item.path}
-                                        className={`flex items-center gap-3 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                                        title={!isOpen ? item.name : undefined}
+                                        className={`flex items-center rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                                            isOpen ? 'gap-3 px-2.5 py-2' : 'justify-center p-2.5'
+                                        } ${
                                             active
                                                 ? 'bg-white/[0.07] text-white'
                                                 : 'text-neutral-500 hover:bg-white/[0.03] hover:text-neutral-300'
                                         }`}
                                     >
-                                        <span className={active ? 'text-violet-400' : 'text-neutral-600'}>
+                                        <span className={`${active ? 'text-violet-400' : 'text-neutral-600'} shrink-0`}>
                                             {item.icon}
                                         </span>
-                                        {item.name}
-                                        {active && (
-                                            <span className="ml-auto w-1 h-1 rounded-full bg-violet-400" />
+                                        {isOpen && (
+                                            <>
+                                                <span className="truncate">{item.name}</span>
+                                                {active && (
+                                                    <span className="ml-auto w-1 h-1 rounded-full bg-violet-400 shrink-0" />
+                                                )}
+                                            </>
                                         )}
                                     </Link>
                                 )
@@ -150,11 +173,13 @@ export default function Sidebar() {
             </nav>
 
             {/* Bottom hint */}
-            <div className="px-5 py-4 border-t border-white/[0.04]">
-                <p className="text-[10.5px] text-neutral-700 leading-relaxed">
-                    Ingest a repo on the dashboard first to unlock tools.
-                </p>
-            </div>
+            {isOpen && (
+                <div className="px-5 py-4 border-t border-white/[0.04]">
+                    <p className="text-[10.5px] text-neutral-700 leading-relaxed">
+                        Ingest a repo on the dashboard first to unlock tools.
+                    </p>
+                </div>
+            )}
         </aside>
     )
 }

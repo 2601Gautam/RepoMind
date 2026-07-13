@@ -54,7 +54,17 @@ export default function LandingPage() {
         }
     }, [user, loading, navigate])
 
-    // Removed auto-play timer, slider is now purely interactive
+    // Auto-play timer to cycle features deck automatically
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveStep(prev => {
+                if (prev === '1') return '2'
+                if (prev === '2') return '3'
+                return '1'
+            })
+        }, 3000)
+        return () => clearInterval(interval)
+    }, [])
 
     useEffect(() => {
         const fullLogo = 'RepoMind'
