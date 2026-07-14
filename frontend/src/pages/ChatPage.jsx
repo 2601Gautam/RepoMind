@@ -22,17 +22,6 @@ function ChatPageInner({ repoId }) {
     // Load repo info
     useEffect(() => {
         getRepoStatus(repoId).then(setRepo).catch(console.error)
-        
-        // Track this repo as recently chatted
-        if (repoId) {
-            try {
-                const recent = JSON.parse(localStorage.getItem('recent_chat_repos') || '[]')
-                const updated = [repoId, ...recent.filter(id => id !== repoId)].slice(0, 5)
-                localStorage.setItem('recent_chat_repos', JSON.stringify(updated))
-            } catch (e) {
-                console.error('Failed to update recent chat repos:', e)
-            }
-        }
     }, [repoId])
 
     // On mount: fetch chat history from the database (per user + per repo)

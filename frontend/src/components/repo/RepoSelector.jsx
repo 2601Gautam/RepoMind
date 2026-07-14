@@ -68,28 +68,14 @@ export default function RepoSelector({ tool }) {
     const colors = COLOR_CLASSES[meta.color]
 
     const [repos, setRepos] = useState([])
-    const [recentRepos, setRecentRepos] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
-    const [isStackHovered, setIsStackHovered] = useState(false)
 
     useEffect(() => {
         listRepos(0, 100)
             .then(data => {
                 const list = Array.isArray(data) ? data : (data.content || [])
                 setRepos(list)
-
-                // Load recent chats from localStorage
-                try {
-                    const recentIds = JSON.parse(localStorage.getItem('recent_chat_repos') || '[]')
-                    const matched = recentIds
-                        .map(id => list.find(r => r.id === id))
-                        .filter(Boolean)
-                        .filter(r => r.status === 'READY')
-                    setRecentRepos(matched)
-                } catch (e) {
-                    console.error('Failed to parse recent repos:', e)
-                }
             })
             .catch(console.error)
             .finally(() => setLoading(false))
@@ -122,53 +108,7 @@ export default function RepoSelector({ tool }) {
                     </div>
                 </div>
 
-                {/* Recent repos stack - ONLY for chat tool and when there are recent chats */}
-                {tool === 'chat' && recentRepos.length > 0 && (
-                    <div className="mb-12">
-                        <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-5">
-                            Recent Chats
-                        </p>
-                        <div 
-                            className="relative flex flex-col transition-all duration-300"
-                            onMouseEnter={() => setIsStackHovered(true)}
-                            onMouseLeave={() => setIsStackHovered(false)}
-                            style={{
-                                // Add buffer height to prevent layout jumps when expanding
-                                minHeight: isStackHovered ? `${recentRepos.length * 80}px` : '100px'
-                            }}
-                        >
-                            {recentRepos.map((repo, idx) => {
-                                const slug = repo.githubUrl?.replace('https://github.com/', '') ?? ''
-                                const name = repo.repoName ?? slug.split('/').pop() ?? 'Unknown'
-                                const isFirst = idx === 0
 
-                                return (
-                                    <div
-                                        key={repo.id}
-                                        onClick={() => launch(repo.id)}
-                                        className={`group cursor-pointer rounded-2xl p-4.5 border border-white/[0.06] bg-[#0c0c0e] hover:bg-[#111116] hover:border-violet-500/40 shadow-2xl flex items-center justify-between relative transition-all duration-500 ease-out`}
-                                        style={{
-                                            marginTop: isFirst ? '0' : (isStackHovered ? '12px' : '-48px'),
-                                            zIndex: 10 - idx,
-                                            transform: isStackHovered ? 'scale(1) translateY(0)' : `scale(${1 - idx * 0.035}) translateY(${idx * 2}px)`,
-                                            opacity: isStackHovered ? 1 : (1 - idx * 0.15)
-                                        }}
-                                    >
-                                        <div className="flex items-center gap-4 min-w-0">
-                                            <div className="w-9 h-9 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 group-hover:scale-105 transition-transform shrink-0">
-                                                {meta.icon}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="truncate text-[14px] font-bold text-white/90 group-hover:text-white transition-colors">{name}</p>
-                                                <p className="truncate text-[11px] text-neutral-600 font-mono mt-0.5">{slug}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                )}
 
                 {/* Choose repo label */}
                 <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">

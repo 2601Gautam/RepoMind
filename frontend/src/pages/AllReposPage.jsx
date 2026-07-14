@@ -9,7 +9,6 @@ export default function AllReposPage() {
     const [page, setPage] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
     const [loadingRepos, setLoadingRepos] = useState(true)
-    const [viewMode, setViewMode] = useState(() => localStorage.getItem('repomind_view_mode') || 'grid')
     const [searchQuery, setSearchQuery] = useState('')
     const pollsRef = useRef({})
 
@@ -23,9 +22,11 @@ export default function AllReposPage() {
         try {
             const data = await listRepos(page, 12)
             const repoList = Array.isArray(data) ? data : (data.content || [])
-            setRepos(repoList)
+            // Filter out FAILED repos — never show them in the UI
+            const visible = repoList.filter(r => r.status !== 'FAILED')
+            setRepos(visible)
             setTotalPages(data.totalPages || (Array.isArray(data) ? 1 : 0))
-            repoList.forEach(repo => {
+            visible.forEach(repo => {
                 if (repo.status === 'PROCESSING' || repo.status === 'PENDING') startPollingRepo(repo.id)
             })
         } catch (e) {
@@ -40,8 +41,15 @@ export default function AllReposPage() {
         pollsRef.current[repoId] = setInterval(async () => {
             try {
                 const updated = await getRepoStatus(repoId)
+                if (updated.status === 'FAILED') {
+                    // Remove failed repos from the list silently
+                    clearInterval(pollsRef.current[repoId])
+                    delete pollsRef.current[repoId]
+                    setRepos(prev => prev.filter(r => r.id !== repoId))
+                    return
+                }
                 setRepos(prev => prev.map(r => r.id === repoId ? updated : r))
-                if (updated.status === 'READY' || updated.status === 'FAILED') {
+                if (updated.status === 'READY') {
                     clearInterval(pollsRef.current[repoId])
                     delete pollsRef.current[repoId]
                 }
@@ -120,79 +128,44 @@ export default function AllReposPage() {
                                             className="w-full sm:w-44 bg-[#0d0d0f] border border-white/[0.06] rounded-lg pl-9 pr-3 py-1.5 text-[12px] text-white placeholder-neutral-600 focus:outline-none focus:border-white/[0.12] transition-all"
                                         />
                                     </div>
-
-                                    {/* Layout Grid/List Selector */}
-                                    <div className="flex items-center gap-0.5 bg-[#0d0d0f] border border-white/[0.06] rounded-lg p-0.5 shrink-0">
-                                        <button
-                                            type="button"
-                                            onClick={() => { setViewMode('grid'); localStorage.setItem('repomind_view_mode', 'grid') }}
-                                            className={`cursor-pointer p-1.5 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-white/[0.06] text-white' : 'text-neutral-500 hover:text-neutral-350'}`}
-                                            title="Grid Layout"
-                                        >
-                                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5">
-                                                <rect x="2" y="2" width="5" height="5" rx="0.75" />
-                                                <rect x="9" y="2" width="5" height="5" rx="0.75" />
-                                                <rect x="2" y="9" width="5" height="5" rx="0.75" />
-                                                <rect x="9" y="9" width="5" height="5" rx="0.75" />
-                                            </svg>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => { setViewMode('list'); localStorage.setItem('repomind_view_mode', 'list') }}
-                                            className={`cursor-pointer p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'bg-white/[0.06] text-white' : 'text-neutral-500 hover:text-neutral-350'}`}
-                                            title="List Layout"
-                                        >
-                                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5">
-                                                <line x1="2" y1="4" x2="14" y2="4" />
-                                                <line x1="2" y1="8" x2="14" y2="8" />
-                                                <line x1="2" y1="12" x2="14" y2="12" />
-                                            </svg>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
 
                             {/* Repos mapping */}
                             {filtered.length === 0 ? (
-                                <div className="py-12 text-center text-[12.5px] text-neutral-600">
+                                <div className="py-12 text-center text-[12.5px] text-neutral-650">
                                     No repositories match "{searchQuery}"
                                 </div>
-                            ) : viewMode === 'grid' ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                                    {filtered.map(repo => (
-                                        <RepoCard key={repo.id} repo={repo} viewMode="grid" onRemove={handleRemove} />
-                                    ))}
-                                </div>
                             ) : (
-                                <div className="flex flex-col gap-2">
+                                <div className="flex flex-col gap-2.5">
                                     {filtered.map(repo => (
                                         <RepoCard key={repo.id} repo={repo} viewMode="list" onRemove={handleRemove} />
                                     ))}
                                 </div>
                             )}
-
-                            {totalPages > 1 && (
-                                <div className="flex items-center justify-center gap-5 pt-10">
-                                    <button
-                                        onClick={() => setPage(p => Math.max(0, p - 1))}
-                                        disabled={page === 0}
-                                        className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        ← Previous
-                                    </button>
-                                    <span className="text-[12px] text-neutral-600">{page + 1} / {totalPages}</span>
-                                    <button
-                                        onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                                        disabled={page >= totalPages - 1}
-                                        className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        Next →
-                                    </button>
-                                </div>
-                            )}
                         </div>
                     )
                 })()}
+
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-5 pt-10">
+                        <button
+                            onClick={() => setPage(p => Math.max(0, p - 1))}
+                            disabled={page === 0}
+                            className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                            ← Previous
+                        </button>
+                        <span className="text-[12px] text-neutral-600">{page + 1} / {totalPages}</span>
+                        <button
+                            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                            disabled={page >= totalPages - 1}
+                            className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Next →
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

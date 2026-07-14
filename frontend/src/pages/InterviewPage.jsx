@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import {
     generateInterview,
@@ -12,7 +12,6 @@ import RateLimitBanner from '../components/common/RateLimitBanner'
 import ToolNavLinks from '../components/common/ToolNavLinks'
 import RepoSelector from '../components/repo/RepoSelector'
 import NavBar from '../components/layout/NavBar'
-import TerminalTypewriter from '../components/common/TerminalTypewriter'
 
 const DIFFICULTIES = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED']
 
@@ -172,14 +171,6 @@ export default function InterviewPage() {
 
     const activeQuestion = session?.questions?.[currentQuestionIdx]
 
-    const typewriterSteps = useMemo(() => [
-        { text: `repomind interview --difficulty ${difficulty}`, type: 'command' },
-        { text: 'Building repository summary context...', type: 'info', delay: 400 },
-        { text: 'Generating difficulty-aware semantic embedding query...', type: 'info', delay: 500 },
-        { text: `Retrieving 20 structural chunks from repository ${repo?.repoName || ''} via pgvector...`, type: 'success', delay: 600 },
-        { text: 'Formulating 5 codebase-specific questions...', type: 'info', delay: 500 },
-        { text: 'Drafting expectation guidelines & concept checks...', type: 'info', delay: 600 }
-    ], [difficulty, repo?.repoName])
 
     if (!repoId) return <RepoSelector tool="interview" />
 
@@ -517,19 +508,87 @@ export default function InterviewPage() {
                             )}
                         </div>
 
-                        {/* Loading State with Bot Typing Indicator */}
+                        {/* Loading State — questions generating */}
                         {loading && (
-                            <div className="max-w-2xl mx-auto py-4 animate-fade-up">
-                                <TerminalTypewriter
-                                    title="interview — terminal"
-                                    steps={typewriterSteps}
-                                />
-                            </div>
+                            <InterviewLoadingCard difficulty={difficulty} repoName={repo?.repoName} />
                         )}
 
                     </div>
                 )}
             </main>
+        </div>
+    )
+}
+
+// ─── Interview Loading Card ────────────────────────────────────────────────────
+
+function InterviewLoadingCard({ difficulty, repoName }) {
+    const steps = [
+        { label: 'Building repository context', done: false },
+        { label: 'Generating semantic query embeddings', done: false },
+        { label: `Retrieving code chunks from ${repoName || 'repository'}`, done: false },
+        { label: `Formulating ${difficulty?.toLowerCase() || 'intermediate'} questions`, done: false },
+        { label: 'Drafting answer guidelines', done: false },
+    ]
+
+    const [activeIdx, setActiveIdx] = useState(0)
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveIdx(prev => (prev < steps.length - 1 ? prev + 1 : prev))
+        }, 900)
+        return () => clearInterval(interval)
+    }, [])
+
+    return (
+        <div className="animate-fade-up bg-[#0f0f11] border border-white/[0.07] rounded-xl p-5 space-y-4">
+            {/* Header */}
+            <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-violet-400 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="32" strokeLinecap="round" className="opacity-50" />
+                        <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                </div>
+                <div>
+                    <p className="text-[13px] font-semibold text-white/90">Generating Questions</p>
+                    <p className="text-[11px] text-neutral-500 mt-0.5">This usually takes a few seconds…</p>
+                </div>
+            </div>
+
+            {/* Step list */}
+            <div className="space-y-2.5 pl-1">
+                {steps.map((step, i) => {
+                    const isDone = i < activeIdx
+                    const isActive = i === activeIdx
+                    return (
+                        <div key={i} className="flex items-center gap-2.5">
+                            {isDone ? (
+                                <span className="w-4 h-4 flex items-center justify-center shrink-0">
+                                    <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </span>
+                            ) : isActive ? (
+                                <span className="w-4 h-4 flex items-center justify-center shrink-0">
+                                    <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
+                                </span>
+                            ) : (
+                                <span className="w-4 h-4 flex items-center justify-center shrink-0">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-white/10" />
+                                </span>
+                            )}
+                            <span className={`text-[12px] transition-colors ${
+                                isDone ? 'text-neutral-500' :
+                                isActive ? 'text-neutral-200 font-medium' :
+                                'text-neutral-600'
+                            }`}>
+                                {step.label}
+                            </span>
+                        </div>
+                    )
+                })}
+            </div>
         </div>
     )
 }

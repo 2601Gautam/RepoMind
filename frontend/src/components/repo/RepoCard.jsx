@@ -54,6 +54,9 @@ export default function RepoCard({ repo, onRemove, viewMode = 'grid' }) {
         : 0
 
     const st = STATUS[repo.status] ?? { label: repo.status, dot: 'bg-neutral-600' }
+
+    // Never render failed repos in any view
+    if (repo.status === 'FAILED') return null
     
     // Parse owner and repo separately for a cleaner UI
     const slugRaw = repo.githubUrl?.replace('https://github.com/', '').replace(/\/$/, '') ?? ''

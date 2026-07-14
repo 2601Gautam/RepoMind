@@ -62,12 +62,25 @@ export default function NavBar({ repoName, action }) {
 
                 {!isHome && (
                     <>
-                        <Chevron />
-                        {/* Repo segment — links to dashboard */}
+                        {pageLabel && (
+                            <>
+                                <Chevron />
+                                {repoId ? (
+                                    <Link to={`/${pageLabel.toLowerCase()}`} className="text-neutral-500 hover:text-white font-semibold transition-colors duration-200">
+                                        {pageLabel}
+                                    </Link>
+                                ) : (
+                                    <span className="text-neutral-500 font-semibold">
+                                        {pageLabel}
+                                    </span>
+                                )}
+                            </>
+                        )}
                         {repoName && (
                             <>
-                                {repoId ? (
-                                    <Link to="/dashboard" className="text-neutral-400 hover:text-white font-medium truncate max-w-[150px] transition-colors duration-200">
+                                <Chevron />
+                                {repoId && pageLabel ? (
+                                    <Link to={`/${pageLabel.toLowerCase()}/${repoId}`} className="text-neutral-400 hover:text-neutral-350 font-medium truncate max-w-[150px] transition-colors duration-200">
                                         {repoName}
                                     </Link>
                                 ) : (
@@ -75,20 +88,7 @@ export default function NavBar({ repoName, action }) {
                                         {repoName}
                                     </span>
                                 )}
-                                {pageLabel && <Chevron />}
                             </>
-                        )}
-                        {/* Page segment */}
-                        {pageLabel && (
-                            repoId ? (
-                                <Link to={`/${pageLabel.toLowerCase()}/${repoId}`} className="text-neutral-500 hover:text-neutral-300 font-semibold transition-colors duration-200">
-                                    {pageLabel}
-                                </Link>
-                            ) : (
-                                <span className="text-neutral-500 font-semibold">
-                                    {pageLabel}
-                                </span>
-                            )
                         )}
                     </>
                 )}
@@ -112,7 +112,7 @@ export default function NavBar({ repoName, action }) {
                         className={`text-[11.5px] px-3.5 py-1.5 rounded-lg transition-all duration-200 font-semibold ${
                             isInterview
                                 ? 'bg-white/[0.08] border-white/[0.08] text-white shadow-sm'
-                                : 'text-neutral-500 hover:text-neutral-300'
+                                : 'text-neutral-500 hover:text-neutral-350'
                         }`}
                     >
                         Interview
@@ -139,7 +139,7 @@ export default function NavBar({ repoName, action }) {
                     title={user?.name || user?.email}
                     className="group flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.1] transition-all duration-150"
                 >
-                    <div className="w-5.5 h-5.5 rounded-md bg-gradient-to-br from-violet-600 to-fuchsia-700 flex items-center justify-center text-[10px] font-bold text-white/95 select-none">
+                    <div className="w-5.5 h-5.5 rounded-md bg-gradient-to-br from-violet-600/40 to-fuchsia-600/40 border border-white/[0.1] flex items-center justify-center text-[10px] font-bold text-white select-none shadow-lg shadow-violet-500/20">
                         {initials}
                     </div>
                     <span className="text-[12px] font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors pr-0.5 hidden md:block">

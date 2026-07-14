@@ -1,89 +1,46 @@
-import { useState, useEffect, useRef } from 'react'
-import { listRepos, ingestRepo, getRepoStatus, deleteRepo, RateLimitError } from '../api/client'
+import { useState, useRef, useEffect } from 'react'
+import { ingestRepo, getRepoStatus, RateLimitError } from '../api/client'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import NavBar from '../components/layout/NavBar'
-import RepoCard from '../components/repo/RepoCard'
 import RepoUrlInput from '../components/repo/RepoUrlInput'
 import IngestionProgress from '../components/repo/IngestionProgress'
-import LoadingSpinner from '../components/common/LoadingSpinner'
 import RateLimitBanner from '../components/common/RateLimitBanner'
-import EmptyState from '../components/common/EmptyState'
-
-function getLsKey(userId) {
-    return `repomind_active_repo:${userId}`
-}
 
 export default function DashboardPage() {
     const { user } = useAuth()
-    const [activeRepo, setActiveRepo] = useState(null)   // single active repo shown
-    const [loadingRepos, setLoadingRepos] = useState(true)
+
+    // Session-only state — nothing persisted to localStorage
     const [busy, setBusy] = useState(false)
-    const [current, setCurrent] = useState(null)         // for IngestionProgress
+    const [current, setCurrent] = useState(null)   // repo being ingested (PROCESSING/PENDING)
+    const [readyRepo, setReadyRepo] = useState(null) // repo that just finished → show success msg
     const [submitError, setSubmitError] = useState('')
     const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
-    const pollRef = useRef(null)                         // single polling interval
+    const pollRef = useRef(null)
 
-    // On mount: restore last active repo from localStorage, then sync its status
-    useEffect(() => {
-        async function restoreActive() {
-            try {
-                if(!user)return;
-                const saved = localStorage.getItem(getLsKey(user.id))
-                if (saved) {
-                    const parsed = JSON.parse(saved)
-                    setActiveRepo(parsed)
-                    if (parsed.status === 'PROCESSING' || parsed.status === 'PENDING') {
-                        setCurrent(parsed)
-                    }
-                    // Refresh status from server
-                    const fresh = await getRepoStatus(parsed.id)
-                    const updated = { ...parsed, ...fresh }
-                    setActiveRepo(updated)
-                    localStorage.setItem(getLsKey(user.id), JSON.stringify(updated))
-                    // If still in progress, start polling
-                    if (fresh.status === 'PROCESSING' || fresh.status === 'PENDING') {
-                        setCurrent(fresh)
-                        startPolling(parsed.id)
-                    } else {
-                        setCurrent(null)
-                    }
-                } else {
-                    // No saved repo — fetch the most recently submitted one
-                    const data = await listRepos(0, 1)
-                    const list = Array.isArray(data) ? data : (data.content || [])
-                    if (list.length > 0) {
-                        setActiveRepo(list[0])
-                        localStorage.setItem(getLsKey(user.id), JSON.stringify(list[0]))
-                        if (list[0].status === 'PROCESSING' || list[0].status === 'PENDING') {
-                            setCurrent(list[0])
-                            startPolling(list[0].id)
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error('Failed to restore active repo:', e)
-            } finally {
-                setLoadingRepos(false)
-            }
+    function stopPolling() {
+        if (pollRef.current) {
+            clearInterval(pollRef.current)
+            pollRef.current = null
         }
-        restoreActive()
-        return () => { if (pollRef.current) clearInterval(pollRef.current) }
-    }, [user])
+    }
 
     function startPolling(repoId) {
-        if (pollRef.current) clearInterval(pollRef.current)
+        stopPolling()
         pollRef.current = setInterval(async () => {
             try {
                 const updated = await getRepoStatus(repoId)
-                setActiveRepo(prev => {
-                    const merged = { ...prev, ...updated }
-                    localStorage.setItem(getLsKey(user.id), JSON.stringify(merged))
-                    return merged
-                })
+                if (updated.status === 'FAILED') {
+                    // Failed — silently clear everything, no UI trace
+                    stopPolling()
+                    setCurrent(null)
+                    return
+                }
                 setCurrent(updated)
-                if (updated.status === 'READY' || updated.status === 'FAILED') {
-                    clearInterval(pollRef.current)
-                    pollRef.current = null
+                if (updated.status === 'READY') {
+                    stopPolling()
+                    setCurrent(null)
+                    setReadyRepo(updated)
                 }
             } catch { /* silently retry */ }
         }, 3000)
@@ -91,14 +48,14 @@ export default function DashboardPage() {
 
     async function handleSubmit(url, token) {
         setSubmitError('')
+        setReadyRepo(null)
         setBusy(true)
         setCurrent(null)
+        stopPolling()
 
         try {
             const repo = await ingestRepo(url, token)
-            setActiveRepo(repo)
             setCurrent(repo)
-            localStorage.setItem(getLsKey(user.id), JSON.stringify(repo))
             startPolling(repo.id)
         } catch (e) {
             if (e instanceof RateLimitError) {
@@ -111,29 +68,13 @@ export default function DashboardPage() {
         }
     }
 
-    async function handleRemove(repoId) {
-        setActiveRepo(null)
-        setCurrent(null)
-        localStorage.removeItem(getLsKey(user.id))
-        if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
-        try {
-            await deleteRepo(repoId)
-        } catch (e) {
-            console.error('Failed to delete repository:', e)
-        }
-    }
-
     return (
         <div className="min-h-screen bg-[#070709] text-white relative overflow-hidden">
             {/* Subtle glow background */}
             <div className="pointer-events-none fixed top-0 right-0 w-[500px] h-[500px] z-0 opacity-30"
-                style={{
-                    background: 'radial-gradient(circle at 100% 0%, rgba(139,92,246,0.12) 0%, transparent 70%)'
-                }} />
+                style={{ background: 'radial-gradient(circle at 100% 0%, rgba(139,92,246,0.12) 0%, transparent 70%)' }} />
             <div className="pointer-events-none fixed bottom-0 left-0 w-[400px] h-[400px] z-0 opacity-20"
-                style={{
-                    background: 'radial-gradient(circle at 0% 100%, rgba(236,72,153,0.08) 0%, transparent 70%)'
-                }} />
+                style={{ background: 'radial-gradient(circle at 0% 100%, rgba(236,72,153,0.08) 0%, transparent 70%)' }} />
 
             <NavBar />
 
@@ -152,7 +93,6 @@ export default function DashboardPage() {
 
                 {/* URL submission card */}
                 <div className="relative overflow-hidden bg-[#0d0d12]/50 border border-white/[0.06] rounded-2xl p-6 sm:p-8 space-y-6 backdrop-blur-md shadow-2xl">
-                    {/* Glowing effect in the background */}
                     <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-violet-600/5 blur-[80px] rounded-full pointer-events-none" />
 
                     <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -194,30 +134,49 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Active repository */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between border-b border-white/[0.04] pb-3">
-                        <h3 className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
-                            Active Repository
-                        </h3>
-                    </div>
-
-                    {loadingRepos ? (
-                        <div className="flex justify-center py-12">
-                            <LoadingSpinner size="lg" />
-                        </div>
-                    ) : !activeRepo ? (
-                        <EmptyState
-                            title="No active repository"
-                            description="Paste a GitHub URL above to analyze a codebase"
-                        />
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <RepoCard key={activeRepo.id} repo={activeRepo} onRemove={handleRemove} />
-                        </div>
-                    )}
-                </div>
+                {/* Success message — shown only when processing completes in this session */}
+                {readyRepo && (
+                    <SuccessCard repo={readyRepo} onDismiss={() => setReadyRepo(null)} />
+                )}
             </main>
+        </div>
+    )
+}
+
+// ─── SuccessCard — shown when repo becomes READY ─────────────────────────────
+
+function SuccessCard({ repo, onDismiss }) {
+    const slugRaw = repo.githubUrl?.replace('https://github.com/', '').replace(/\/$/, '') ?? ''
+    
+    useEffect(() => {
+        const timer = setTimeout(onDismiss, 5000)
+        return () => clearTimeout(timer)
+    }, [onDismiss])
+
+    return (
+        <div className="animate-fade-up relative overflow-hidden bg-[#0d0d0f] border border-white/[0.08] rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.4)] flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0 text-emerald-400">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <div>
+                    <p className="text-[13px] font-semibold text-white/90">Repo processing is done</p>
+                    <p className="text-[11.5px] text-neutral-500 mt-0.5 font-mono truncate max-w-[260px]">
+                        {slugRaw || repo.repoName}
+                    </p>
+                </div>
+            </div>
+            <button
+                onClick={onDismiss}
+                className="cursor-pointer text-neutral-600 hover:text-neutral-350 transition-colors shrink-0 mt-0.5"
+                title="Dismiss"
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
         </div>
     )
 }

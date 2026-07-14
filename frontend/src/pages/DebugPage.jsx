@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { streamDebug, getRepoStatus, RateLimitError } from '../api/client'
 import NavBar from '../components/layout/NavBar'
@@ -7,7 +7,6 @@ import LoadingSpinner from '../components/common/LoadingSpinner'
 import ToolNavLinks from '../components/common/ToolNavLinks'
 import RepoSelector from '../components/repo/RepoSelector'
 import DebugSection from '../components/debug/DebugSection'
-import TerminalTypewriter from '../components/common/TerminalTypewriter'
 
 // Parses the streaming plain text into named sections
 // Backend DebugService sends: "## Root Cause\n...\n## Explanation\n..."
@@ -57,13 +56,6 @@ export default function DebugPage() {
     }, [repoId])
 
 
-    const typewriterSteps = useMemo(() => [
-        { text: `repomind debug --error "${errorText.substring(0, 35)}${errorText.length > 35 ? '...' : ''}"`, type: 'command' },
-        { text: 'Embedding error signature & context...', type: 'info', delay: 400 },
-        { text: 'Querying vector database for similar code chunks...', type: 'info', delay: 600 },
-        { text: `Found matching chunks in repository ${repo?.repoName || ''}.`, type: 'success', delay: 500 },
-        { text: 'Executing reasoning LLM analysis model...', type: 'info', delay: 400 }
-    ], [errorText, repo?.repoName])
 
     async function handleAnalyze() {
         if (!errorText.trim()) return
@@ -230,12 +222,7 @@ export default function DebugPage() {
 
                 {/* Loading state — before first token arrives */}
                 {loading && !hasContent && (
-                    <div className="max-w-3xl mx-auto py-4 animate-fade-up">
-                        <TerminalTypewriter
-                            title="debug — terminal"
-                            steps={typewriterSteps}
-                        />
-                    </div>
+                    <DebugLoadingCard errorText={errorText} repoName={repo?.repoName} />
                 )}
 
                 {/* Results — sections appear one by one as streaming progresses */}
@@ -331,6 +318,24 @@ export default function DebugPage() {
                     </div>
                 )}
             </main>
+        </div>
+    )
+}
+
+// ─── Debug Loading Card ───────────────────────────────────────────────────────
+
+function DebugLoadingCard({ errorText, repoName }) {
+    return (
+        <div className="animate-fade-up bg-[#0d0d12]/50 border border-white/[0.06] rounded-2xl p-5 flex items-center gap-3 backdrop-blur-md">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-violet-600/30 to-fuchsia-600/30 border border-violet-500/20 flex items-center justify-center relative overflow-hidden shrink-0">
+                <div className="absolute inset-0 bg-violet-400/10 animate-pulse" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5 text-violet-300 relative z-10">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                </svg>
+            </div>
+            <p className="text-[12.5px] font-medium text-neutral-400 animate-pulse">
+                Analyzing error...
+            </p>
         </div>
     )
 }
