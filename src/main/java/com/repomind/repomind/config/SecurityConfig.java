@@ -53,7 +53,8 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Public endpoints — no token needed
                         .requestMatchers(
-                                "/api/auth/**",          // login, register, oauth2 callback
+                                "/api/auth/login",
+                                "/api/auth/register",// login, register, oauth2 callback
                                 "/oauth2/**",            // Google OAuth2 redirect URLs
                                 "/login/oauth2/**",      // Spring's OAuth2 callback path
                                 "/error",

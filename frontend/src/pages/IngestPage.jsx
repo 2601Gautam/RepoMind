@@ -15,7 +15,17 @@ export default function IngestPage({ onSelect }) {
 
     useEffect(() => {
         listRepos()
-            .then(all => setRepos(all.filter(r => r.status === 'READY')))
+            .then(data => {
+                const all = Array.isArray(data) ? data : (data.content || [])
+                setRepos(all.filter(r => r.status === 'READY'))
+                
+                const processing = all.find(r => r.status === 'PROCESSING' || r.status === 'PENDING')
+                if (processing) {
+                    setCurrent(processing)
+                    setBusy(true)
+                    startPolling(processing.id)
+                }
+            })
             .catch(() => {})
         return () => { if (pollRef.current) clearInterval(pollRef.current) }
     }, [])

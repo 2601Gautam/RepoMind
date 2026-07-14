@@ -75,9 +75,6 @@ function DebugSection({ variant, title, children, onCopy, streaming }) {
 export default function DebugPage() {
     const { repoId } = useParams() // undefined on /debug standalone route
 
-    // No repo selected — show picker
-    if (!repoId) return <RepoSelector tool="debug" />
-
     const [errorText, setErrorText] = useState('');
     const [context, setContext] = useState('');
     const [streamedText, setStreamedText] = useState('')
@@ -155,6 +152,8 @@ export default function DebugPage() {
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).catch(() => {})
     }
+    if (!repoId) return <RepoSelector tool="debug" />
+
     return (
         <div className="min-h-screen bg-gray-950 text-white">
             <NavBar repoName={repoId ? undefined : undefined} />

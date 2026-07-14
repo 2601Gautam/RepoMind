@@ -73,7 +73,8 @@ public class AuthController {
         return  ResponseEntity.ok(Map.of(
                 "userId", user.getId(),
                 "email", user.getEmail(),
-                "name", user.getName()
+                "name", user.getName(),
+                "provider", user.getProvider() // Add this line!
         ));
     }
 
@@ -81,12 +82,12 @@ public class AuthController {
     // Simply setting an expired cookie with the same name removes it from browser
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response){
-        Cookie cookie = new Cookie("jwt","");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);// MaxAge=0 tells browser to delete the cookie
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        return ResponseEntity.ok(Map.of("message","Logged out"));
+        response.addHeader(
+                "Set-Cookie",
+                "jwt=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0"
+        );
+
+        return ResponseEntity.ok(Map.of("message", "Logged out"));
     }
 
     // Creates and sets the httpOnly cookie containing the JWT
@@ -96,18 +97,17 @@ public class AuthController {
     // MaxAge = cookie expiry in seconds
 
     private void setJwtCookie(HttpServletResponse response,String token){
-        Cookie cookie = new Cookie("jwt",token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);// Must be true when SameSite=None
-        cookie.setPath("/");
-        cookie.setMaxAge(jwtExpiration/1000);  // Convert ms to seconds
-        // SameSite=None is required for cross-origin cookie sending
-        // Without this, the browser blocks the cookie when Vercel calls Render
-        response.addHeader("set-Cookie",
-                String.format("jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",token,jwtExpiration/1000));
+        response.addHeader(
+                "Set-Cookie",
+                String.format(
+                        "jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",
+                        token,
+                        jwtExpiration / 1000
+                )
+        );
     }
 
-    @GetMapping("profile/stats")
+    @GetMapping("/profile/stats")
     public ResponseEntity<?> getProfileStats(@AuthenticationPrincipal User user){
         if(user == null) return ResponseEntity.status(401).build();
 

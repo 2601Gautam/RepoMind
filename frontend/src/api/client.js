@@ -78,8 +78,8 @@ export const getProfileStats = () => apiFetch(`${BASE}/auth/profile/stats`)
 //------Repos---------------------------------------
 
 // Backend now returns PagedResponse: {content:[], page:0, totalPages:N, ...}
-export const listRepos = (page = 0, size = 12) =>
-    apiFetch(`${BASE}/repos?page=${page}&size=${size}`)
+export const listRepos = () => apiFetch(`${BASE}/repos`)
+
 
 export const getRepoStatus = (repoId) =>
     apiFetch(`${BASE}/repos/${repoId}/status`)

@@ -8,16 +8,14 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        checkAuthStatus()
-    }, [])
 
     async function checkAuthStatus() {
         try {
             const data = await getMe()
             setUser(data)
-        } catch {
+        } catch (err) {
             setUser(null)
+            throw err;
         } finally {
             setLoading(false)
         }
@@ -35,10 +33,11 @@ export function AuthProvider({ children }) {
                 if (active) {
                     setUser(user)
                 }
-            } catch {
+            } catch (err) {
                 if (active) {
                     setUser(null)
                 }
+            throw err;
             } finally {
                 if (active) {
                     setLoading(false)

@@ -125,7 +125,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         // Redirect to frontend after successful login
         // Frontend reads /api/auth/me to get user details
-        response.sendRedirect(frontendUrl + "/?oauth=success");
+        response.sendRedirect(frontendUrl + "/auth/callback?oauth=success");
 
     }
 

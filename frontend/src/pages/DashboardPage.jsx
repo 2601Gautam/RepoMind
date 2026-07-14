@@ -32,6 +32,9 @@ export default function DashboardPage() {
                 if (saved) {
                     const parsed = JSON.parse(saved)
                     setActiveRepo(parsed)
+                    if (parsed.status === 'PROCESSING' || parsed.status === 'PENDING') {
+                        setCurrent(parsed)
+                    }
                     // Refresh status from server
                     const fresh = await getRepoStatus(parsed.id)
                     const updated = { ...parsed, ...fresh }
@@ -41,6 +44,8 @@ export default function DashboardPage() {
                     if (fresh.status === 'PROCESSING' || fresh.status === 'PENDING') {
                         setCurrent(fresh)
                         startPolling(parsed.id)
+                    } else {
+                        setCurrent(null)
                     }
                 } else {
                     // No saved repo — fetch the most recently submitted one
@@ -195,19 +200,6 @@ export default function DashboardPage() {
                         <h3 className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
                             Active Repository
                         </h3>
-                        {activeRepo && (
-                            <button
-                                onClick={() => {
-                                    setActiveRepo(null)
-                                    setCurrent(null)
-                                    localStorage.removeItem(getLsKey(user.id))
-                                    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
-                                }}
-                                className="cursor-pointer text-[11px] text-neutral-600 hover:text-neutral-400 transition-colors"
-                            >
-                                Clear
-                            </button>
-                        )}
                     </div>
 
                     {loadingRepos ? (

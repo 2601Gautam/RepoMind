@@ -10,42 +10,50 @@ export default function IngestionProgress({ repo }) {
         : 0
 
     return (
-        <div className="bg-[#0f0f13]/60 border border-white/[0.06] rounded-xl p-5 space-y-4 shadow-inner relative overflow-hidden backdrop-blur-md">
-            <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-            
-            <div className="flex justify-between items-center gap-4">
-                <div className="flex items-center gap-3 min-w-0">
-                    <svg className="animate-spin shrink-0 h-5 w-5 text-violet-400" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2.5" className="opacity-20" />
-                        <path d="M12 2C17.5228 2 22 6.47715 22 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                    </svg>
-                    <p className="text-[14px] font-bold text-white truncate tracking-tight">
-                        {repo.repoName}
-                    </p>
-                </div>
-                <StatusBadge status={repo.status} />
+        <div className="mt-6 mx-auto w-full rounded-xl overflow-hidden border border-white/[0.07] shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center gap-2 px-4 py-3 bg-white/[0.03] border-b border-white/[0.06]">
+                <span className="w-3 h-3 rounded-full" style={{ background: '#FF5F57' }} />
+                <span className="w-3 h-3 rounded-full" style={{ background: '#FEBC2E' }} />
+                <span className="w-3 h-3 rounded-full" style={{ background: '#28C840' }} />
+                <span className="ml-3 text-[11px] text-[#4b5563] font-mono">repomind — ai processing</span>
+                <span className="ml-auto text-[11px] text-gray-500 font-mono flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span>
+                    {repo.status}
+                </span>
             </div>
-
-            {repo.totalFiles > 0 && (
-                <div className="space-y-2 pt-1">
-                    <div className="flex justify-between text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                        <span>Ingesting files...</span>
-                        <span>{pct}%</span>
-                    </div>
-                    <div className="bg-white/[0.05] rounded-full h-1.5 overflow-hidden shadow-inner">
-                        <div
-                            className="bg-gradient-to-r from-violet-500 to-fuchsia-500 h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(139,92,246,0.4)]"
-                            style={{ width: `${pct}%` }}
-                        />
-                    </div>
-                    <div className="text-[12.5px] text-neutral-500 font-semibold pt-1 flex items-center justify-between">
-                        <span>{repo.processedFiles} of {repo.totalFiles} files</span>
-                        {repo.totalChunks > 0 && (
-                            <span>{repo.totalChunks.toLocaleString()} chunks indexed</span>
-                        )}
-                    </div>
+            <div className="bg-[#0d0d0d] p-5 md:p-7 font-mono text-[13px] md:text-[14px] leading-[1.8] text-left transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent animate-[shimmer_2s_infinite]" />
+                <div className="text-gray-500 flex items-center gap-2"><span className="text-violet-400 font-semibold">System:</span> AI Embedding Engine Active</div>
+                <div className="text-gray-300 text-xs font-sans space-y-3 mt-4 relative z-10">
+                    <p className="text-gray-400 flex items-center gap-2">
+                        <span className="text-violet-500/70">✦</span> 
+                        Analyzing repository: <span className="text-white font-mono text-[13px]">{repo.repoName}</span>
+                    </p>
+                    
+                    {repo.totalFiles > 0 ? (
+                        <>
+                            <p className="text-gray-400 flex items-center gap-2">
+                                <span className="text-violet-500/70">✦</span> 
+                                Processing files... {repo.processedFiles} / {repo.totalFiles} ({pct}%)
+                            </p>
+                            
+                            <div className="w-full max-w-md bg-white/[0.05] rounded-full h-1.5 mt-2 mb-3 overflow-hidden shadow-inner flex">
+                                <div
+                                    className="bg-gradient-to-r from-violet-500 to-fuchsia-500 h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(139,92,246,0.4)]"
+                                    style={{ width: `${pct}%` }}
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        <p className="flex items-center gap-2 text-violet-300">
+                            <svg className="w-3.5 h-3.5 animate-spin text-violet-400" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="32" strokeLinecap="round" className="opacity-70" />
+                            </svg>
+                            AI is scanning repository files...
+                        </p>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     )
 }

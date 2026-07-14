@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import LoadingSpinner from '../components/common/LoadingSpinner'
 
 const GoogleIcon = () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -35,6 +36,14 @@ export default function LoginPage() {
 
      // Check for OAuth error in URL params — Spring redirects here on OAuth failure
     const oauthError = new URLSearchParams(window.location.search).get('error')
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+                <LoadingSpinner size="lg" />
+            </div>
+        )
+    }
 
     async function handleLogin(e) {
         e.preventDefault()
@@ -139,10 +148,9 @@ export default function LoginPage() {
                                     Sign in
                                 </span>
                                 <div className={`absolute flex items-center gap-2.5 transition-all duration-300 ${loading ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-4'}`}>
-                                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-20" />
-                                        <path d="M12 2C17.5228 2 22 6.47715 22 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                                    </svg>
+                                    <div className="[&>div>div]:border-black/20 [&>div>div]:border-t-black">
+                                        <LoadingSpinner size="sm" />
+                                    </div>
                                     <span className="font-medium tracking-wide">Authenticating...</span>
                                 </div>
                             </div>
