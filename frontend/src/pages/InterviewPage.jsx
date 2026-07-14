@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import {
     generateInterview,
     getRepoStatus,
@@ -8,7 +8,11 @@ import {
     RateLimitError
 } from '../api/client'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import RateLimitBanner from '../components/common/RateLimitBanner'
+import ToolNavLinks from '../components/common/ToolNavLinks'
 import RepoSelector from '../components/repo/RepoSelector'
+import NavBar from '../components/layout/NavBar'
+import TerminalTypewriter from '../components/common/TerminalTypewriter'
 
 const DIFFICULTIES = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED']
 
@@ -30,7 +34,7 @@ export default function InterviewPage() {
     const [loadingSessions, setLoadingSessions] = useState(true)
     const [error, setError] = useState('')
     const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
-    
+
     // Toggle for Saved Sessions Drawer
     const [showHistory, setShowHistory] = useState(false)
 
@@ -81,8 +85,6 @@ export default function InterviewPage() {
         }
     }
 
-    // ─── EARLY RETURN FOR REPO SELECTOR ────────────────────────────────────
-    if (!repoId) return <RepoSelector tool="interview" />
 
     async function handleGenerate() {
         setLoading(true)
@@ -142,7 +144,7 @@ export default function InterviewPage() {
     function formatDate(dateVal) {
         try {
             if (!dateVal) return 'Recently'
-            
+
             if (Array.isArray(dateVal)) {
                 const [y, m, d] = dateVal
                 if (y === undefined || m === undefined || d === undefined) return 'Recently'
@@ -154,7 +156,7 @@ export default function InterviewPage() {
                     year: 'numeric'
                 })
             }
-            
+
             const date = new Date(dateVal)
             if (isNaN(date.getTime())) return 'Recently'
             return date.toLocaleDateString(undefined, {
@@ -170,17 +172,34 @@ export default function InterviewPage() {
 
     const activeQuestion = session?.questions?.[currentQuestionIdx]
 
+    const typewriterSteps = useMemo(() => [
+        { text: `repomind interview --difficulty ${difficulty}`, type: 'command' },
+        { text: 'Building repository summary context...', type: 'info', delay: 400 },
+        { text: 'Generating difficulty-aware semantic embedding query...', type: 'info', delay: 500 },
+        { text: `Retrieving 20 structural chunks from repository ${repo?.repoName || ''} via pgvector...`, type: 'success', delay: 600 },
+        { text: 'Formulating 5 codebase-specific questions...', type: 'info', delay: 500 },
+        { text: 'Drafting expectation guidelines & concept checks...', type: 'info', delay: 600 }
+    ], [difficulty, repo?.repoName])
+
+    if (!repoId) return <RepoSelector tool="interview" />
+
     return (
-        <div className="min-h-screen bg-gray-955 bg-[#080809] text-white font-sans flex flex-col relative overflow-x-hidden pt-8">
-            
+        <div className="min-h-screen bg-[#080809] text-white font-sans flex flex-col relative overflow-x-hidden">
+            <NavBar repoName={repo?.repoName} />
+            {/* Subtle glow background — matches Dashboard/Chat/Debug */}
+            <div className="pointer-events-none fixed top-0 right-0 w-[500px] h-[500px] z-0 opacity-30"
+                style={{ background: 'radial-gradient(circle at 100% 0%, rgba(139,92,246,0.12) 0%, transparent 70%)' }} />
+            <div className="pointer-events-none fixed bottom-0 left-0 w-[400px] h-[400px] z-0 opacity-20"
+                style={{ background: 'radial-gradient(circle at 0% 100%, rgba(236,72,153,0.08) 0%, transparent 70%)' }} />
+
             {/* ─── SIDE-OVER SAVED SESSIONS DRAWER ─── */}
             {showHistory && (
-                <div 
+                <div
                     onClick={() => setShowHistory(false)}
                     className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300"
                 />
             )}
-            
+
             <div className={`fixed inset-y-0 right-0 w-80 max-w-full bg-[#0d0d0f] border-l border-white/[0.07] p-6 z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
                 showHistory ? 'translate-x-0' : 'translate-x-full'
             }`}>
@@ -188,7 +207,7 @@ export default function InterviewPage() {
                     <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
                         Saved Sessions
                     </h3>
-                    <button 
+                    <button
                         onClick={() => setShowHistory(false)}
                         className="cursor-pointer text-neutral-500 hover:text-white transition-colors"
                     >
@@ -260,31 +279,21 @@ export default function InterviewPage() {
                             </p>
                         </div>
                     </div>
-                    
-                    {/* Navigation Actions & History Toggle */}
-                    <div className="flex items-center gap-1.5 shrink-0">
-                        <Link to={`/chat/${repoId}`}
-                            className="text-xs bg-[#0f0f11] hover:bg-[#151518] border border-white/[0.06] text-neutral-400 hover:text-white px-3.5 py-1.5 rounded-lg transition-all font-medium">
-                            Chat
-                        </Link>
-                        <Link to={`/debug/${repoId}`}
-                            className="text-xs bg-[#0f0f11] hover:bg-[#151518] border border-white/[0.06] text-neutral-400 hover:text-white px-3.5 py-1.5 rounded-lg transition-all font-medium">
-                            Debug
-                        </Link>
-                        <button onClick={() => setShowHistory(true)}
-                            className="text-xs bg-[#0f0f11] hover:bg-[#151518] border border-white/[0.06] text-neutral-400 hover:text-white px-3.5 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1 cursor-pointer">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
-                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            History
-                        </button>
-                    </div>
+
+                    {/* History Toggle */}
+                    <button onClick={() => setShowHistory(true)}
+                        className="text-xs bg-[#0f0f11] hover:bg-[#151518] border border-white/[0.06] text-neutral-400 hover:text-white px-3.5 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1 cursor-pointer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
+                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        History
+                    </button>
                 </div>
 
                 {/* ─── CASE 1: GENERATED STATIC CARD DECK ─── */}
                 {session && activeQuestion && (
                     <div className="space-y-6 py-2">
-                        
+
                         {/* Integrated Flat Header Row (Replacing the bulky banner card) */}
                         <div className="flex items-center justify-between border-b border-white/[0.05] pb-4">
                             <div>
@@ -297,12 +306,12 @@ export default function InterviewPage() {
                                 <button onClick={copyAllQuestions}
                                     className={`text-xs border px-3 py-1.5 rounded-lg font-medium transition-all ${
                                         copiedAll
-                                            ? 'bg-emerald-955/20 bg-emerald-950/20 border-emerald-800/30 text-emerald-400'
+                                            ? 'bg-emerald-950/20 border-emerald-800/30 text-emerald-400'
                                             : 'border-white/[0.06] bg-[#0f0f11] text-neutral-400 hover:text-white hover:bg-white/[0.02] cursor-pointer'
                                     }`}>
                                     {copiedAll ? 'Copied All!' : 'Copy All Questions'}
                                 </button>
-                                
+
                                 <button onClick={handleStartNew}
                                     className="text-xs bg-transparent text-neutral-500 hover:text-white transition-all cursor-pointer font-semibold flex items-center gap-1.5">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5">
@@ -315,12 +324,12 @@ export default function InterviewPage() {
 
                         {/* Interactive deck layout with absolute side chevrons */}
                         <div className="relative w-full flex flex-col sm:block">
-                            
+
                             {/* Soft violet ambient glow orb behind the deck */}
                             <div className="absolute -inset-10 bg-violet-500/5 blur-[50px] rounded-full pointer-events-none z-0" />
 
                             {/* Previous Button (Left Side - absolute positioned outside card bounds) */}
-                            <button 
+                            <button
                                 onClick={() => {
                                     setIsAnswerRevealed(false)
                                     setCurrentQuestionIdx(idx => Math.max(0, idx - 1))
@@ -335,7 +344,7 @@ export default function InterviewPage() {
                             </button>
 
                             {/* Clickable central Question Card (full width matching banner) */}
-                            <div 
+                            <div
                                 onClick={() => setIsAnswerRevealed(!isAnswerRevealed)}
                                 className="relative w-full bg-[#0f0f11] border border-white/[0.07] hover:border-white/[0.12] rounded-2xl p-5 flex flex-col shadow-[0_4px_30px_rgba(0,0,0,0.4)] cursor-pointer select-none transition-all duration-150 overflow-hidden z-10"
                             >
@@ -358,7 +367,7 @@ export default function InterviewPage() {
                                         {activeQuestion.question}
                                     </p>
                                 </div>
-                                
+
                                 {/* Landing Page style gradient line divider */}
                                 <div className="h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent my-3.5" />
 
@@ -368,7 +377,7 @@ export default function InterviewPage() {
                                         <span className="text-[11px] text-neutral-600 font-medium tracking-tight">
                                             {isAnswerRevealed ? 'Click card to hide answer' : 'Click card to reveal answer'}
                                         </span>
-                                        <button 
+                                        <button
                                             onClick={(e) => {
                                                 e.stopPropagation() // Prevent toggling the answer reveal
                                                 copySingleQuestion(activeQuestion, currentQuestionIdx)
@@ -399,7 +408,7 @@ export default function InterviewPage() {
                             </div>
 
                             {/* Next Button (Right Side - absolute positioned outside card bounds) */}
-                            <button 
+                            <button
                                 onClick={() => {
                                     setIsAnswerRevealed(false)
                                     setCurrentQuestionIdx(idx => Math.min(session.questions.length - 1, idx + 1))
@@ -416,7 +425,7 @@ export default function InterviewPage() {
 
                         {/* Inline navigation buttons below the card for mobile screen bounds */}
                         <div className="flex sm:hidden items-center justify-between gap-4 w-full mt-2">
-                            <button 
+                            <button
                                 onClick={() => {
                                     setIsAnswerRevealed(false)
                                     setCurrentQuestionIdx(idx => Math.max(0, idx - 1))
@@ -426,7 +435,7 @@ export default function InterviewPage() {
                             >
                                 Previous
                             </button>
-                            <button 
+                            <button
                                 onClick={() => {
                                     setIsAnswerRevealed(false)
                                     setCurrentQuestionIdx(idx => Math.min(session.questions.length - 1, idx + 1))
@@ -460,7 +469,7 @@ export default function InterviewPage() {
                 {/* ─── CASE 2: CONFIGURATION SCREEN ─── */}
                 {!session && (
                     <div className="space-y-6 animate-fade-up">
-                        
+
                         {/* Configuration Card */}
                         <div className="bg-[#0f0f11] border border-white/[0.07] rounded-xl p-5 sm:p-6 space-y-5">
                             <div>
@@ -508,13 +517,13 @@ export default function InterviewPage() {
                             )}
                         </div>
 
-                        {/* Loading Spinner */}
+                        {/* Loading State with Bot Typing Indicator */}
                         {loading && (
-                            <div className="flex flex-col items-center gap-3 py-12">
-                                <LoadingSpinner size="lg" />
-                                <p className="text-neutral-500 text-xs">
-                                    Analyzing codebase structure and preparing questionnaire...
-                                </p>
+                            <div className="max-w-2xl mx-auto py-4 animate-fade-up">
+                                <TerminalTypewriter
+                                    title="interview — terminal"
+                                    steps={typewriterSteps}
+                                />
                             </div>
                         )}
 

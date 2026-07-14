@@ -164,57 +164,30 @@ function ChatPageInner({ repoId }) {
                 style={{ background: 'radial-gradient(circle at 0% 100%, rgba(236,72,153,0.1) 0%, transparent 70%)' }} />
 
             {/* ── Top Bar ─────────────────────────────────────────── */}
-            <header className="relative z-10 shrink-0 border-b border-white/[0.05] bg-[#080809]/80 backdrop-blur-md">
-                <div className="w-full px-4 sm:px-8 h-14 flex items-center gap-4">
-                    {/* Back */}
-                    <button
-                        onClick={() => navigate('/chat')}
-                        className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
-                        title="Back to Chats"
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-
-                    {/* Repo info */}
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div className="w-6 h-6 rounded-md bg-[#13111f] border border-violet-500/20 flex items-center justify-center shrink-0">
-                            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 text-violet-400">
-                                <path d="M2 3h10M2 7h7M2 11h5"/>
-                            </svg>
-                        </div>
-                        <div className="min-w-0">
-                            <p className="text-[13px] font-semibold text-white/85 truncate leading-none tracking-[-0.01em]">{repo.repoName || slug.split('/').pop()}</p>
-                            <p className="text-[10px] text-neutral-700 font-mono truncate mt-0.5">{slug}</p>
-                        </div>
-                    </div>
-
-                    {/* Nav links / Actions */}
-                    <div className="flex items-center gap-1.5 shrink-0">
-                        {messages.length > 0 && (
-                            <button
-                                onClick={async () => {
-                                    if (conversationId) {
-                                        try {
-                                            await clearChatConversation(conversationId)
-                                        } catch (e) {
-                                            console.error('Failed to clear database conversation:', e)
-                                        }
+            <NavBar 
+                repoName={repo?.repoName} 
+                action={
+                    messages.length > 0 && (
+                        <button
+                            onClick={async () => {
+                                if (conversationId) {
+                                    try {
+                                        await clearChatConversation(conversationId)
+                                    } catch (e) {
+                                        console.error('Failed to clear database conversation:', e)
                                     }
-                                    setMessages([])
-                                    setConversationId(null)
-                                }}
-                                className="cursor-pointer text-[11.5px] font-medium text-neutral-600 hover:text-red-400 bg-white/[0.03] hover:bg-red-500/5 border border-white/[0.05] hover:border-red-500/20 px-3 py-1.5 rounded-lg transition-all"
-                                title="Clear chat history"
-                            >
-                                Clear
-                            </button>
-                        )}
-                    </div>
-
-                </div>
-            </header>
+                                }
+                                setMessages([])
+                                setConversationId(null)
+                            }}
+                            className="cursor-pointer text-[11px] font-bold text-neutral-500 hover:text-red-400 bg-white/[0.02] hover:bg-red-500/5 border border-white/[0.05] hover:border-red-500/15 px-3 py-1.5 rounded-xl transition-all"
+                            title="Clear chat history"
+                        >
+                            Clear
+                        </button>
+                    )
+                }
+            />
 
             {/* ── Message area ─────────────────────────────────────── */}
             <div className="flex-1 overflow-hidden relative z-10">
