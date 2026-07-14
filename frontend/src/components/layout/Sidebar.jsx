@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const navItems = [
     {
@@ -93,7 +93,6 @@ const navItems = [
 
 export default function Sidebar({ isOpen = true, onToggle }) {
     const location = useLocation()
-    const { repoId } = useParams()
 
     function isActive(path) {
         if (path === '/dashboard') return location.pathname === '/dashboard'
@@ -114,8 +113,8 @@ export default function Sidebar({ isOpen = true, onToggle }) {
                     <span className="text-[15px] font-bold text-white tracking-tight">RepoMind</span>
                 </Link>
                 {/* Toggle Button */}
-                <button 
-                    onClick={onToggle} 
+                <button
+                    onClick={onToggle}
                     className={`cursor-pointer p-1.5 rounded-lg text-neutral-500 hover:text-white hover:bg-white/[0.06] transition-colors ${isOpen ? '' : 'mx-auto'}`}
                     title={isOpen ? "Collapse Sidebar" : "Expand Sidebar"}
                 >
@@ -141,13 +140,10 @@ export default function Sidebar({ isOpen = true, onToggle }) {
                         <div className="space-y-1">
                             {group.items.map((item) => {
                                 const active = isActive(item.path)
-                                const targetPath = (item.path === '/chat' || item.path === '/debug' || item.path === '/interview') && repoId
-                                    ? `${item.path}/${repoId}`
-                                    : item.path
                                 return (
                                     <Link
                                         key={item.name}
-                                        to={targetPath}
+                                        to={item.path}
                                         title={!isOpen ? item.name : undefined}
                                         className={`flex items-center rounded-lg text-[13px] font-medium transition-all duration-150 ${
                                             isOpen ? 'gap-3 px-2.5 py-2' : 'justify-center p-2.5'

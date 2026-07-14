@@ -6,10 +6,7 @@ import com.repomind.repomind.dto.request.InterviewRequest;
 import com.repomind.repomind.dto.response.InterviewQuestionDto;
 import com.repomind.repomind.dto.response.InterviewSessionDto;
 import com.repomind.repomind.model.entity.*;
-import com.repomind.repomind.repository.CodeChunkRepository;
-import com.repomind.repomind.repository.InterviewQuestionRepository;
-import com.repomind.repomind.repository.InterviewSessionRepository;
-import com.repomind.repomind.repository.RepoJpaRepository;
+import com.repomind.repomind.repository.*;
 import com.repomind.repomind.service.ingestion.EmbeddingService;
 import jakarta.persistence.SecondaryTable;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +29,7 @@ public class InterviewService {
     private final InterviewQuestionRepository questionRepository;
     private final EmbeddingService embeddingService;
     private final ObjectMapper objectMapper;
+    private final UserRepoRepository userRepoRepository;
 
     public InterviewService(
             @Qualifier("structuredChatClient") ChatClient chatClient,
@@ -40,7 +38,8 @@ public class InterviewService {
             InterviewSessionRepository sessionRepository,
             InterviewQuestionRepository questionRepository,
             ObjectMapper objectMapper,
-            EmbeddingService embeddingService)
+            EmbeddingService embeddingService,
+            UserRepoRepository userRepoRepository)
     {
         this.chatClient = chatClient;
         this.repoRepository = repoRepository;
@@ -49,14 +48,16 @@ public class InterviewService {
         this.questionRepository = questionRepository;
         this.objectMapper = objectMapper;
         this.embeddingService = embeddingService;
+        this.userRepoRepository = userRepoRepository;
     }
 
 
     public InterviewSessionDto generateQuestions(InterviewRequest request , User currentUser){
 
         // Load the repo and verify it exists and is ready
-        RepoEntity repo = repoRepository.findById(request.getRepoId())
-                .orElseThrow(() -> new RuntimeException(("Repository not found")));
+        UserRepo userRepo = userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), request.getRepoId())
+                .orElseThrow(() -> new RuntimeException("Access denied"));
+        RepoEntity repo = userRepo.getRepo();
         if(repo.getStatus() != RepoEntity.IngestionStatus.READY){
             throw  new RuntimeException("Repository is not ready yet");
         }
@@ -96,7 +97,7 @@ public class InterviewService {
                     .question(pq.question())
                     .expectedAnswer(pq.expectedAnswer())
                     .difficulty(request.getDifficulty())
-                    .conceptTested(pq.conceptTested)
+                    .conceptTested(pq.conceptTested())
                     .questionOrder(i+1)
                     .build();
             savedQuestions.add(questionRepository.save(q));

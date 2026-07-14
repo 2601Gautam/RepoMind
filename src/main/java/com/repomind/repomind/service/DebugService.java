@@ -2,18 +2,14 @@ package com.repomind.repomind.service;
 
 
 import com.repomind.repomind.dto.request.DebugRequest;
-import com.repomind.repomind.dto.response.DebugResponse;
-import com.repomind.repomind.model.entity.CodeChunk;
 import com.repomind.repomind.repository.CodeChunkRepository;
 import com.repomind.repomind.service.ingestion.EmbeddingService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
+
 
 import java.util.List;
 import java.util.UUID;

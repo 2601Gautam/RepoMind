@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-
+import logo from "../../dist/websiteLogo.png"
 const RevealOnScroll = ({ children, delay = 0 }) => {
     const [isVisible, setIsVisible] = useState(false)
     const ref = useRef(null)
@@ -188,32 +188,47 @@ export default function LandingPage() {
             <header className="relative z-50 sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-2xl">
                 <div className="max-w-6xl mx-auto px-8 h-14 flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2 select-none group">
-                        <div className="w-7 h-7 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(139,92,246,0.35)] group-hover:shadow-[0_0_18px_rgba(139,92,246,0.5)] transition-all">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="16 18 22 12 16 6" />
-                                <polyline points="8 6 2 12 8 18" />
-                            </svg>
+                        <div className="w-13 h-13 flex items-center justify-center">
+                            <img
+                                src={logo}
+                                alt="RepoMind Logo"
+                                className="w-full h-full object-contain"
+                                draggable={false}
+                            />
                         </div>
+
                         <span className="font-mono text-2xl font-bold text-white tracking-tight leading-none">
                             {logoText}
                         </span>
-                        <span className={`inline-block w-[2px] h-[22px] bg-violet-400 transition-opacity duration-75 ${isTyping ? 'opacity-100' : 'opacity-30'} animate-pulse`} />
+
+                        <span
+                            className={`inline-block w-[2px] h-[22px] bg-violet-400 transition-opacity duration-75 ${
+                                isTyping ? "opacity-100" : "opacity-30"
+                            } animate-pulse`}
+                        />
                     </Link>
 
                     <nav className="flex items-center gap-1">
                         {user ? (
-                            <Link to="/dashboard"
-                                className="text-sm font-medium text-gray-400 hover:text-white hover:bg-white/[0.06] px-4 py-2 rounded-lg transition-all duration-150 cursor-pointer">
+                            <Link
+                                to="/dashboard"
+                                className="text-sm font-medium text-gray-400 hover:text-white hover:bg-white/[0.06] px-4 py-2 rounded-lg transition-all duration-150 cursor-pointer"
+                            >
                                 Dashboard
                             </Link>
                         ) : (
                             <>
-                                <Link to="/login"
-                                    className="text-sm font-medium text-gray-400 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.05] transition-all duration-150 cursor-pointer">
+                                <Link
+                                    to="/login"
+                                    className="text-sm font-medium text-gray-400 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.05] transition-all duration-150 cursor-pointer"
+                                >
                                     Sign in
                                 </Link>
-                                <Link to="/register"
-                                    className="ml-1 text-sm font-semibold bg-white text-[#0a0a0a] hover:bg-[#f0f0f0] px-4 py-2 rounded-lg transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+
+                                <Link
+                                    to="/register"
+                                    className="ml-1 text-sm font-semibold bg-white text-[#0a0a0a] hover:bg-[#f0f0f0] px-4 py-2 rounded-lg transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                                >
                                     Get Started
                                 </Link>
                             </>

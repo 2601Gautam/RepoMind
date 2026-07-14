@@ -1,17 +1,23 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-
+import logo from "../../../dist/websiteLogo.png"
 // Wordmark logo
 function Logo() {
     return (
-        <Link to="/dashboard" className="flex items-center gap-2 group shrink-0 select-none">
-            <div className="w-6.5 h-6.5 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(139,92,246,0.3)] group-hover:shadow-[0_0_15px_rgba(139,92,246,0.5)] transition-all duration-300">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="16 18 22 12 16 6" />
-                    <polyline points="8 6 2 12 8 18" />
-                </svg>
+            <Link
+            to="/dashboard"
+            className="flex items-center gap-2 group shrink-0 select-none"
+        >
+            <div className="w-12 h-12 flex items-center justify-center">
+                <img
+                    src={logo}
+                    alt="RepoMind Logo"
+                    className="w-full h-full object-contain transition-transform"
+                    draggable={false}
+                />
             </div>
-            <span className="text-[13.5px] font-bold text-white group-hover:text-violet-300 tracking-tight transition-colors duration-300">
+
+            <span className="text-[15.5px] font-bold text-white  tracking-tight ">
                 RepoMind
             </span>
         </Link>
