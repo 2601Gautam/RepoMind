@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import logo from '../../../dist/websiteLogo.png'
+import logo from '../../assets/websiteLogo.png'
 
 const navItems = [
     {

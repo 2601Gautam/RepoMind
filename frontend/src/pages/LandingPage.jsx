@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import logo from "../../dist/websiteLogo.png"
+import logo from '../../assets/websiteLogo.png'
 const RevealOnScroll = ({ children, delay = 0 }) => {
     const [isVisible, setIsVisible] = useState(false)
     const ref = useRef(null)

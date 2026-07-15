@@ -1,6 +1,6 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import logo from "../../../dist/websiteLogo.png"
+import logo from "../../assets/websiteLogo.png"
 // Wordmark logo
 function Logo() {
     return (

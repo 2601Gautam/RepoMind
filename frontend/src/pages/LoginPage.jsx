@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import LoadingSpinner from '../components/common/LoadingSpinner'
-import logo from '../../dist/websiteLogo.png'
+import logo from '../../assets/websiteLogo.png'
 
 const GoogleIcon = () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24">
