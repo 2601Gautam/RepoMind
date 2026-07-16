@@ -20,7 +20,7 @@ export default function AllReposPage() {
     async function loadRepos() {
         setLoadingRepos(true)
         try {
-            const data = await listRepos(page, 12)
+            const data = await listRepos(page, 5)
             const repoList = Array.isArray(data) ? data : (data.content || [])
             // Filter out FAILED repos — never show them in the UI
             const visible = repoList.filter(r => r.status !== 'FAILED')
