@@ -20,21 +20,35 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public AuthResponse register(RegisterRequest reqest)
+    public AuthResponse register(RegisterRequest request)
     {
         //check if email already exists
-        if(userRepository.existsByEmail(reqest.getEmail())){
-            throw new RuntimeException("Email already registered");
-        }
+        userRepository.findByEmail(request.getEmail()).ifPresent(existingUser -> {
+            String provider = existingUser.getProvider();
+            String message;
+
+            if ("LOCAL".equals(provider)) {
+                message = "An account with " + request.getEmail() +
+                        " already exists. Please log in with your password instead.";
+            } else {
+                String providerName = "GOOGLE".equals(provider) ? "Google" : "GitHub";
+                message = "An account with " + request.getEmail() +
+                        " already exists via " + providerName + ". Please sign in with " + providerName + " instead.";
+            }
+
+            log.warn("Registration blocked — email already exists via {}: {}", provider, request.getEmail());
+            throw new RuntimeException(message);
+        });
+
 
 
         // Create new user with bcrypt-hashed password
         // passwordEncoder.encode() runs bcrypt — irreversible one-way hash
 
         User user = User.builder()
-                .email(reqest.getEmail())
-                .passwordHash(passwordEncoder.encode(reqest.getPassword()))
-                .name(reqest.getName())
+                .email(request.getEmail())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .name(request.getName())
                 .provider("LOCAL")
                 .build();
 
@@ -42,7 +56,7 @@ public class AuthService {
         log.info("New user registered: {}",user.getEmail());
 
         String token = jwtUtil.generateToken(user.getId(),user.getEmail());
-        return new AuthResponse(token,user.getId(),user.getEmail(),user.getName());
+        return new AuthResponse(token,user.getId(),user.getEmail(),user.getName(),user.getProvider());
     }
 
     public AuthResponse login(LoginRequest request){
@@ -67,6 +81,6 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getId(),user.getEmail());
         log.info("User logged in: {}",user.getEmail());
-        return new AuthResponse(token,user.getId(),user.getEmail(),user.getName());
+        return new AuthResponse(token,user.getId(),user.getEmail(),user.getName(),user.getProvider());
     }
 }

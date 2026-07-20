@@ -28,15 +28,31 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const params = new URLSearchParams(window.location.search)
+    const oauthError = params.get('error')
+    const existingProvider = params.get('existingProvider')
+    const attemptedProvider = params.get('attemptedProvider')
+
+    function getOAuthErrorMessage() {
+        if (!oauthError) return null
+
+        if (oauthError === 'provider_mismatch' && existingProvider) {
+            const existing = existingProvider.charAt(0).toUpperCase() + existingProvider.slice(1)
+            return `This email is already registered with ${existing}. Please sign in with ${existing} instead.`
+        }
+        if (oauthError === 'authentication_failed') {
+            return 'Something went wrong verifying your account. Please try again.'
+        }
+        return 'Sign in failed. Please try again.'
+    }
+
+    const oauthErrorMessage = getOAuthErrorMessage()
 
     useEffect(() => {
         if (!authLoading && user) {
             navigate('/dashboard', { replace: true })
         }
     }, [user, authLoading, navigate])
-
-     // Check for OAuth error in URL params — Spring redirects here on OAuth failure
-    const oauthError = new URLSearchParams(window.location.search).get('error')
 
     if (authLoading) {
         return (
@@ -108,9 +124,9 @@ export default function LoginPage() {
                 </div>
 
                 <div className="bg-[#050505]/80 backdrop-blur-2xl border border-white/[0.05] rounded-3xl p-8 md:p-10 shadow-2xl animate-fade-up-1">
-                    {oauthError && (
+                    {oauthErrorMessage && (
                         <div className="mb-6 bg-red-950/30 border border-red-800/40 rounded-xl px-4 py-3 text-sm text-red-400 text-center">
-                            OAuth sign in failed. Please try again.
+                            {oauthErrorMessage}
                         </div>
                     )}
 

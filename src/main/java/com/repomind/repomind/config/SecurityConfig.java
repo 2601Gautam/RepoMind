@@ -13,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -28,6 +31,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final ClientRegistrationRepository clientRegistrationRepository;
     @Value("${app.cors.allowed-origin:http://localhost:5173}")
     private String allowedOrigin;
 
@@ -80,6 +84,19 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
+    public OAuth2AuthorizationRequestResolver authorizationRequestResolver() {
+
+        DefaultOAuth2AuthorizationRequestResolver resolver =
+                new DefaultOAuth2AuthorizationRequestResolver(
+                        clientRegistrationRepository, "/oauth2/authorization");
+
+        resolver.setAuthorizationRequestCustomizer(customizer ->
+                customizer.additionalParameters(params ->
+                        params.put("prompt", "select_account")));
+
+        return resolver;
+    }
     // BCryptPasswordEncoder — the industry standard for password hashing
     // strength=10 means 2^10 = 1024 rounds of hashing
     // Higher = more secure but slower. 10 is the standard balance.

@@ -8,8 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.sql.Update;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -21,6 +25,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
@@ -89,31 +94,55 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             email = oAuth2User.getAttribute("email");
         }
 
-        // Find or create user - same logic for both provider
         final String finalEmail = email;
         final String finalName = name;
         final String finalProviderId = providerId;
         final String finalProvider = provider;
+        User user = userRepository.findByEmail(email).orElse(null);
 
-        // We look up by email first — if user previously registered with email/password
-        // using the same email, we link the accounts
-
-        User user = userRepository.findByEmail(email).orElseGet(()->{
-            //New User - Create account automatically from Google data
-            User newUser = User.builder()
+        if(user == null){
+            // First time login with this email -> create new OAuth account
+            user = User.builder()
                     .email(finalEmail)
                     .name(finalName)
                     .provider(finalProvider)
                     .providerId(finalProviderId)
                     .build();
-            return userRepository.save(newUser);
-        });
+            user = userRepository.save(user);
+        } else {
 
-        // If existing user, update provider info if not set
-        if (user.getProviderId() == null) {
-            user.setProviderId(finalProviderId);
-            user.setProvider(finalProvider);
-            userRepository.save(user);
+            // Email already exists
+
+            // Reject if the account belongs to another provider
+            if (!user.getProvider().equals(finalProvider)) {
+                log.warn(
+                        "OAuth login denied. Email {} is already registered with {}.",
+                        finalEmail,
+                        user.getProvider()
+                );
+                response.sendRedirect(
+                        frontendUrl +
+                                "/login?error=provider_mismatch&existingProvider=" +
+                                user.getProvider().toLowerCase() +
+                                "&attemptedProvider=" +
+                                finalProvider.toLowerCase()
+                );
+                return;
+            }
+            // If the provider matches, update providerId if not set
+            if (!finalProviderId.equals(user.getProviderId())) {
+
+                log.warn(
+                        "Provider ID mismatch for email {}",
+                        finalEmail
+                );
+
+                response.sendRedirect(
+                        frontendUrl +
+                                "/login?error=authentication_failed"
+                );
+                return;
+            }
         }
 
         String token = jwtUtil.generateToken(user.getId(),user.getEmail());
@@ -128,6 +157,4 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.sendRedirect(frontendUrl + "/auth/callback?oauth=success");
 
     }
-
-
 }

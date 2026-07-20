@@ -41,7 +41,8 @@ public class AuthController {
             return ResponseEntity.ok(Map.of(
                     "userId",auth.getUserId(),
                     "email",auth.getEmail(),
-                    "name",auth.getName()
+                    "name",auth.getName(),
+                    "provider",auth.getProvider()
             ));
         }catch (RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
@@ -59,7 +60,8 @@ public class AuthController {
             return ResponseEntity.ok(Map.of(
                     "userId",auth.getUserId(),
                     "email",auth.getEmail(),
-                    "name",auth.getName()
+                    "name",auth.getName(),
+                    "provider", auth.getProvider()
             ));
         }catch (RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
