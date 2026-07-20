@@ -51,7 +51,7 @@ public class FileCloneService {
     // 500KB max per file
     // Files larger than this are almost always generated or minified
     // Minified JS is one line of gibberish — useless for semantic search
-    private static final long MAX_FILE_BYTES = 2000 * 1024;
+    private static final long MAX_FILE_BYTES = 500 * 1024;
 
     public Path cloneRepository(String githubUrl, String token) throws Exception {
 

@@ -69,12 +69,14 @@ spring:
         options:
           model: mistral-embed
 
-  app:
-    models:
-      chat: ${CHAT_MODEL:openrouter/free}
-      reasoning: ${REASONING_MODEL:openrouter/free}
-      structured: ${STRUCTURED_MODEL:openrouter/free}
-
+app:
+  models:
+    chat: ${CHAT_MODEL:openrouter/free}
+    reasoning: ${REASONING_MODEL:openrouter/free}
+    structured: ${STRUCTURED_MODEL:openrouter/free}
+  http:
+    timeout-seconds:90
+    reasoning-timeout-seconds:300
 
 logging:
   level:

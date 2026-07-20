@@ -80,9 +80,6 @@ public class IngestionService {
                     );
 
                     for (ChunkingService.Chunk chunk : chunks) {
-                        // EmbeddingService converts chunk text → float[768]
-                        // This calls Nomic API — one HTTP call per chunk
-                        // A 200-file repo might create 400-600 chunks total
                         float[] embedding = embeddingService.embed(chunk.content());
 
 
