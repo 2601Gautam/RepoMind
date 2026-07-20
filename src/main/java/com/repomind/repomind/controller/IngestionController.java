@@ -50,7 +50,7 @@ public class IngestionController {
             githubUrl = githubUrl.substring(0, githubUrl.length() - 4);
         }
         
-        request.setGithubUrl(githubUrl)
+        request.setGithubUrl(githubUrl);
         String repoName = extractRepoName(request.getGithubUrl());
         
         Optional<RepoEntity> existing = repoRepository
