@@ -45,12 +45,17 @@ public class IngestionController {
                                                      @AuthenticationPrincipal User currentUser){
         // @Valid triggers the @NotBlank and @Pattern checks on IngestRequest
         // If validation fails, Spring returns 400 automatically before this runs
-
+        String githubUrl = request.getGithubUrl();
+        if (githubUrl.endsWith(".git")) {
+            githubUrl = githubUrl.substring(0, githubUrl.length() - 4);
+        }
+        
+        request.setGithubUrl(githubUrl);
         String repoName = extractRepoName(request.getGithubUrl());
-
+        
         Optional<RepoEntity> existing = repoRepository
                 .findFirstByGithubUrlOrderByCreatedAtDesc(request.getGithubUrl());
-
+        
         if(existing.isPresent())
         {
             RepoEntity existingRepo = existing.get();
