@@ -1,4 +1,4 @@
-import logo from "../../../dist/websiteLogo.png";
+import logo from '../../assets/websiteLogo.png'
 
 // Reusable spinner for loading states
 // size: 'sm', 'md' (default), 'lg', 'xl' (logo variant)

@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import logo from '../../assets/websiteLogo.png'
 
 const navItems = [
     {
@@ -103,14 +104,16 @@ export default function Sidebar({ isOpen = true, onToggle }) {
         <aside className={`fixed inset-y-0 left-0 bg-[#060608] border-r border-white/[0.04] flex flex-col z-40 transition-all duration-300 ${isOpen ? 'w-60' : 'w-[72px]'}`}>
             {/* Logo */}
             <div className="h-[60px] flex items-center justify-between px-5 shrink-0 border-b border-white/[0.04]">
-                <Link to="/dashboard" className={`flex items-center gap-2.5 group ${isOpen ? '' : 'hidden'}`}>
-                    <div className="w-7 h-7 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(139,92,246,0.35)] group-hover:shadow-[0_0_18px_rgba(139,92,246,0.5)] transition-all">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="16 18 22 12 16 6" />
-                            <polyline points="8 6 2 12 8 18" />
-                        </svg>
+                <Link to="/dashboard" className={`flex items-center gap-2 group ${isOpen ? '' : 'hidden'}`}>
+                    <div className="w-11 h-11 flex items-center justify-center shrink-0">
+                        <img
+                            src={logo}
+                            alt="RepoMind Logo"
+                            className="w-full h-full object-contain"
+                            draggable={false}
+                        />
                     </div>
-                    <span className="text-[15px] font-bold text-white tracking-tight">RepoMind</span>
+                    <span className="text-[17px] font-bold text-white tracking-tight">RepoMind</span>
                 </Link>
                 {/* Toggle Button */}
                 <button

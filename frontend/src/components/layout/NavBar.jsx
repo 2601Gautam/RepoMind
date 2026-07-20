@@ -1,6 +1,6 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import logo from "../../../dist/websiteLogo.png"
+import logo from "../../assets/websiteLogo.png"
 // Wordmark logo
 function Logo() {
     return (
@@ -8,7 +8,7 @@ function Logo() {
             to="/dashboard"
             className="flex items-center gap-2 group shrink-0 select-none"
         >
-            <div className="w-12 h-12 flex items-center justify-center">
+            <div className="w-11 h-11 flex items-center justify-center">
                 <img
                     src={logo}
                     alt="RepoMind Logo"
@@ -17,7 +17,7 @@ function Logo() {
                 />
             </div>
 
-            <span className="text-[15.5px] font-bold text-white  tracking-tight ">
+            <span className="text-[17px] font-bold text-white  tracking-tight ">
                 RepoMind
             </span>
         </Link>

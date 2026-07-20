@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import logo from "../../dist/websiteLogo.png"
+import logo from '../assets/websiteLogo.png'
 const RevealOnScroll = ({ children, delay = 0 }) => {
     const [isVisible, setIsVisible] = useState(false)
     const ref = useRef(null)
@@ -429,11 +429,13 @@ export default function LandingPage() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
                         <div className="col-span-2 md:col-span-1">
                             <div className="flex items-center gap-2 mb-4 select-none">
-                                <div className="w-6 h-6 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-md flex items-center justify-center shadow-[0_0_8px_rgba(139,92,246,0.25)]">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <polyline points="16 18 22 12 16 6" />
-                                        <polyline points="8 6 2 12 8 18" />
-                                    </svg>
+                                <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                                    <img
+                                        src={logo}
+                                        alt="RepoMind Logo"
+                                        className="w-full h-full object-contain"
+                                        draggable={false}
+                                    />
                                 </div>
                                 <span className="font-mono text-xl font-bold text-white tracking-tight">RepoMind</span>
                             </div>

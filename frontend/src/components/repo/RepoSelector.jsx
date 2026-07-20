@@ -62,32 +62,57 @@ const COLOR_CLASSES = {
 
 // ── component ─────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 5
+
 export default function RepoSelector({ tool }) {
     const navigate = useNavigate()
     const meta = TOOL_META[tool] || TOOL_META.chat
     const colors = COLOR_CLASSES[meta.color]
 
     const [repos, setRepos] = useState([])
+    const [recentRepos, setRecentRepos] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
+    const [page, setPage] = useState(0)
+    const [isStackHovered, setIsStackHovered] = useState(false)
 
     useEffect(() => {
-        listRepos(0, 100)
+        listRepos(0, 200)
             .then(data => {
                 const list = Array.isArray(data) ? data : (data.content || [])
                 setRepos(list)
+
+                // Load recent chats from localStorage
+                try {
+                    const recentIds = JSON.parse(localStorage.getItem('recent_chat_repos') || '[]')
+                    const matched = recentIds
+                        .map(id => list.find(r => r.id === id))
+                        .filter(Boolean)
+                        .filter(r => r.status === 'READY')
+                    setRecentRepos(matched)
+                } catch (e) {
+                    console.error('Failed to parse recent repos:', e)
+                }
             })
             .catch(console.error)
             .finally(() => setLoading(false))
     }, [])
+
+    // Reset to page 0 whenever search changes
+    useEffect(() => { setPage(0) }, [search])
 
     const filtered = repos.filter(r => {
         const q = search.toLowerCase()
         return !q || (r.repoName || '').toLowerCase().includes(q) || (r.githubUrl || '').toLowerCase().includes(q)
     })
 
-    const readyRepos = filtered.filter(r => r.status === 'READY')
-    const otherRepos = filtered.filter(r => r.status !== 'READY')
+    const allSorted = [
+        ...filtered.filter(r => r.status === 'READY'),
+        ...filtered.filter(r => r.status !== 'READY')
+    ]
+    const totalPages = Math.ceil(allSorted.length / PAGE_SIZE)
+    const paginated = allSorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+    const hasReady = filtered.some(r => r.status === 'READY')
 
     function launch(repoId) {
         navigate(`/${tool}/${repoId}`)
@@ -110,7 +135,65 @@ export default function RepoSelector({ tool }) {
 
 
 
-                {/* Choose repo label */}
+                {/* Recent repos stack — only for chat tool when there are recent chats */}
+                {tool === 'chat' && recentRepos.length > 0 && (
+                    <div className="mb-10">
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-5">
+                            Recent Chats
+                        </p>
+                        <div
+                            className="relative transition-all duration-500"
+                            onMouseEnter={() => setIsStackHovered(true)}
+                            onMouseLeave={() => setIsStackHovered(false)}
+                            style={{
+                                height: isStackHovered
+                                    ? `${recentRepos.length * 68 + 20}px`
+                                    : `${56 + (recentRepos.length - 1) * 10}px`
+                            }}
+                        >
+                            {/* Render in reverse so card[0] is on top visually */}
+                            {[...recentRepos].reverse().map((repo, revIdx) => {
+                                const idx = recentRepos.length - 1 - revIdx
+                                const slug = repo.githubUrl?.replace('https://github.com/', '') ?? ''
+                                const name = repo.repoName ?? slug.split('/').pop() ?? 'Unknown'
+
+                                return (
+                                    <div
+                                        key={repo.id}
+                                        onClick={() => isStackHovered && launch(repo.id)}
+                                        className="group cursor-pointer rounded-2xl px-5 py-4 border border-white/[0.06] bg-[#0c0c0e] hover:bg-[#111116] hover:border-violet-500/40 flex items-center justify-between absolute w-full transition-all duration-500 ease-out"
+                                        style={{
+                                            top: isStackHovered ? `${idx * 68}px` : `${idx * 12}px`,
+                                            zIndex: recentRepos.length - idx,
+                                            transform: isStackHovered
+                                                ? 'scale(1)'
+                                                : `scale(${1 - idx * 0.025})`,
+                                            boxShadow: isStackHovered
+                                                ? '0 4px 24px rgba(0,0,0,0.4)'
+                                                : `0 ${idx * 2}px 0 rgba(255,255,255,0.03), 0 ${idx * 4 + 8}px 20px rgba(0,0,0,0.5)`
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-3.5 min-w-0">
+                                            <div className="w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/15 flex items-center justify-center text-violet-400 group-hover:scale-105 transition-transform shrink-0">
+                                                {meta.icon}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="truncate text-[13.5px] font-bold text-white/90 group-hover:text-white transition-colors tracking-tight">{name}</p>
+                                                <p className="truncate text-[10.5px] text-neutral-600 font-mono mt-0.5">{slug}</p>
+                                            </div>
+                                        </div>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"
+                                            className="w-4 h-4 text-neutral-700 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all shrink-0">
+                                            <path d="M9 18l6-6-6-6" />
+                                        </svg>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )}
+
+
                 <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">
                     Choose a repository to start
                 </p>
@@ -155,13 +238,13 @@ export default function RepoSelector({ tool }) {
                     </div>
                 ) : (
                     <div className="space-y-2">
-                        {readyRepos.length === 0 && (
+                        {!hasReady && (
                             <p className="text-[12.5px] text-amber-500/70 bg-amber-500/5 border border-amber-500/10 rounded-xl px-3.5 py-2.5 mb-4">
                                 No repositories are fully indexed yet. Wait for indexing to complete, then come back.
                             </p>
                         )}
 
-                        {[...readyRepos, ...otherRepos].map(repo => {
+                        {paginated.map(repo => {
                             const st = STATUS[repo.status] ?? { label: repo.status, dot: 'bg-neutral-600', text: 'text-neutral-400' }
                             const slug = repo.githubUrl?.replace('https://github.com/', '') ?? ''
                             const name = repo.repoName ?? slug.split('/').pop() ?? 'Unknown'
@@ -200,6 +283,35 @@ export default function RepoSelector({ tool }) {
                                 </button>
                             )
                         })}
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-between pt-4 border-t border-white/[0.04] mt-2">
+                                <button
+                                    onClick={() => setPage(p => Math.max(0, p - 1))}
+                                    disabled={page === 0}
+                                    className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-25 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+                                >
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                                        <path d="M10 12L6 8l4-4" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                <span className="text-[11.5px] text-neutral-600">
+                                    {page + 1} / {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                                    disabled={page >= totalPages - 1}
+                                    className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-25 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+                                >
+                                    Next
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                                        <path d="M6 4l4 4-4 4" />
+                                    </svg>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
