@@ -81,7 +81,7 @@ public class DebugService {
                 .stream()
                 .content()
                 .map(token -> formatToken(token));
-
+        log.info("streaming......");
         Flux<String> startEvent = Flux.just(formatEvent("start", ""));
         Flux<String> sourcesEvent = Flux.just(formatSources(finalRelevantFiles));
         Flux<String> doneEvent = Flux.just(formatEvent("done", ""));

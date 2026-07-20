@@ -53,6 +53,16 @@ export default function DebugPage() {
     useEffect(() => {
         if (!repoId) return
         getRepoStatus(repoId).then(setRepo).catch(console.error)
+        
+        // Reset state on repo change
+        setErrorText('')
+        setContext('')
+        setStreamedText('')
+        setSources([])
+        setError('')
+        setDone(false)
+        setRateLimitSeconds(null)
+        streamedRef.current = ''
     }, [repoId])
 
 
