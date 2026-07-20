@@ -7,7 +7,6 @@ import LoadingSpinner from '../components/common/LoadingSpinner'
 export default function AllReposPage() {
     const [repos, setRepos] = useState([])
     const [page, setPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
     const [loadingRepos, setLoadingRepos] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
     const pollsRef = useRef({})
@@ -25,7 +24,6 @@ export default function AllReposPage() {
             // Filter out FAILED repos — never show them in the UI
             const visible = repoList.filter(r => r.status !== 'FAILED')
             setRepos(visible)
-            setTotalPages(data.totalPages || (Array.isArray(data) ? 1 : 0))
             visible.forEach(repo => {
                 if (repo.status === 'PROCESSING' || repo.status === 'PENDING') startPollingRepo(repo.id)
             })
@@ -146,26 +144,6 @@ export default function AllReposPage() {
                         </div>
                     )
                 })()}
-
-                {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-5 pt-10">
-                        <button
-                            onClick={() => setPage(p => Math.max(0, p - 1))}
-                            disabled={page === 0}
-                            className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
-                            ← Previous
-                        </button>
-                        <span className="text-[12px] text-neutral-600">{page + 1} / {totalPages}</span>
-                        <button
-                            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                            disabled={page >= totalPages - 1}
-                            className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
-                            Next →
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     )

@@ -92,7 +92,7 @@ export default function InterviewPage() {
             const result = await generateInterview(repoId, difficulty)
             // Navigate to active session parameter URL (replace in history stack)
             navigate(`/interview/${repoId}?sessionId=${result.id}`, { replace: true })
-            loadPreviousSessions()
+            await loadPreviousSessions()
         } catch (e) {
             if (e instanceof RateLimitError) {
                 setRateLimitSeconds(e.retryAfterSeconds)

@@ -43,6 +43,7 @@ public class IngestionService {
         RepoEntity repo = repoRepository.findById(repoId)
                 .orElseThrow(() ->new RuntimeException("Repo not found: " + repoId));
         try{
+
             //1.Mark as Processsing
             repo.setStatus(RepoEntity.IngestionStatus.PROCESSING);
             repoRepository.save(repo);

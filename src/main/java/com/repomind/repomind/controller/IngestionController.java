@@ -45,8 +45,13 @@ public class IngestionController {
                                                      @AuthenticationPrincipal User currentUser){
         // @Valid triggers the @NotBlank and @Pattern checks on IngestRequest
         // If validation fails, Spring returns 400 automatically before this runs
-
+        String githubUrl = request.getGithubUrl();
+        if (githubUrl.endsWith(".git")) {
+            githubUrl = githubUrl.substring(0, githubUrl.length() - 4);
+        }
+        request.setGithubUrl(githubUrl);
         String repoName = extractRepoName(request.getGithubUrl());
+
 
         Optional<RepoEntity> existing = repoRepository
                 .findFirstByGithubUrlOrderByCreatedAtDesc(request.getGithubUrl());
@@ -83,6 +88,7 @@ public class IngestionController {
 
             }
         }
+
         // Save the repo row immediately — gives it a UUID right now
         // Status starts as PENDING from @PrePersist in the entity
         RepoEntity repo = RepoEntity.builder()
@@ -136,8 +142,10 @@ public class IngestionController {
     @CacheEvict(value = "userRepos", key = "#currentUser.id")
     public ResponseEntity<Void> removeRepo(@PathVariable UUID repoId,
                                            @AuthenticationPrincipal User currentUser) {
-        userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), repoId)
-                .ifPresent(userRepoRepository::delete);
+        UserRepo link = userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), repoId)
+                .orElse(null);
+        if (link == null) return ResponseEntity.notFound().build();
+        userRepoRepository.delete(link);
 
         // If nobody else has this repo, clean it up entirely
         if (userRepoRepository.countByRepoId(repoId) == 0) {
