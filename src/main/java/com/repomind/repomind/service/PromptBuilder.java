@@ -11,7 +11,7 @@ import java.util.List;
 public class PromptBuilder {
     // Sliding window size — how many recent message PAIRS to include
     // 8 pairs = 16 messages = enough context without overwhelming the LLM
-    public static final int MEMORY_WINDOW_SIZE = 16;
+    public static final int MEMORY_WINDOW_SIZE = 8;
 
     public String buildChatSystemPrompt(){
         return """
