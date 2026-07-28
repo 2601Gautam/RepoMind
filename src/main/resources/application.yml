@@ -12,6 +12,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  cache:
+    redis:
+      time-to-live: 5m
 
 # Add these under the existing config:
 app:

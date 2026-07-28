@@ -1,3 +1,5 @@
+import logo from '../../assets/websiteLogo.png'
+
 const QUESTIONS = [
     {
         label: 'Architecture',
@@ -65,11 +67,13 @@ export default function SuggestedQuestions({ onSelect }) {
             {/* Wordmark / hero */}
             <div className="space-y-3">
                 <div className="flex items-center justify-center gap-2.5 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center shadow-lg shadow-violet-900/40">
-                        <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5 text-white">
-                            <path d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" fill="currentColor" opacity=".2"/>
-                            <path d="M6 8h8M6 11h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                        </svg>
+                    <div className="w-12 h-12 flex items-center justify-center select-none">
+                        <img 
+                            src={logo} 
+                            alt="RepoMind Logo" 
+                            className="w-full h-full object-contain" 
+                            draggable={false}
+                        />
                     </div>
                 </div>
                 <h2 className="text-[22px] font-bold text-white tracking-tight leading-tight">

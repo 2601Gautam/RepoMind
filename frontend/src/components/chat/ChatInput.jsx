@@ -1,9 +1,24 @@
 import { useState, useRef, useEffect } from 'react'
 
-export default function ChatInput({ onSend, disabled }) {
+export default function ChatInput({ onSend, disabled, directValue, onDirectConsumed }) {
     const [value, setValue] = useState('')
     const textareaRef = useRef(null)
     const [focused, setFocused] = useState(false)
+
+    // When a message's "Direct" button is clicked, pre-fill & focus
+    useEffect(() => {
+        if (directValue) {
+            setValue(directValue)
+            onDirectConsumed?.()
+            // Focus + move cursor to end
+            setTimeout(() => {
+                const el = textareaRef.current
+                if (!el) return
+                el.focus()
+                el.setSelectionRange(el.value.length, el.value.length)
+            }, 0)
+        }
+    }, [directValue])
 
     // Auto-resize textarea height
     useEffect(() => {

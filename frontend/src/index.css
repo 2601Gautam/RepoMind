@@ -81,7 +81,7 @@ body {
 .chat-input-loading {
   border: 2px solid transparent !important;
   background-image:
-    linear-gradient(#0d0d12, #0d0d12),
+    linear-gradient(#15151a, #15151a),
     conic-gradient(from var(--angle), #7c3aed, #ec4899, #06b6d4, #7c3aed);
   background-origin: border-box;
   background-clip: padding-box, border-box;

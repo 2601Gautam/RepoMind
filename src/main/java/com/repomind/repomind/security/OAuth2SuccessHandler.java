@@ -1,5 +1,6 @@
 package com.repomind.repomind.security;
 
+import com.repomind.repomind.controller.AuthController;
 import com.repomind.repomind.model.entity.User;
 import com.repomind.repomind.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -146,6 +147,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
 
         String token = jwtUtil.generateToken(user.getId(),user.getEmail());
+
 
         response.addHeader("Set-Cookie",
                 String.format("jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",token,jwtExpiration/1000));

@@ -4,6 +4,7 @@ import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.InterviewRequest;
 import com.repomind.repomind.dto.response.InterviewSessionDto;
 import com.repomind.repomind.model.entity.User;
+import com.repomind.repomind.repository.UserRepoRepository;
 import com.repomind.repomind.service.InterviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,9 @@ import java.util.UUID;
 @Slf4j
 public class InterviewController {
     private final InterviewService interviewService;
+    private final UserRepoRepository userRepoRepository;
     // Generate new interview questions for a repo
-    @RateLimit(requests = 3, windowSeconds = 60)
+    @RateLimit(requests = 5, windowSeconds = 1800)
     @PostMapping("/generate")
     public ResponseEntity<?> generate(
             @Valid @RequestBody InterviewRequest request,
@@ -37,7 +39,7 @@ public class InterviewController {
         }
     }
 
-    // Get a previously generated session by ID
+    // Get a specific generated session by ID
     @GetMapping("/sessions/{sessionId}")
     public ResponseEntity<?> getSession(
             @PathVariable UUID sessionId,

@@ -49,7 +49,7 @@ export default function DebugSection({ variant, children, onCopy, streaming }) {
                     </button>
                 )}
             </div>
-            <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-p:my-2 prose-p:text-[13.5px] prose-p:text-neutral-300 prose-headings:text-white prose-headings:font-semibold prose-ul:my-2 prose-ul:pl-4 prose-ul:text-neutral-300 prose-ol:my-2 prose-ol:pl-4 prose-ol:text-neutral-300 prose-li:my-0.5 prose-li:leading-relaxed prose-li:text-[13.5px] prose-code:before:content-none prose-code:after:content-none prose-strong:text-white prose-strong:font-semibold">
+            <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-p:my-2 prose-p:text-[13.5px] prose-p:text-neutral-300 prose-headings:text-white prose-headings:font-semibold prose-ul:my-2 prose-ul:pl-4 prose-ul:text-neutral-300 prose-ol:my-2 prose-ol:pl-4 prose-ol:text-neutral-300 prose-li:my-0.5 prose-li:leading-relaxed prose-li:text-[13.5px] [&_li::marker]:text-violet-400 prose-code:before:content-none prose-code:after:content-none prose-strong:text-white prose-strong:font-semibold">
                 <ReactMarkdown 
                     remarkPlugins={[remarkGfm]}
                     components={{

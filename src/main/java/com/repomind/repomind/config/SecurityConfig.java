@@ -38,9 +38,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF — not needed for stateless JWT APIs
-                // CSRF protects against form-based attacks on session-based apps
-                // JWT-based apps are not vulnerable to this attack
                 .csrf(csrf -> csrf.disable())
 
                 // Configure CORS using our bean below

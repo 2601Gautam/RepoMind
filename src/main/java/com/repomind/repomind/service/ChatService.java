@@ -33,6 +33,7 @@ public class ChatService {
     private final RepoJpaRepository repoRepository;
     private final PromptBuilder promptBuilder;
     private final ConversationMemoryService memoryService;
+    private final GenerateEmbeddingQuery generateEmbeddingQuery;
 
     // Returns Flux<String> for SSE streaming
     // The controller converts this to text/event-stream automatically
@@ -68,7 +69,7 @@ public class ChatService {
         String vectorString = embeddingService.toVectorString(questionVector);
 
         List<CodeChunkRepository.CodeChunkProjection> relevantChunks =
-                chunkRepository.findTopSimilarChunks(repoId,vectorString,8);
+                chunkRepository.findTopSimilarChunks(repoId,vectorString,10);
 
         if(relevantChunks.isEmpty()){
             // Return a Flux that emits one event and completes
@@ -187,7 +188,9 @@ public class ChatService {
         String recentContext = history.subList(fromIndex, history.size()).stream()
                 .map(ConversationMemoryService.MemoryMessage::content)
                 .collect(Collectors.joining(" "));
-        return recentContext + " " + userQuestion;
+
+        String embeddingText = generateEmbeddingQuery.generateEmbeddingQueryFromContext(userQuestion,recentContext);
+        return embeddingText;
     }
 
     private Conversation resolveConversation(UUID conversationId, RepoEntity repo, User currentUser) {
@@ -221,16 +224,7 @@ public class ChatService {
         }
     }
 
-    /**
-     * Returns the most recent conversation (and its messages) for a given user+repo pair.
-     * Called on page load so the frontend can restore the chat without using localStorage.
-     *
-     * Strategy:
-     *  1. Try the user-scoped query first (conversations saved with user_id — new data).
-     *  2. Fall back to the latest conversation for the repo regardless of user_id
-     *     (covers old conversations created before user_id was tracked).
-     * Returns empty Optional if no conversation/messages exist yet.
-     */
+
     public Optional<ChatHistoryResponse> getChatHistory(UUID repoId, User currentUser) {
         // Step 1: prefer the user-scoped conversation (accurate, new data)
         Optional<Conversation> found = conversationRepository

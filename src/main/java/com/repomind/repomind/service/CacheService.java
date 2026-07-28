@@ -1,4 +1,4 @@
-package com.repomind.repomind.controller;
+package com.repomind.repomind.service;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;

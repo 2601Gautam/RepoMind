@@ -27,9 +27,8 @@ public class RedisConversationMemoryService implements ConversationMemoryService
 //    An active conversation resets the timer on every message
     private static final long CONVERSATION_TTL_HOURS = 24;
 
-    //maximum message to store per conversation, to prevent unbounded growth in Redis
-    //we store more than we retrieve-retrieve only the last 8 pairs (16 messages) for context, but store up to 100 messages in Redis
-    private static final long  MAX_STORED_MESSAGES = 30;
+
+    private static final long  MAX_STORED_MESSAGES = 20;
 
     //Redis key formate: coversation:{conversationId}:messages
     //namespace prefix prevents key collisions with other data in Redis, and makes it easy to find all keys related to a conversation

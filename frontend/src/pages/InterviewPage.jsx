@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import {
     generateInterview,
     getRepoStatus,
@@ -354,9 +359,23 @@ export default function InterviewPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-[14.5px] sm:text-[15.5px] font-bold text-white leading-relaxed tracking-tight">
-                                        {activeQuestion.question}
-                                    </p>
+                                    <div className="text-[14.5px] sm:text-[15.5px] font-semibold text-white leading-relaxed tracking-tight prose prose-invert max-w-none prose-p:my-0 prose-code:before:content-none prose-code:after:content-none">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            rehypePlugins={[rehypeRaw]}
+                                            components={{
+                                                code({ node, inline, className, children, ...props }) {
+                                                    return (
+                                                        <code {...props} className="text-violet-300 font-mono font-semibold px-0.5 text-[14px]">
+                                                            {children}
+                                                        </code>
+                                                    )
+                                                }
+                                            }}
+                                        >
+                                            {activeQuestion.question}
+                                        </ReactMarkdown>
+                                    </div>
                                 </div>
 
                                 {/* Landing Page style gradient line divider */}
@@ -390,9 +409,61 @@ export default function InterviewPage() {
                                             <span className="block text-[9.5px] font-mono font-bold tracking-widest bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-1.5 uppercase">
                                                 Suggested Answer
                                             </span>
-                                            <p className="text-[12.5px] text-neutral-300 leading-relaxed font-normal">
-                                                {activeQuestion.expectedAnswer}
-                                            </p>
+                                            <div className="prose prose-invert prose-sm max-w-none
+                                                prose-p:leading-relaxed prose-p:my-2 prose-p:text-[14px] prose-p:text-neutral-200
+                                                prose-headings:text-white prose-headings:font-semibold
+                                                prose-ul:my-2 prose-ul:pl-4 prose-ul:text-neutral-200
+                                                prose-ol:my-2 prose-ol:pl-4 prose-ol:text-neutral-200
+                                                prose-li:my-0.5 prose-li:leading-relaxed prose-li:text-[14px] [&_li::marker]:text-violet-400
+                                                prose-code:before:content-none prose-code:after:content-none
+                                                prose-strong:text-white prose-strong:font-semibold">
+                                                <ReactMarkdown 
+                                                    remarkPlugins={[remarkGfm]}
+                                                    rehypePlugins={[rehypeRaw]}
+                                                    components={{
+                                                        table({ node, children, ...props }) {
+                                                            return (
+                                                                <div className="overflow-x-auto w-full pb-2 scrollbar-thin scrollbar-thumb-white/10">
+                                                                    <table {...props}>
+                                                                        {children}
+                                                                    </table>
+                                                                </div>
+                                                            )
+                                                        },
+                                                        code({ node, inline, className, children, ...props }) {
+                                                            const match = /language-(\w+)/.exec(className || '')
+                                                            return !inline && match ? (
+                                                                <div className="my-3 rounded-xl overflow-hidden border border-white/[0.06] bg-[#0a0a0f]">
+                                                                    <div className="bg-[#111118] px-4 py-1.5 text-xs text-neutral-400 font-mono border-b border-white/[0.04] flex items-center">
+                                                                        {match[1]}
+                                                                    </div>
+                                                                    <SyntaxHighlighter
+                                                                        {...props}
+                                                                        style={vscDarkPlus}
+                                                                        language={match[1]}
+                                                                        PreTag="div"
+                                                                        customStyle={{
+                                                                            margin: 0,
+                                                                            padding: '1rem',
+                                                                            background: 'transparent',
+                                                                            fontSize: '13.5px',
+                                                                            lineHeight: '1.6'
+                                                                        }}
+                                                                    >
+                                                                        {String(children).replace(/\n$/, '')}
+                                                                    </SyntaxHighlighter>
+                                                                </div>
+                                                            ) : (
+                                                                <code {...props} className="text-violet-300 font-mono font-semibold px-0.5 text-[13.5px]">
+                                                                    {children}
+                                                                </code>
+                                                            )
+                                                        }
+                                                    }}
+                                                >
+                                                    {activeQuestion.expectedAnswer}
+                                                </ReactMarkdown>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

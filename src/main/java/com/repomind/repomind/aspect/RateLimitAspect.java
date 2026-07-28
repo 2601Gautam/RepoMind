@@ -30,15 +30,17 @@ public class RateLimitAspect {
     // ProceedingJoinPoint: let us call the original method (proceed())
     // or skip it (throw exception without calling proceed())
 
-    @Around("@annotation(com.repomind.repomind.annotation.RateLimit")
+    @Around("@annotation(com.repomind.repomind.annotation.RateLimit)")
     public Object enforceRateLimit(ProceedingJoinPoint joinPoint) throws Throwable{
 
         // Get the @RateLimit annotation details
+        //signature contain return type and method
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         RateLimit rateLimit = signature.getMethod().getAnnotation(RateLimit.class);
 
         // Get current user from spring security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //public endpoint can be possible spring security will handle it
         if(authentication == null || !(authentication.getPrincipal() instanceof User)){
             // Not authenticated - Spring Security will return  anyway
             // Let the request proceed to get the proper  response

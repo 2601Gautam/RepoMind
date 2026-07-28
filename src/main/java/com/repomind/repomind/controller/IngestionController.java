@@ -10,6 +10,7 @@ import com.repomind.repomind.model.entity.UserRepo;
 import com.repomind.repomind.repository.CodeChunkRepository;
 import com.repomind.repomind.repository.RepoJpaRepository;
 import com.repomind.repomind.repository.UserRepoRepository;
+import com.repomind.repomind.service.CacheService;
 import com.repomind.repomind.service.ingestion.IngestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class IngestionController {
     private final IngestionService ingestionService;
     private final RepoJpaRepository repoRepository;
     private final CodeChunkRepository chunkRepository;
+    private final CacheService cacheService;
 
     @RateLimit(requests = 2, windowSeconds = 3600)  // 2 per hour
     @PostMapping("/ingest")
@@ -82,6 +84,9 @@ public class IngestionController {
                 existingRepo.setTotalChunks(0);
                 repoRepository.save(existingRepo);
                 grantUserAccess(currentUser, existingRepo);
+                // Other users sharing this repo may have FAILED cached in Redis
+                // Evict all so they see the fresh PENDING status immediately
+                cacheService.evictUserReposCache();
                 ingestionService.ingestAsync(existingRepo.getId(),
                         request.getGithubUrl(), request.getToken());
                 return ResponseEntity.accepted().body(toDto(existingRepo));
@@ -124,7 +129,7 @@ public class IngestionController {
     // @Cacheable: first call queries DB, result stored in Redis for 5 min
 // Subsequent calls within 5 min return from Redis instantly
 // Cache key is per-user so User A never sees User B's repos
-    public ResponseEntity<List<RepoStatusResponse>> listAll(
+    public List<RepoStatusResponse> listAll(
             @AuthenticationPrincipal User currentUser){
 
         List<RepoStatusResponse> list = userRepoRepository
@@ -132,7 +137,7 @@ public class IngestionController {
                 .stream()
                 .map(this::toDto)
                 .toList();
-        return ResponseEntity.ok(list);
+        return list;
     }
 
     // Remove this user's access to a repo.
