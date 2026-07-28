@@ -30,7 +30,7 @@ public class InterviewService {
     private final EmbeddingService embeddingService;
     private final ObjectMapper objectMapper;
     private final UserRepoRepository userRepoRepository;
-
+    private final PromptBuilder promptBuilder;
     public InterviewService(
             @Qualifier("structuredChatClient") ChatClient chatClient,
             RepoJpaRepository repoRepository,
@@ -39,7 +39,8 @@ public class InterviewService {
             InterviewQuestionRepository questionRepository,
             ObjectMapper objectMapper,
             EmbeddingService embeddingService,
-            UserRepoRepository userRepoRepository)
+            UserRepoRepository userRepoRepository,
+            PromptBuilder promptBuilder)
     {
         this.chatClient = chatClient;
         this.repoRepository = repoRepository;
@@ -49,6 +50,7 @@ public class InterviewService {
         this.objectMapper = objectMapper;
         this.embeddingService = embeddingService;
         this.userRepoRepository = userRepoRepository;
+        this.promptBuilder = promptBuilder;
     }
 
 
@@ -69,7 +71,7 @@ public class InterviewService {
 
         // Build the prompt - this is the most critical part of this entire feature
         // The quality of questions depends entirely on prompt quality
-        String prompt = buildInterviewPrompt(repoSummary,repo.getRepoName(),request.getDifficulty());
+        String prompt = promptBuilder.buildInterviewPrompt(repoSummary,repo.getRepoName(),request.getDifficulty());
 
         // Call LLM and get raw response
         log.info("Generating {} interview questions for repo: {}",request.getDifficulty(),repo.getRepoName());
@@ -154,7 +156,7 @@ public class InterviewService {
         List<CodeChunkRepository.CodeChunkProjection> sampleChunks = chunkRepository.findTopSimilarChunks(
                 repo.getId(),
                 vectorString,
-                20
+                25
         );
 
         Set<String> uniqueFiles = sampleChunks.stream()
@@ -169,9 +171,9 @@ public class InterviewService {
         uniqueFiles.forEach(f -> summary.append("  - ").append(f).append("\n"));
 
         summary.append("\nSample code context:\n");
-        sampleChunks.stream().limit(5).forEach(chunk ->
+        sampleChunks.stream().limit(25).forEach(chunk ->
                 summary.append("\n")
-                        .append(chunk.getContent(), 0, Math.min(500, chunk.getContent().length()))
+                        .append(chunk.getContent(), 0, Math.min(200, chunk.getContent().length()))
                         .append("...\n")
         );
 
@@ -179,73 +181,23 @@ public class InterviewService {
     }
     private float[] buildDifficultyAwareEmbedding(String difficulty) {
         String query = switch (difficulty) {
-            // Beginner questions are about what things do — get entry points and main flows
-            case "BEGINNER" -> "main application entry point basic flow request response";
 
-            // Intermediate questions are about how things work — get implementation details
-            case "INTERMEDIATE" -> "service implementation business logic authentication database";
+            case "BEGINNER" ->
+                    "what does this project do important files key modules project flow";
 
-            // Advanced questions are about design decisions — get config, security, architecture
-            case "ADVANCED" -> "security configuration architecture design pattern performance optimization";
+            case "INTERMEDIATE" ->
+                    "how is this feature implemented important logic algorithms data structures module interaction";
 
-            default -> "main service architecture overview";
+            case "ADVANCED" ->
+                    "why was this architecture chosen design tradeoffs scalability performance maintainability";
+
+            default ->
+                    "project overview implementation architecture";
         };
 
         return embeddingService.embed(query);
     }
-    private String buildInterviewPrompt(String repoSummary , String repoName , String difficulty){
-        // Difficulty-specific instructions
-        String difficultyInstructions = switch(difficulty){
-            case "BEGINNER" -> """
-                Questions should focus on:
-                - What each main class or file does
-                - Basic flow of the application (how a request travels through the code)
-                - Simple concepts like what the database stores, what the API does
-                - Questions a junior developer would be asked about this project
-                """;
-            case "INTERMEDIATE" -> """
-                Questions should focus on:
-                - Design decisions made in the codebase (why certain patterns were chosen)
-                - How specific features are implemented (authentication, data flow)
-                - Error handling and edge cases visible in the code
-                - Questions a mid-level developer would be asked about this project
-                """;
-            case "ADVANCED" -> """
-                    Questions should focus on:
-                    - Scalability concerns with the current architecture
-                    - Security vulnerabilities or improvements possible
-                    - Performance optimizations and their tradeoffs
-                    - System design alternatives to what was implemented
-                    - Questions a senior developer would be asked about this project
-                    """;
-            default -> "";
-        };
-        return """
-                You are a senior technical interviewer preparing questions for a project called: %s
-                
-                PROJECT DETAILS:
-                %s
-                DIFFICULTY LEVEL: %s
-                %s
-    
-                Generate exactly 5 interview questions specific to THIS project.
-                The questions must reference actual files, classes, or patterns visible in the code above.
-                Do NOT generate generic programming questions.
-    
-                CRITICAL: Respond with ONLY a valid JSON array. No explanation. No markdown. No code blocks.
-                Start your response with [ and end with ].
-    
-                Use exactly this JSON structure:
-                [
-                  {
-                    "question": "Specific question about this project",
-                    "expectedAnswer": "Detailed answer based on the actual code",
-                    "conceptTested": "e.g. Authentication, Database Design, Error Handling",
-                    "difficulty": "%s"
-                  }
-                ]
-                """.formatted(repoName,repoSummary,difficulty,difficultyInstructions,difficulty);
-    }
+
     private List<ParsedQuestion> parsedQuestionsFromResponse(String rawResponse){
         try{
             // Clean up common LLM formatting issues

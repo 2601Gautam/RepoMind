@@ -27,7 +27,7 @@ import java.util.Map;
 public class DebugController {
     private final DebugService debugService;
     private final UserRepoRepository userRepoRepository;
-    @RateLimit(requests = 5, windowSeconds = 60)
+    @RateLimit(requests = 5, windowSeconds = 1800)
     @PostMapping(value = "/analyze", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> analyze(@Valid @RequestBody DebugRequest request,
                                 @AuthenticationPrincipal User currentUser) {

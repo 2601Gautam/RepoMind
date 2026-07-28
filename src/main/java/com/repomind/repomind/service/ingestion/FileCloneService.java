@@ -31,11 +31,18 @@ public class FileCloneService {
     // We whitelist (only allow these) rather than blacklist (block specific ones)
     // because there are too many binary/junk types to block exhaustively
     private static final Set<String> SUPPORTED_EXTENSIONS = Set.of(
-            ".java", ".js", ".ts", ".jsx", ".tsx", ".py", ".go",
-            ".rb", ".php", ".cs", ".cpp", ".c", ".h", ".rs",
-            ".kt", ".swift", ".yml", ".yaml", ".json", ".xml",
-            ".sql", ".sh", ".md", ".properties", ".gradle", ".toml",
-            ".html", ".css"
+            ".java", ".kt", ".kts", ".gradle", ".pom",
+            ".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs",
+            ".py",
+            ".c", ".cpp", ".cc", ".cxx", ".c++", ".h", ".hpp", ".hh", ".hxx",
+            ".cs", ".go", ".rs", ".php", ".rb", ".swift", ".dart", ".scala",
+            ".sh", ".bash", ".zsh", ".ps1",
+            ".sql",
+            ".html", ".css", ".scss", ".sass", ".less",
+            ".json", ".jsonc", ".xml", ".yml", ".yaml",
+            ".toml", ".ini", ".cfg", ".conf", ".properties",
+            ".md", ".rst", ".txt",
+            ".tf", ".tfvars", ".dockerfile"
     );
     // Folders that contain zero useful code
     // node_modules = npm dependencies (not your code)
@@ -43,15 +50,30 @@ public class FileCloneService {
     // .git = git history (binary, not readable)
     // build/dist = build outputs
     private static final Set<String> SKIP_FOLDERS = Set.of(
-            "node_modules", ".git", ".idea", ".vscode",
-            "build", "dist", "target", ".gradle",
-            "__pycache__", ".next", "vendor", "coverage", "out"
+            ".git", "node_modules", ".idea", ".vscode", ".settings",
+            "build", "dist", "target", ".gradle", ".mvn", "out", "bin",
+            "__pycache__", ".pytest_cache", ".mypy_cache", ".venv", "venv", "env",
+            ".next", ".nuxt", ".angular", ".cache",
+            "vendor", "coverage", ".nyc_output",
+            "cmake-build-debug", "cmake-build-release", "CMakeFiles",
+            ".yarn", ".pnpm-store", ".terraform",
+            "logs", "log", "tmp", "temp",
+            ".DS_Store", "$RECYCLE.BIN"
     );
 
-    // 500KB max per file
+    private static final Set<String> SUPPORTED_FILENAMES = Set.of(
+            "Dockerfile",
+            "Jenkinsfile",
+            "Makefile",
+            "Procfile",
+            "README",
+            "README.md",
+            "LICENSE"
+    );
+    // 2 MB max per file
     // Files larger than this are almost always generated or minified
     // Minified JS is one line of gibberish — useless for semantic search
-    private static final long MAX_FILE_BYTES = 500 * 1024;
+    private static final long MAX_FILE_BYTES = 2000 * 1024;
 
     public Path cloneRepository(String githubUrl, String token) throws Exception {
 
@@ -73,8 +95,6 @@ public class FileCloneService {
 
             //private repo requires authentication. Public repo can skip this.
             if (token != null && !token.isEmpty()) {
-                // Github PAT as username, empty password.
-                // This is excatly how Github's token auth works over HTTPS.
 
                 cmd.setCredentialsProvider((
                         new UsernamePasswordCredentialsProvider(token, "")
@@ -117,7 +137,7 @@ public class FileCloneService {
                     String name = file.getFileName().toString();
                     String ext = fileCloneUtil.getExtension(name);
 
-                    if(!SUPPORTED_EXTENSIONS.contains(ext)) return FileVisitResult.CONTINUE;
+                    if(!SUPPORTED_EXTENSIONS.contains(ext) && !SUPPORTED_FILENAMES.contains(name)) return FileVisitResult.CONTINUE;
 
                     if(attrs.size() > MAX_FILE_BYTES){
                         log.debug("Skipping large filee: {}",file);

@@ -188,7 +188,7 @@ export async function streamDebug(errorText, repoId, additionalContext, onEvent,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 errorText,
-                repoId: repoId || null,
+                repoId: repoId,
                 additionalContext: additionalContext || null
             })
         })

@@ -7,13 +7,15 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import java.io.Serializable;
+
 // DTO exists separately from the Entity on purpose
 // If you return the Entity directly, you expose all internal fields
 // If your DB schema changes, your API response changes too — breaking the frontend
 // DTO decouples API response shape from DB structure
 @Data
 @Builder
-public class RepoStatusResponse {
+public class RepoStatusResponse implements Serializable {
     private UUID id;
     private String githubUrl;
     private String repoName;

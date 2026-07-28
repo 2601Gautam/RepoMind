@@ -17,6 +17,7 @@ function ChatPageInner({ repoId }) {
     const [loading, setLoading] = useState(false)
     const [historyLoading, setHistoryLoading] = useState(true)  // true until DB history is fetched
     const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
+    const [directValue, setDirectValue] = useState(null)
     const messageIdRef = useRef(0)
 
     // Load repo info
@@ -179,10 +180,32 @@ function ChatPageInner({ repoId }) {
                                 setMessages([])
                                 setConversationId(null)
                             }}
-                            className="cursor-pointer text-[11px] font-bold text-neutral-500 hover:text-red-400 bg-white/[0.02] hover:bg-red-500/5 border border-white/[0.05] hover:border-red-500/15 px-3 py-1.5 rounded-xl transition-all"
+                            className="group cursor-pointer flex items-center gap-1.5 text-[11.5px] font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 active:bg-red-500/30 border border-red-500/20 hover:border-red-500/40 px-3 py-1.5 rounded-xl transition-all duration-200 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_15px_rgba(239,68,68,0.25)] active:scale-95"
                             title="Clear chat history"
                         >
-                            Clear
+                            <svg 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                strokeWidth="2" 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                                className="w-3.5 h-3.5 text-red-400 group-hover:text-red-300 transition-colors duration-200 shrink-0 overflow-visible"
+                            >
+                                {/* Animated Dustbin Lid */}
+                                <g 
+                                    className="transition-transform duration-300 ease-out group-hover:-rotate-25 group-hover:-translate-y-0.5 group-active:rotate-0 group-active:translate-y-0"
+                                    style={{ transformOrigin: '3px 6px', transformBox: 'fill-box' }}
+                                >
+                                    <path d="M3 6h18" />
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </g>
+                                {/* Dustbin Body */}
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                <line x1="10" y1="11" x2="10" y2="17" />
+                                <line x1="14" y1="11" x2="14" y2="17" />
+                            </svg>
+                            <span>Clear</span>
                         </button>
                     )
                 }
@@ -195,6 +218,7 @@ function ChatPageInner({ repoId }) {
                         messages={messages}
                         loading={loading}
                         onSuggest={handleSend}
+                        onDirect={(text) => setDirectValue(text)}
                     />
                 </div>
             </div>
@@ -211,6 +235,8 @@ function ChatPageInner({ repoId }) {
                     <ChatInput
                         onSend={handleSend}
                         disabled={loading || !!rateLimitSeconds}
+                        directValue={directValue}
+                        onDirectConsumed={() => setDirectValue(null)}
                     />
                     <p className="text-center text-[10px] text-neutral-800">
                         Enter to send &middot; Shift+Enter for newline

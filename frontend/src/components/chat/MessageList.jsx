@@ -1,50 +1,84 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import MessageBubble from './MessageBubble'
 import SuggestedQuestions from './SuggestedQuestions'
 
-export default function MessageList({ messages, loading, onSuggest }) {
-    const bottomRef = useRef(null)
+export default function MessageList({ messages, loading, onSuggest, onDirect }) {
     const containerRef = useRef(null)
     const [isScrolledUp, setIsScrolledUp] = useState(false)
+    const userScrolledRef = useRef(false)
 
+    // Handle scroll events to detect if user manually scrolled up
     const handleScroll = () => {
         const el = containerRef.current
         if (!el) return
-        const scrolledUp = el.scrollHeight - el.scrollTop - el.clientHeight > 150
-        setIsScrolledUp(scrolledUp)
+        const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+        const isUp = distanceFromBottom > 90
+        setIsScrolledUp(isUp)
+        userScrolledRef.current = isUp
     }
 
     const scrollToBottom = () => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+        userScrolledRef.current = false
+        setIsScrolledUp(false)
+        if (containerRef.current) {
+            containerRef.current.scrollTo({
+                top: containerRef.current.scrollHeight,
+                behavior: 'smooth'
+            })
+        }
     }
 
-    useEffect(() => {
-        const el = containerRef.current
-        if (!el) return
+    const hasInitializedRef = useRef(false)
 
-        if (!isScrolledUp) {
-            // Use 'auto' (instant) during streaming so the browser doesn't stutter 
-            // trying to calculate overlapping smooth-scroll animations 50 times a second.
-            bottomRef.current?.scrollIntoView({ behavior: loading ? 'auto' : 'smooth' })
+    // Reset initialization flag when messages are cleared or reset
+    useEffect(() => {
+        if (messages.length === 0) {
+            hasInitializedRef.current = false
         }
-    }, [messages, loading, isScrolledUp])
+    }, [messages.length])
+
+    // When new user message is sent, reset user scroll lock so view follows new answer
+    useEffect(() => {
+        const lastMsg = messages[messages.length - 1]
+        if (lastMsg && lastMsg.role === 'user') {
+            userScrolledRef.current = false
+            setIsScrolledUp(false)
+        }
+    }, [messages.length])
+
+    // Synchronous layout scroll — opens directly at bottom on load without scrolling animation
+    useLayoutEffect(() => {
+        const el = containerRef.current
+        if (!el || messages.length === 0) return
+
+        // Override global smooth scroll for instant positioning
+        el.style.scrollBehavior = 'auto'
+
+        if (!hasInitializedRef.current) {
+            el.scrollTop = el.scrollHeight
+            hasInitializedRef.current = true
+            return
+        }
+
+        if (!userScrolledRef.current) {
+            el.scrollTop = el.scrollHeight
+        }
+    }, [messages])
 
     return (
         <div className="relative flex-1 min-h-0 flex flex-col">
             <div 
                 ref={containerRef} 
                 onScroll={handleScroll}
-                className="flex-1 overflow-y-auto py-6 space-y-5 pr-1"
+                className="flex-1 overflow-y-auto py-6 space-y-5 pr-1 scroll-smooth-none"
             >
                 {messages.length === 0 && !loading && (
                     <SuggestedQuestions onSelect={onSuggest} />
                 )}
 
                 {messages.map((msg, i) => (
-                    <MessageBubble key={i} message={msg} />
+                    <MessageBubble key={i} message={msg} onDirect={onDirect} />
                 ))}
-
-                <div ref={bottomRef} className="h-2 shrink-0" />
             </div>
 
             {/* Go Down Button */}

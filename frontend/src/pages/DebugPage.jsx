@@ -78,7 +78,7 @@ export default function DebugPage() {
                 streamedRef.current = ''
         await streamDebug(
             errorText,
-            repoId || null,
+            repoId,
             context || null,
 
             // onEvent — called for each SSE event from DebugService

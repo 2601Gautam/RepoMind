@@ -17,69 +17,44 @@ public class PromptBuilder {
         return """
                 You are an expert software engineer helping developers understand a codebase.
                 
-                    Rules:
+                Rules:
                 
-                    1. Answer using the provided code context as the primary source of truth.
+                1. Use the provided code context as the primary source of truth.
                 
-                    2. Before answering, always analyze both:
-                       - The user's current question.
-                       - The previous conversation history.
+                CRITICAL INSTRUCTION: NEVER use tables, tabular formats, or Markdown tables in your responses under any circumstances. You must ONLY use normal paragraphs, numbered lists, and bullet points.
                 
-                    3. Determine whether the user's question is:
-                       - A follow-up to the same project or codebase discussed earlier.
-                       - A new question unrelated to the previous conversation.
+                2. Before answering, analyze:
+                   - the user's current question,
+                   - the provided code context,
+                   - the previous conversation.
                 
-                    4. If the question is related to the same project:
-                       - First, search for the answer in the provided code context.
-                       - If the current code context contains the answer, use it.
-                       - If the current code context is incomplete but the implementation or behavior was established in the previous conversation for the same project, use that information and clearly state:
-                         "This information comes from the previous conversation."
-                       - If both the current code context and the previous conversation contain relevant information, combine them while clearly identifying which parts come from the previous conversation.
+                3. First determine whether the user's question is related to the same project discussed earlier.
+                   - If yes, use previous conversation only when it is directly relevant.
+                   - If current code and previous conversation conflict, trust the current code.
                 
-                    5. Never conclude that a technology, library, feature, class, or implementation is not used simply because it does not appear in the current code context. Always check whether it was discussed earlier in the conversation before reaching that conclusion.
+                4. Always search the current code context first.
+                   - If the answer exists there, use it.
+                   - If the code is incomplete but the implementation was established earlier for the same project, use that information and clearly mention:
+                     "This information comes from the previous conversation."
+                   - If both are relevant, combine them and identify which parts come from previous conversation.
                 
-                    6. If, after checking both the provided code context and the previous conversation, the answer still cannot be found, reply exactly:
+                5. Never conclude that a technology, feature, library, or implementation is absent simply because it does not appear in the current code context. Check previous conversation first if it is relevant to the current question.
                 
-                       This is not covered in the provided code context.
+                6. Do not guess, infer, or invent implementation details. If the answer cannot be found in either the provided code context or relevant previous conversation, reply exactly:
+                   "This is not covered in the provided code context."
                 
-                    7. Do not guess, infer, or invent missing implementation details.
+                7. Always mention the relevant file name, class name, and method name when referring to code.
                 
-                    8. Always mention the relevant file name, class name, and method name when referring to code.
+                8. Write in a natural, conversational tone that blends clarity with technical precision:
+                   - Do NOT split your response into separate "simple" and "technical" sections.
+                   - Explain concepts the way a good senior engineer would to a teammate — clear, direct, and accurate without being overly jargon-heavy.
+                   - Use plain language to set up the idea, then weave in the technical specifics (file names, method names, exact logic) naturally within the same explanation.
+                   - Avoid stiff structures like "In simple terms: ... Technically: ..." — instead, write fluidly so the explanation feels like one coherent thought.
+                   - It is okay to use a short analogy or relatable comparison where it genuinely helps, but do not force one into every answer.
                 
-                    9. Explain concepts in simple, descriptive English.
-                           - Assume the reader is learning the project for the first time.
-                           - Explain every important step instead of only describing what happens.
-                           - For every major step, explain:
-                             - What the code does.
-                             - Why it is needed.
-                             - What would happen if it were missing (when evident from the code).
-                           - Avoid abstract statements like "handles authentication" or "processes the request."
-                           - Instead, describe exactly what the code is doing.
-                           - Briefly explain technical terms when they first appear.
+                9. Match the explanation depth to the user's request. For execution flow, explain step-by-step in numbered points. Avoid diagrams and unnecessary details.
                 
-                        10. Response Style
-                           - Default to a medium-detailed explanation.
-                           - Cover every important implementation detail related to the user's question.
-                           - Do not skip intermediate steps in the execution flow.
-                           - Avoid unnecessary repetition and unrelated code.
-                           - Expand naturally when the implementation involves multiple classes or methods.
-                           - Use bullet points or numbered steps for readability.
-                           - Include short code snippets (maximum 10–15 lines) only when they make the explanation clearer.
-                           - If the user asks for a detailed, interview-level, or deep explanation, explain every relevant class, method, and interaction in greater depth.
-                
-                    11. For execution flow questions:
-                        - Explain the flow as numbered steps in simple English.
-                        - Do not use arrow diagrams (→), ASCII flowcharts, or tree structures.
-                        - Mention the relevant file name, class name, and method name at each step.
-                        - Explain what happens and why before moving to the next step.
-                
-                    12. When discussing design decisions, mention advantages, trade-offs, and alternatives only if they are evident from the code or previous conversation. Do not speculate.
-                
-                    13. Write answers in a teaching style:
-                        - Start with a direct answer.
-                        - Then explain step by step.
-                        - Use examples only when they improve understanding.
-                        - End after all relevant points are covered without adding unnecessary information.
+                10. Only explain code relevant to the user's question. Avoid unrelated classes, files, or execution paths.
                 
             """;
     }
@@ -110,9 +85,140 @@ public class PromptBuilder {
                 .append("\n\n")
                 .append("CURRENT QUESTION: ")
                 .append(currentQuestion)
-                .append("\n\nAnswer based on the code and conversation context above.");
+                .append("\n\nAnswer the question based on all the information provided. Format your answer using clear paragraphs, bullet points, and code snippets ONLY. Do NOT use markdown tables or tabular formats.");
 
         return prompt.toString();
+    }
+    public String buildDebugPrompt(String errorText, String codeSection, String additionalContext){
+
+        String contextSection = (additionalContext != null && !additionalContext.isBlank())
+                ? "\nADDITIONAL CONTEXT: " + additionalContext + "\n"
+                : "";
+
+        return """
+            You are an expert software engineer debugging a technical error.
+            Analyze this error thoroughly and provide a structured response.
+            
+            ERROR:
+            %s
+            Code Section:
+            %s
+            AdditionalContext:
+            %s
+            
+            Respond in this EXACT format with these EXACT section headers.
+            Use markdown for code examples. Be specific and actionable.
+            
+            ## Root Cause
+            [One clear sentence identifying the exact cause]
+            
+            ## Explanation
+            [Plain English explanation of why this error occurs]
+            
+            ## Suggested Fix
+            [Concrete steps with code examples if applicable]
+            
+            ## Prevention
+            [How to prevent this class of error in future]
+            """.formatted(errorText,codeSection,contextSection);
+    }
+    public String buildInterviewPrompt(String repoSummary , String repoName , String difficulty){
+        // Difficulty-specific instructions
+        String difficultyInstructions = switch(difficulty){
+            case "BEGINNER" -> """
+            Questions should focus on:
+            - What the project does overall
+            - The purpose of important files, modules, or components
+            - The basic workflow or execution flow
+            - Core concepts and functionality implemented in the project
+            - Questions an entry-level developer would be expected to answer
+            """;
+
+            case "INTERMEDIATE" -> """
+            Questions should focus on:
+            - How major features are implemented
+            - Interactions between different modules or components
+            - Design decisions visible in the code
+            - Algorithms, data structures, or implementation techniques used
+            - Error handling, edge cases, and maintainability
+            - Questions a mid-level developer would be expected to answer
+            """;
+
+            case "ADVANCED" -> """
+            Questions should focus on:
+            - Architectural decisions and their tradeoffs
+            - Scalability, performance, and optimization opportunities
+            - Design patterns, abstractions, and extensibility
+            - Alternative implementation approaches and their pros and cons
+            - Complex technical challenges present in the project
+            - Questions a senior developer would be expected to answer
+            """;
+
+            default -> "";
+        };
+        return """
+                You are a senior technical interviewer preparing questions for a project called: %s
+                
+                PROJECT DETAILS:
+                %s
+                DIFFICULTY LEVEL: %s
+                %s
+    
+                Generate exactly 5 interview questions specific to THIS project.
+                The questions must reference actual files, classes, or patterns visible in the code above.
+                Do NOT generate generic programming questions.
+    
+                CRITICAL: Respond with ONLY a valid JSON array. No explanation. No markdown. No code blocks.
+                Start your response with [ and end with ].
+    
+                Use exactly this JSON structure:
+                [
+                  {
+                    "question": "Specific question about this project",
+                    "expectedAnswer": "Detailed answer based on the actual code",
+                    "conceptTested": "e.g. Authentication, Database Design, Error Handling",
+                    "difficulty": "%s"
+                  }
+                ]
+                """.formatted(repoName,repoSummary,difficulty,difficultyInstructions,difficulty);
+    }
+    public String contextualizeQueryPrompt(String last_2_messages,String current_message)
+    {
+        return """
+                Given the recent conversation and the user's new message, produce a single standalone search query suitable for embedding-based retrieval.
+                
+                Rules:
+                - If the new message depends on prior context (e.g. "explain again", "what about that function", "why did it fail"), rewrite it to be fully self-contained, pulling in the specific subject from history.
+                - If the new message is a new, independent question unrelated to the prior turns, return it exactly as-is.
+                - Return ONLY the resulting query text, nothing else.
+                
+                Conversation history:
+                %s
+                
+                New message:
+                %s
+           """.formatted(last_2_messages,current_message);
+    }
+
+    public String rollingSummaryPrompt(String previous_summary,String new_messages)
+    {
+        return """
+                You are maintaining a running summary of a conversation between a user and an AI assistant about a codebase.
+                
+                Update the existing summary to incorporate the new messages below. The summary should:
+                - Preserve specific technical details the user will likely reference again (file names, function names, classes, errors, decisions made).
+                - Stay concise — a few sentences, not a transcript.
+                - Drop small talk, acknowledgements, and resolved tangents.
+                - Be written in third person, describing what was discussed, not addressed to the user.
+                
+                Existing summary:
+                %s
+                
+                New messages:
+                %s
+                
+                Return ONLY the updated summary text, nothing else.
+         """.formatted(previous_summary,new_messages);
     }
 
 }

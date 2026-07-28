@@ -3,7 +3,7 @@ export default function SourceBadges({ sources }) {
     if (!sources?.length) return null
 
     return (
-        <div className="mt-2.5 flex flex-wrap gap-1.5">
+        <div className="mt-0 flex flex-wrap gap-1.5">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-600 self-center mr-1">
                 Sources
             </span>

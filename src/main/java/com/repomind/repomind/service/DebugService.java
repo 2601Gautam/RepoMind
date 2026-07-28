@@ -22,17 +22,21 @@ public class DebugService {
     private final ChatClient chatClient;
     private final EmbeddingService embeddingService;
     private final CodeChunkRepository chunkRepository;
+    private final PromptBuilder promptBuilder;
 
     // Explicit constructor required because @Qualifier cannot be used
     // with @RequiredArgsConstructor — Lombok does not support field-level qualifiers
     public DebugService(
+            //inject this Chatclient which have "reasoningChatClient" id during bean creation
             @Qualifier("reasoningChatClient") ChatClient chatClient,
             EmbeddingService embeddingService,
-            CodeChunkRepository chunkRepository
+            CodeChunkRepository chunkRepository,
+            PromptBuilder promptBuilder
     ){
         this.chatClient = chatClient;
         this.embeddingService = embeddingService;
         this.chunkRepository = chunkRepository;
+        this.promptBuilder = promptBuilder;
     }
 
     // Returns Flux<String> for SSE streaming
@@ -66,7 +70,7 @@ public class DebugService {
             }
         }
 
-        String prompt = buildDebugPrompt(request.getErrorText(), codeSection, request.getAdditionalContext());
+        String prompt = promptBuilder.buildDebugPrompt(request.getErrorText(), codeSection, request.getAdditionalContext());
 
         log.info("Streaming debug analysis for error: {}",
                 request.getErrorText().substring(0, Math.min(80, request.getErrorText().length())));
@@ -92,36 +96,7 @@ public class DebugService {
                 });
     }
 
-    private String buildDebugPrompt(String errorText, String codeSection, String additionalContext){
 
-        String contextSection = (additionalContext != null && !additionalContext.isBlank())
-                ? "\nADDITIONAL CONTEXT: " + additionalContext + "\n"
-                : "";
-
-        return """
-            You are an expert software engineer debugging a technical error.
-            Analyze this error thoroughly and provide a structured response.
-            
-            ERROR:
-            %s
-            %s%s
-            
-            Respond in this EXACT format with these EXACT section headers.
-            Use markdown for code examples. Be specific and actionable.
-            
-            ## Root Cause
-            [One clear sentence identifying the exact cause]
-            
-            ## Explanation
-            [Plain English explanation of why this error occurs]
-            
-            ## Suggested Fix
-            [Concrete steps with code examples if applicable]
-            
-            ## Prevention
-            [How to prevent this class of error in future]
-            """.formatted(errorText,codeSection,contextSection);
-    }
 
     private String formatToken(String token) {
         String escaped = token

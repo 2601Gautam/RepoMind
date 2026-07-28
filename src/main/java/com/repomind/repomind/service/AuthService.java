@@ -63,7 +63,7 @@ public class AuthService {
         //Find user by email
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow( () -> new RuntimeException("Invalid email or password"));
+                .orElseThrow( () -> new RuntimeException("Please enter a valid email address."));
 
         // Updated check — covers both OAuth providers
         if (!"LOCAL".equals(user.getProvider())) {
@@ -76,7 +76,7 @@ public class AuthService {
         // passwordEncoder.matches() hashes the input and compares with stored hash
         // Never compare plain passwords — always use this method
         if(!passwordEncoder.matches(request.getPassword(),user.getPasswordHash())){
-            throw new RuntimeException("Invalid email or password");
+            throw new RuntimeException("Please enter a valid password.");
         }
 
         String token = jwtUtil.generateToken(user.getId(),user.getEmail());

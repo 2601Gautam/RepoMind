@@ -1,6 +1,6 @@
 package com.repomind.repomind.service.ingestion;
 
-import com.repomind.repomind.controller.CacheService;
+import com.repomind.repomind.service.CacheService;
 import com.repomind.repomind.model.entity.CodeChunk;
 import com.repomind.repomind.model.entity.RepoEntity;
 import com.repomind.repomind.repository.CodeChunkRepository;
