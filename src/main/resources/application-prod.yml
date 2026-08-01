@@ -76,6 +76,7 @@ app:
     structured: ${STRUCTURED_MODEL:openrouter/free}
     summary: ${SUMMARY_MODEL}
 
+
 logging:
   level:
     com.repomind.repomind: INFO

@@ -1,5 +1,6 @@
 package com.repomind.repomind.service.ingestion;
 
+import com.openai.errors.RateLimitException;
 import com.repomind.repomind.service.CacheService;
 import com.repomind.repomind.model.entity.CodeChunk;
 import com.repomind.repomind.model.entity.RepoEntity;
@@ -7,6 +8,7 @@ import com.repomind.repomind.repository.CodeChunkRepository;
 import com.repomind.repomind.repository.RepoJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -71,31 +73,58 @@ public class IngestionService {
             // ── 4. Process each file ─────────────────────────────────────────
             int processedCount = 0;
             int chunkCount = 0;
-
+            int maxRetries = 5;
             for(FileCloneService.ParsedFile file : files) {
-                try {
+
                     List<ChunkingService.Chunk> chunks = chunkingService.chunkFile(
                             file.relativePath(),
                             file.content()
                     );
 
                     for (ChunkingService.Chunk chunk : chunks) {
-                        float[] embedding = embeddingService.embed(chunk.content());
+                        try {
+                            long delay = 1000;
+                            float[] embedding = new float[0];
+                            for (int i = 0; i < maxRetries; i++) {
+                                try {
+
+                                    embedding = embeddingService.embed(chunk.content());
+                                    log.debug("Embedding done on {} try", i + 1);
+//                                    Thread.sleep(500);
+                                    break;
+                                } catch (NonTransientAiException e) {
+                                    if (i == maxRetries - 1) {
+                                        throw e; // Give up after the last retry
+                                    }
+                                    Thread.sleep(delay);
+                                    log.warn("Rate limit hit. Retrying in {} ms...", delay);
+                                    delay *= 2; // 1s -> 2s -> 4s -> 8s -> 16s
+                                }
+                            }
 
 
-                        CodeChunk entity = CodeChunk.builder()
-                                .repository(repo)
-                                .filePath(chunk.filePath())
-                                .language(toLanguage(file.extension()))
-                                .content(chunk.content())
-                                .chunkIndex(chunk.chunkIndex())
-                                .startLine(chunk.startLine())
-                                .endLine(chunk.endLine())
-                                .embedding(embedding)
-                                .build();
+                            CodeChunk entity = CodeChunk.builder()
+                                    .repository(repo)
+                                    .filePath(chunk.filePath())
+                                    .language(toLanguage(file.extension()))
+                                    .content(chunk.content())
+                                    .chunkIndex(chunk.chunkIndex())
+                                    .startLine(chunk.startLine())
+                                    .endLine(chunk.endLine())
+                                    .embedding(embedding)
+                                    .build();
 
-                        chunkRepository.save(entity);
-                        chunkCount++;
+                            chunkRepository.save(entity);
+                            chunkCount++;
+                        } catch (Exception e) {   // <-- PUT CATCH HERE
+                            log.error("Exception class: {}", e.getClass().getName(), e);
+                            log.warn(
+                                    "Skipping chunk {} in file {}: {}",
+                                    chunk.chunkIndex(),
+                                    file.relativePath(),
+                                    e.getMessage()
+                            );
+                        }
                     }
                     processedCount++;
                     // Update progress every 5 files so the frontend progress
@@ -107,15 +136,8 @@ public class IngestionService {
                         log.info("Progress: {}/{} files, {} chunks",
                                 processedCount, files.size(), chunkCount);
                     }
-                }catch (Exception e)
-                {
-                    // One unreadable file (encoding issues, binary disguised as text)
-                    // should NOT stop the entire ingestion
-                    // Log it and move on to the next file
-                    log.warn("Skipping file {} due to error: {}",
-                            file.relativePath(), e.getMessage());
                 }
-            }
+
             // ── 5. Mark as READY ─────────────────────────────────────────────
             repo.setStatus(RepoEntity.IngestionStatus.READY);
             cacheService.evictUserReposCache();

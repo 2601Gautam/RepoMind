@@ -11,7 +11,7 @@ import java.util.List;
 public class PromptBuilder {
     // Sliding window size — how many recent message PAIRS to include
     // 8 pairs = 16 messages = enough context without overwhelming the LLM
-    public static final int MEMORY_WINDOW_SIZE = 8;
+    public static final int MEMORY_WINDOW_SIZE = 4;
 
     public String buildChatSystemPrompt(){
         return """
@@ -64,19 +64,16 @@ public class PromptBuilder {
     // - Retrieved code chunks (for RAG)
     // - The current question
     public String buildChatUserPrompt(
-        List<ConversationMemoryService.MemoryMessage> history,
+        String conversationSummary,
         String codeContext,
         String currentQuestion){
         StringBuilder prompt = new StringBuilder();
 
         // Include conversation history if this is not the first message
         // History gives the LLM context about what was already discussed
-        if(!history.isEmpty()){
-            prompt.append("PREVIOUS CONVERSATION:\n");
-            history.forEach(msg ->
-                    prompt.append(msg.role().equals("user") ? "Developer: " : "Assistant: ")
-                            .append(msg.content())
-                            .append("\n\n"));
+        if(!conversationSummary.isEmpty()){
+            prompt.append("PREVIOUS CONVERSATION Summary:\n");
+            prompt.append(conversationSummary);
             prompt.append("-------\n\n");
         }
 
@@ -200,25 +197,36 @@ public class PromptBuilder {
            """.formatted(last_2_messages,current_message);
     }
 
-    public String rollingSummaryPrompt(String previous_summary,String new_messages)
+    public String rollingSummaryPrompt(String previous_summary,String user_message,String chat_bot_ans)
     {
         return """
-                You are maintaining a running summary of a conversation between a user and an AI assistant about a codebase.
+                You are maintaining a persistent summary of an ongoing conversation between a user and an AI assistant about a code repository.
                 
-                Update the existing summary to incorporate the new messages below. The summary should:
-                - Preserve specific technical details the user will likely reference again (file names, function names, classes, errors, decisions made).
-                - Stay concise — a few sentences, not a transcript.
-                - Drop small talk, acknowledgements, and resolved tangents.
-                - Be written in third person, describing what was discussed, not addressed to the user.
+                       Your task is to update the existing summary using the latest interaction.
                 
-                Existing summary:
-                %s
+                       Instructions:
+                       - Combine the previous summary with the latest user message and the assistant's response.
+                       - Retain information that will be useful for future conversations, including:
+                         - Technical decisions and design choices.
+                         - User preferences and requirements.
+                         - File names, class names, method names, APIs, database schema changes, and configuration details.
+                         - Bugs, error messages, debugging progress, and unresolved issues.
+                         - Important explanations or conclusions reached.
+                       - Remove greetings, acknowledgements, repeated information, and temporary conversational details.
+                       - Keep the summary concise (3–8 sentences).
+                       - Write in third person and do not address the user directly.
+                       - Return only the updated summary without markdown or extra commentary.
                 
-                New messages:
-                %s
+                       Previous summary:
+                       %s
                 
-                Return ONLY the updated summary text, nothing else.
-         """.formatted(previous_summary,new_messages);
+                       Latest user message:
+                       %s
+                
+                       Latest assistant response:
+                       %s
+               return only summary nothing else
+         """.formatted(previous_summary,user_message,chat_bot_ans);
     }
 
 }

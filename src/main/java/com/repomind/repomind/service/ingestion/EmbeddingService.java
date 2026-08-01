@@ -21,6 +21,7 @@ public class EmbeddingService {
 
 
     public float[] embed(String text) {
+
         float[] result = embeddingModel.embed(text);
 
         // IMPORTANT: verify this actually prints 768, not 3072
