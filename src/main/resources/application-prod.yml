@@ -75,6 +75,7 @@ app:
     reasoning: ${REASONING_MODEL:openrouter/free}
     structured: ${STRUCTURED_MODEL:openrouter/free}
 
+
 logging:
   level:
     com.repomind.repomind: INFO

@@ -38,4 +38,7 @@ public class Conversation {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    @Column(columnDefinition = "TEXT")
+    private String summary;
 }

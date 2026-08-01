@@ -22,4 +22,5 @@ public interface ConversationMemoryService {
 
     //clear all history for a conversationId, used when starting a new conversation or resetting context
     void clearConversation(UUID conversationId);
+
 }

@@ -15,7 +15,7 @@ public class ChunkingService {
     // Smaller chunks = more specific embeddings = more precise search results
     // If you make chunks too large, the embedding becomes an "average" of too
     // many things and loses specificity
-    private static final int MAX_LINES = 200;
+    private static final int MAX_LINES = 100;
 
     // Why 40 lines of overlap between consecutive chunks:
     // Imagine a method that starts at line 498 of a file
@@ -23,7 +23,7 @@ public class ChunkingService {
     // The method is split — neither chunk has the complete method
     // With overlap: chunk 1 starts at line 460 (500 - 40)
     // So the full method appears in chunk 1 with 40 lines of context before it
-    private static final int OVERLAP = 30;
+    private static final int OVERLAP = 15;
 
     public List<Chunk> chunkFile(String filePath, String content){
         List<Chunk> chunks = new ArrayList<>();

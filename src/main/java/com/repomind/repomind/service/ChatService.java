@@ -11,6 +11,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -34,7 +37,8 @@ public class ChatService {
     private final PromptBuilder promptBuilder;
     private final ConversationMemoryService memoryService;
     private final GenerateEmbeddingQuery generateEmbeddingQuery;
-
+    private final GenerateSummary summaryGenerator;
+    private final CacheManager cacheManager;
     // Returns Flux<String> for SSE streaming
     // The controller converts this to text/event-stream automatically
     // Each emitted String is one SSE data event
@@ -54,22 +58,23 @@ public class ChatService {
 
         //Step2: Get or create conversation (user-scoped)
         Conversation conversation = resolveConversation(conversationId, repo, currentUser);
-
+        UUID conversationIdFinal = conversation.getId();
         //step3 : Load conversationHistory from redis
         //this is what we gives to LLM "memory" of previous messages
         //without this, every Message is treated as as fresh conversation
         List<ConversationMemoryService.MemoryMessage> history =
                 memoryService.getRecentMessages(conversation.getId(),promptBuilder.MEMORY_WINDOW_SIZE);
 
-        log.debug("Loaded {} messages from conversation history", history.size());
+        String conversationSummary = getUserSummary(conversationIdFinal);
 
+        log.debug("Loaded {} messages from conversation history", history.size());
         // step4 : Embed question and find relevant code chunks
         String retrievalQuery = buildRetrievalQuery(history, userQuestion);
         float[] questionVector = embeddingService.embed(retrievalQuery);
         String vectorString = embeddingService.toVectorString(questionVector);
 
         List<CodeChunkRepository.CodeChunkProjection> relevantChunks =
-                chunkRepository.findTopSimilarChunks(repoId,vectorString,10);
+                chunkRepository.findTopSimilarChunks(repoId,vectorString,12);
 
         if(relevantChunks.isEmpty()){
             // Return a Flux that emits one event and completes
@@ -88,7 +93,7 @@ public class ChatService {
 
         //step5: Build Prompts with conversation history included
         String systemPrompt = promptBuilder.buildChatSystemPrompt();
-        String userPrompt = promptBuilder.buildChatUserPrompt(history,codeContext,userQuestion);
+        String userPrompt = promptBuilder.buildChatUserPrompt(conversationSummary,codeContext,userQuestion);
 
         // Step 6: Save user message to Redis memory immediately
         // Save before LLM call so if LLM fails, we still have the question recorded
@@ -98,7 +103,7 @@ public class ChatService {
         // AtomicReference collects the full response as tokens stream in
         // After streaming completes, we save the full response to Redis and DB
         AtomicReference<StringBuilder> fullResponse = new AtomicReference<>(new StringBuilder());
-        UUID conversationIdFinal = conversation.getId();
+
 
         // Build SSE event stream:
         // 1. First emit conversation ID so frontend knows which conversation this belongs to
@@ -116,7 +121,11 @@ public class ChatService {
                     // Streaming finished — save complete response to Redis and DB
                     String completeAnswer = fullResponse.get().toString();
 
-                    //save assistant response to Redis memory
+                    String updatedSummary = summaryGenerator.generateSummary(userQuestion,completeAnswer,conversationSummary);
+
+                    conversation.setSummary(updatedSummary);
+                    conversationRepository.save(conversation);
+
                     memoryService.addMessage(conversationIdFinal,"Assistant",completeAnswer);
 
                     //Save both messages to data base for persistence
@@ -125,6 +134,8 @@ public class ChatService {
                     log.debug("Chat streaming complete. Conversation: {}",conversationIdFinal);
                 })
                 .doOnError(e -> log.error("Streaming error for conversation {}: {}",conversationIdFinal,e.getMessage()));
+
+
 
         // Prepend the conversation ID event and append sources + done events
         Flux<String> startEvent = Flux.just(
@@ -260,6 +271,18 @@ public class ChatService {
                 .orElseThrow(()-> new RuntimeException("Conversation not found: " + conversationId));
         conversationRepository.deleteById(conversationId);
         memoryService.clearConversation(conversationId);
+    }
+
+
+    public String getUserSummary(UUID conversationId)
+    {
+        Optional<Conversation> conversation = conversationRepository.findById(conversationId);
+        Conversation conversation1 = conversation.get();
+
+        if(conversation1 != null && conversation1.getSummary() != null)
+            return conversation1.getSummary();
+
+        return  "";
     }
 
 }
