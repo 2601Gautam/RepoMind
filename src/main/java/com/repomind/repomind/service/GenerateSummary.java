@@ -1,6 +1,5 @@
 package com.repomind.repomind.service;
 
-import com.google.genai.Chat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
