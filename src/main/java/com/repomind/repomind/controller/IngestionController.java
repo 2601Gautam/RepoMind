@@ -3,6 +3,7 @@ package com.repomind.repomind.controller;
 
 import com.repomind.repomind.annotation.RateLimit;
 import com.repomind.repomind.dto.request.IngestRequest;
+import com.repomind.repomind.dto.request.SyncRequest;
 import com.repomind.repomind.dto.response.RepoStatusResponse;
 import com.repomind.repomind.model.entity.RepoEntity;
 import com.repomind.repomind.model.entity.User;
@@ -12,6 +13,7 @@ import com.repomind.repomind.repository.RepoJpaRepository;
 import com.repomind.repomind.repository.UserRepoRepository;
 import com.repomind.repomind.service.CacheService;
 import com.repomind.repomind.service.ingestion.IngestionService;
+import com.repomind.repomind.service.ingestion.SyncService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,43 +30,38 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/repos")
 @RequiredArgsConstructor
-// @CrossOrigin allows your React frontend (port 5173 in dev) to call this backend (port 8080)
-// Browsers block cross-origin requests by default — this annotation lifts that block
-// In production both are on the same domain so this does nothing, but it does not hurt
 @Slf4j
 public class IngestionController {
 
     private final UserRepoRepository userRepoRepository;
     private final IngestionService ingestionService;
+    private final SyncService syncService;
     private final RepoJpaRepository repoRepository;
     private final CodeChunkRepository chunkRepository;
     private final CacheService cacheService;
 
-    @RateLimit(requests = 2, windowSeconds = 3600)  // 2 per hour
+    @RateLimit(requests = 2, windowSeconds = 3600)
     @PostMapping("/ingest")
     @CacheEvict(value = "userRepos", key = "#currentUser.id")
     public ResponseEntity<RepoStatusResponse> ingest(@Valid @RequestBody IngestRequest request,
                                                      @AuthenticationPrincipal User currentUser){
-        // @Valid triggers the @NotBlank and @Pattern checks on IngestRequest
-        // If validation fails, Spring returns 400 automatically before this runs
         String githubUrl = request.getGithubUrl();
         if (githubUrl.endsWith(".git")) {
             githubUrl = githubUrl.substring(0, githubUrl.length() - 4);
         }
-        
+
         request.setGithubUrl(githubUrl);
         String repoName = extractRepoName(request.getGithubUrl());
-        
+
         Optional<RepoEntity> existing = repoRepository
                 .findFirstByGithubUrlOrderByCreatedAtDesc(request.getGithubUrl());
-        
+
         if(existing.isPresent())
         {
             RepoEntity existingRepo = existing.get();
 
             if(existingRepo.getStatus() == RepoEntity.IngestionStatus.READY)
             {
-                // Give this user access to the existing repo without re-ingesting
                 grantUserAccess(currentUser,existingRepo);
                 cleanupDuplicates(request.getGithubUrl(),existingRepo.getId());
                 return ResponseEntity.ok(toDto(existingRepo));
@@ -84,8 +81,6 @@ public class IngestionController {
                 existingRepo.setTotalChunks(0);
                 repoRepository.save(existingRepo);
                 grantUserAccess(currentUser, existingRepo);
-                // Other users sharing this repo may have FAILED cached in Redis
-                // Evict all so they see the fresh PENDING status immediately
                 cacheService.evictUserReposCache();
                 ingestionService.ingestAsync(existingRepo.getId(),
                         request.getGithubUrl(), request.getToken());
@@ -93,8 +88,6 @@ public class IngestionController {
 
             }
         }
-        // Save the repo row immediately — gives it a UUID right now
-        // Status starts as PENDING from @PrePersist in the entity
         RepoEntity repo = RepoEntity.builder()
                 .githubUrl(request.getGithubUrl())
                 .repoName(repoName)
@@ -103,14 +96,37 @@ public class IngestionController {
         repo = repoRepository.save(repo);
         grantUserAccess(currentUser, repo);
 
-        // This fires the background job and returns IMMEDIATELY
-        // The HTTP response goes back to the client before ingestion even starts
-        // The client then polls /status every few seconds to track progress
         ingestionService.ingestAsync(repo.getId(), request.getGithubUrl(), request.getToken());
 
-        // 202 Accepted = "I received your request and started working, but not done yet"
-        // More honest than 200 OK which implies the work is complete
         return  ResponseEntity.accepted().body(toDto(repo));
+    }
+
+    // Incremental sync — diffs against last_commit_sha instead of re-cloning.
+    // See SyncService for the actual logic.
+    @RateLimit(requests = 10, windowSeconds = 3600)
+    @PostMapping("/{repoId}/sync")
+    public ResponseEntity<RepoStatusResponse> sync(@PathVariable UUID repoId,
+                                                   @RequestBody(required = false) SyncRequest request,
+                                                   @AuthenticationPrincipal User currentUser) {
+        RepoEntity repo = userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), repoId)
+                .flatMap(userRepo -> repoRepository.findById(repoId))
+                .orElse(null);
+
+        if (repo == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (repo.getStatus() != RepoEntity.IngestionStatus.READY) {
+            return ResponseEntity.status(409).body(toDto(repo));
+        }
+
+        if (repo.isSyncing()) {
+            return ResponseEntity.accepted().body(toDto(repo));
+        }
+
+        String token = request != null ? request.getToken() : null;
+        syncService.syncAsync(repoId, token);
+        return ResponseEntity.accepted().body(toDto(repo));
     }
 
     @GetMapping("/{repoId}/status")
@@ -123,12 +139,8 @@ public class IngestionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Replace listAll to return only THIS user's repos:
     @GetMapping
     @Cacheable(value = "userRepos",key = "#currentUser.id")
-    // @Cacheable: first call queries DB, result stored in Redis for 5 min
-// Subsequent calls within 5 min return from Redis instantly
-// Cache key is per-user so User A never sees User B's repos
     public List<RepoStatusResponse> listAll(
             @AuthenticationPrincipal User currentUser){
 
@@ -140,8 +152,6 @@ public class IngestionController {
         return list;
     }
 
-    // Remove this user's access to a repo.
-    // If no other users have access, delete the repo entity entirely.
     @DeleteMapping("/{repoId}")
     @CacheEvict(value = "userRepos", key = "#currentUser.id")
     public ResponseEntity<Void> removeRepo(@PathVariable UUID repoId,
@@ -149,7 +159,6 @@ public class IngestionController {
         userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), repoId)
                 .ifPresent(userRepoRepository::delete);
 
-        // If nobody else has this repo, clean it up entirely
         if (userRepoRepository.countByRepoId(repoId) == 0) {
             chunkRepository.deleteByRepositoryId(repoId);
             repoRepository.deleteById(repoId);
@@ -157,8 +166,6 @@ public class IngestionController {
 
         return ResponseEntity.noContent().build();
     }
-
-    // Helper — grants a user access to a repo, ignoring if they already have it
 
     private void grantUserAccess(User user,RepoEntity repo){
         if(!userRepoRepository.existsByUserIdAndRepoId(user.getId(),repo.getId())){
@@ -169,9 +176,6 @@ public class IngestionController {
         }
     }
 
-    // Converts entity → DTO
-    // Entity is your internal DB model, DTO is what the API exposes
-    // Keeping them separate means DB changes don't break your API contract
     private RepoStatusResponse toDto(RepoEntity repo) {
         return RepoStatusResponse.builder()
                 .id(repo.getId())
@@ -183,10 +187,11 @@ public class IngestionController {
                 .totalChunks(repo.getTotalChunks())
                 .errorMessage(repo.getErrorMessage())
                 .createdAt(repo.getCreatedAt())
+                .lastSyncedAt(repo.getLastSyncedAt())
+                .syncing(repo.isSyncing())
                 .build();
     }
     private String extractRepoName(String url) {
-        // "https://github.com/facebook/react" → "facebook/react"
         String[] parts = url.replaceAll("/$", "").split("/");
         return parts.length >= 2
                 ? parts[parts.length - 2] + "/" + parts[parts.length - 1]

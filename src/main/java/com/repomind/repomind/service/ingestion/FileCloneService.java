@@ -3,6 +3,9 @@ package com.repomind.repomind.service.ingestion;
 import com.repomind.repomind.utility.FileCloneUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +30,6 @@ public class FileCloneService {
     @Autowired
     private FileCloneUtil fileCloneUtil;
 
-    // Whitelist of extensions worth embedding
-    // We whitelist (only allow these) rather than blacklist (block specific ones)
-    // because there are too many binary/junk types to block exhaustively
     private static final Set<String> SUPPORTED_EXTENSIONS = Set.of(
             ".java", ".kt", ".kts", ".gradle", ".pom",
             ".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs",
@@ -44,11 +44,6 @@ public class FileCloneService {
             ".md", ".rst", ".txt",
             ".tf", ".tfvars", ".dockerfile"
     );
-    // Folders that contain zero useful code
-    // node_modules = npm dependencies (not your code)
-    // target = compiled Java output
-    // .git = git history (binary, not readable)
-    // build/dist = build outputs
     private static final Set<String> SKIP_FOLDERS = Set.of(
             ".git", "node_modules", ".idea", ".vscode", ".settings",
             "build", "dist", "target", ".gradle", ".mvn", "out", "bin",
@@ -70,16 +65,10 @@ public class FileCloneService {
             "README.md",
             "LICENSE"
     );
-    // 2 MB max per file
-    // Files larger than this are almost always generated or minified
-    // Minified JS is one line of gibberish — useless for semantic search
     private static final long MAX_FILE_BYTES = 2000 * 1024;
 
     public Path cloneRepository(String githubUrl, String token) throws Exception {
 
-        // createTempDirectory makes a folder like /tmp/repomind-clone-4729382
-        // Spring Boot and the OS will clean this up eventually
-        // but we explicitly delete it after ingestion to save disk space
         Path tempDir = Files.createTempDirectory("repomind-clone-");
         log.info("Cloning {} into {}", githubUrl, tempDir);
 
@@ -88,12 +77,8 @@ public class FileCloneService {
             var cmd = Git.cloneRepository()
                     .setURI(githubUrl)
                     .setDirectory(tempDir.toFile())
-                    // Depth 1 = shallow clone: only downloads the latest snapshot
-                    // NOT the full git history. For a repo with 3 years of history,
-                    // this is the difference between 30MB and 800MB download.
                     .setDepth(1);
 
-            //private repo requires authentication. Public repo can skip this.
             if (token != null && !token.isEmpty()) {
 
                 cmd.setCredentialsProvider((
@@ -106,7 +91,6 @@ public class FileCloneService {
             return tempDir;
 
         } catch (Exception e) {
-            //if clone fails, clean up immediately to avoid leaving temp folders lying around
             deleteDirectory(tempDir);
             throw e;
         }
@@ -115,16 +99,10 @@ public class FileCloneService {
     public List<ParsedFile> extractFiles(Path repoRoot) throws IOException {
         List<ParsedFile> result = new ArrayList<>();
 
-        //walkFileTree visits every file and directory recursively
-        //simpleFileVisitor lets you override only the methods you need
-        //Java automatically traverses everything recursively.
         Files.walkFileTree(repoRoot, new SimpleFileVisitor<>(){
 
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                // Called BEFORE entering each directory
-                // SKIP_SUBTREE = do not enter this folder at all
-                // We never even list the contents of node_modules
                 if (SKIP_FOLDERS.contains(dir.getFileName().toString())) {
                     return FileVisitResult.SKIP_SUBTREE;
                 }
@@ -148,10 +126,6 @@ public class FileCloneService {
 
                     if(content.isBlank())return FileVisitResult.CONTINUE;
 
-                    // relativize turns:
-                    // /tmp/repomind-clone-4729/src/main/AuthService.java
-                    // into: src/main/AuthService.java
-                    // This is the path users see in the "sources" section of chat
                     String relativePath = repoRoot.relativize(file).toString()
                             .replace("\\", "/");
 
@@ -177,8 +151,6 @@ public class FileCloneService {
                         Files.delete(f);
                         log.info("file with path: {} deleted",f);
                     } catch (IOException e) {
-                        // Log but DO NOT return TERMINATE or throw
-                        // Returning CONTINUE means the walk keeps going to next file
                         log.warn("Could not delete {}: {}",f,e.getMessage());
                     }
                     return FileVisitResult.CONTINUE;
@@ -186,25 +158,17 @@ public class FileCloneService {
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    // visitFileFailed is called when the walker itself cannot
-                    // even access a file (permissions, locked by OS etc)
-                    // Without overriding this, the default implementation throws
-                    // the exception and stops the entire walk
                     log.warn("Could not access file for deletion {}: {}", file, exc.getMessage());
                     return FileVisitResult.CONTINUE;
                 }
                 @Override
                 public FileVisitResult postVisitDirectory(Path d, IOException exc) {
                     if (exc != null) {
-                        // exc here means something went wrong iterating this directory
-                        // We still try to delete it — it might be empty now
                         log.warn("Issue iterating directory {}: {}", d, exc.getMessage());
                     }
                     try {
                         Files.delete(d);
                     } catch (IOException e) {
-                        // Directory might not be empty because some files above failed
-                        // That is acceptable — OS will clean temp dirs eventually
                         log.warn("Could not delete directory {}: {}", d, e.getMessage());
                     }
                     return FileVisitResult.CONTINUE;
@@ -214,9 +178,38 @@ public class FileCloneService {
             log.warn("Partial cleanup failure: {}", e.getMessage());
         }
     }
-    // Java record: immutable data holder
-    // Auto-generates constructor, getters, equals, hashCode
-    // Perfect for passing data between services without risk of mutation
+
+    // ── Sync support ──────────────────────────────────────────────────
+    public boolean isIngestable(String relativePath, long sizeBytes) {
+        if (sizeBytes > MAX_FILE_BYTES) return false;
+        for (String segment : relativePath.split("/")) {
+            if (SKIP_FOLDERS.contains(segment)) return false;
+        }
+        String name = relativePath.contains("/")
+                ? relativePath.substring(relativePath.lastIndexOf('/') + 1)
+                : relativePath;
+        String ext = fileCloneUtil.getExtension(name);
+        return SUPPORTED_EXTENSIONS.contains(ext) || SUPPORTED_FILENAMES.contains(name);
+    }
+
+    public String extensionOf(String relativePath) {
+        String name = relativePath.contains("/")
+                ? relativePath.substring(relativePath.lastIndexOf('/') + 1)
+                : relativePath;
+        return fileCloneUtil.getExtension(name);
+    }
+
+    public String getHeadCommitSha(Path repoDir) {
+        try (Repository repository = new FileRepositoryBuilder()
+                .setGitDir(repoDir.resolve(".git").toFile())
+                .build()) {
+            ObjectId head = repository.resolve("HEAD");
+            return head != null ? head.getName() : null;
+        } catch (IOException e) {
+            log.warn("Could not resolve HEAD commit for {}: {}", repoDir, e.getMessage());
+            return null;
+        }
+    }
+
     public record ParsedFile(String relativePath, String content, String extension) {}
 }
-

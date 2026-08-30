@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "repositories")
-@Data // Lombok: generates all getters, setters, toString, equals, hashCode
-@Builder  // Lombok: provides a builder pattern for object creation
-@NoArgsConstructor // Lombok: generates a no-args constructor , jpa requires a no-args constructor for entity classes
-@AllArgsConstructor // Lombok: generates an all-args constructor, needed by @Builder to work
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RepoEntity {
 
     @Id
@@ -49,8 +49,21 @@ public class RepoEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // This method runs automatically just before JPA saves a NEW row (INSERT)
-    // Sets both timestamps and default status so you never forget to set them
+    // The commit SHA that was last fully embedded — sync diffs against this.
+    // Captured for free from the clone that full ingestion already does.
+    @Column(name = "last_commit_sha", length = 40)
+    private String lastCommitSha;
+
+    @Column(name = "last_synced_at")
+    private LocalDateTime lastSyncedAt;
+
+    // Deliberately NOT part of `status`. Chat's guard checks status == READY;
+    // keeping sync-in-progress out of that enum means chat keeps working for
+    // the entire duration of a sync. Purely for UI ("Syncing…" badge) and to
+    // stop a second sync firing on top of a running one.
+    @Column(name = "syncing", nullable = false)
+    private boolean syncing;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -60,17 +73,14 @@ public class RepoEntity {
         if (processedFiles == null) processedFiles = 0;
         if (totalChunks == null) totalChunks = 0;
     }
-    // This method runs automatically just before JPA saves changes to an EXISTING row (UPDATE)
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-    // Enum inside the entity because it only makes sense in this context
-    // These are the exact strings stored in the status column
     public enum IngestionStatus {
-        PENDING,     // row created, background job not started yet
-        PROCESSING,  // currently cloning and embedding
-        READY,       // all chunks stored, chat available
-        FAILED       // something went wrong, check error_message column
+        PENDING,
+        PROCESSING,
+        READY,
+        FAILED
     }
 }

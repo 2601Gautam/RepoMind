@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,36 +28,22 @@ public class IngestionService {
     private final RepoJpaRepository repoRepository;
     private final CodeChunkRepository chunkRepository;
     private final CacheService cacheService;
-    // @Async: Spring picks a thread from a thread pool and runs this method there
-    // The thread that handled your HTTP request is freed immediately
-    // The client gets the 202 response and starts polling /status
-    // Meanwhile this method runs in the background for 3-10 minutes
-    //
-    // IMPORTANT: @Async only works if the method is called from a DIFFERENT class
-    // If IngestionController called ingestAsync from THIS class directly via this.ingestAsync()
-    // the @Async would be ignored — Spring's proxy cannot intercept internal calls
-    // It works because IngestionController injects IngestionService via Spring
-    // and calls it through Spring's proxy, which intercepts and runs it async
 
     @Async
     public void ingestAsync(UUID repoId,String githubUrl, String token){
         Path tempDir = null;
+        String headSha = null;
 
         RepoEntity repo = repoRepository.findById(repoId)
                 .orElseThrow(() ->new RuntimeException("Repo not found: " + repoId));
         try{
-            //1.Mark as Processsing
             repo.setStatus(RepoEntity.IngestionStatus.PROCESSING);
             repoRepository.save(repo);
 
-            //2. Clone the repository
-            // FileCloneService.cloneRepository downloads the repo to a temp folder
-            // Returns the path to that folder
             tempDir = fileCloneService.cloneRepository(githubUrl,token);
-
-            // ── 3. Extract all code files ───────────────────────────────────
-            // FileCloneService.extractFiles walks the folder, skips junk,
-            // returns a list of ParsedFile records (relativePath, content, extension)
+            // Capture the baseline commit now, while the clone still exists —
+            // this is what future /sync calls diff against.
+            headSha = fileCloneService.getHeadCommitSha(tempDir);
 
             List<FileCloneService.ParsedFile> files = fileCloneService.extractFiles(tempDir);
 
@@ -70,76 +57,73 @@ public class IngestionService {
             repoRepository.save(repo);
             log.info("Found {} files to process for repo {}", files.size(), repoId);
 
-            // ── 4. Process each file ─────────────────────────────────────────
             int processedCount = 0;
             int chunkCount = 0;
             int maxRetries = 5;
             for(FileCloneService.ParsedFile file : files) {
 
-                    List<ChunkingService.Chunk> chunks = chunkingService.chunkFile(
-                            file.relativePath(),
-                            file.content()
-                    );
+                List<ChunkingService.Chunk> chunks = chunkingService.chunkFile(
+                        file.relativePath(),
+                        file.content()
+                );
 
-                    for (ChunkingService.Chunk chunk : chunks) {
-                        try {
-                            long delay = 1000;
-                            float[] embedding = new float[0];
-                            for (int i = 0; i < maxRetries; i++) {
-                                try {
+                for (ChunkingService.Chunk chunk : chunks) {
+                    try {
+                        long delay = 1000;
+                        float[] embedding = new float[0];
+                        for (int i = 0; i < maxRetries; i++) {
+                            try {
 
-                                    embedding = embeddingService.embed(chunk.content());
-                                    log.debug("Embedding done on {} try", i + 1);
-//                                    Thread.sleep(500);
-                                    break;
-                                } catch (NonTransientAiException e) {
-                                    if (i == maxRetries - 1) {
-                                        throw e; // Give up after the last retry
-                                    }
-                                    Thread.sleep(delay);
-                                    log.warn("Rate limit hit. Retrying in {} ms...", delay);
-                                    delay *= 2; // 1s -> 2s -> 4s -> 8s -> 16s
+                                embedding = embeddingService.embed(chunk.content());
+                                log.debug("Embedding done on {} try", i + 1);
+                                break;
+                            } catch (NonTransientAiException e) {
+                                if (i == maxRetries - 1) {
+                                    throw e;
                                 }
+                                Thread.sleep(delay);
+                                log.warn("Rate limit hit. Retrying in {} ms...", delay);
+                                delay *= 2;
                             }
-
-
-                            CodeChunk entity = CodeChunk.builder()
-                                    .repository(repo)
-                                    .filePath(chunk.filePath())
-                                    .language(toLanguage(file.extension()))
-                                    .content(chunk.content())
-                                    .chunkIndex(chunk.chunkIndex())
-                                    .startLine(chunk.startLine())
-                                    .endLine(chunk.endLine())
-                                    .embedding(embedding)
-                                    .build();
-
-                            chunkRepository.save(entity);
-                            chunkCount++;
-                        } catch (Exception e) {   // <-- PUT CATCH HERE
-                            log.error("Exception class: {}", e.getClass().getName(), e);
-                            log.warn(
-                                    "Skipping chunk {} in file {}: {}",
-                                    chunk.chunkIndex(),
-                                    file.relativePath(),
-                                    e.getMessage()
-                            );
                         }
-                    }
-                    processedCount++;
-                    // Update progress every 5 files so the frontend progress
-                    // bar moves visibly — updating every file would be too many DB writes
-                    if (processedCount % 5 == 0) {
-                        repo.setProcessedFiles(processedCount);
-                        repo.setTotalChunks(chunkCount);
-                        repoRepository.save(repo);
-                        log.info("Progress: {}/{} files, {} chunks",
-                                processedCount, files.size(), chunkCount);
+
+
+                        CodeChunk entity = CodeChunk.builder()
+                                .repository(repo)
+                                .filePath(chunk.filePath())
+                                .language(toLanguage(file.extension()))
+                                .content(chunk.content())
+                                .chunkIndex(chunk.chunkIndex())
+                                .startLine(chunk.startLine())
+                                .endLine(chunk.endLine())
+                                .embedding(embedding)
+                                .build();
+
+                        chunkRepository.save(entity);
+                        chunkCount++;
+                    } catch (Exception e) {
+                        log.error("Exception class: {}", e.getClass().getName(), e);
+                        log.warn(
+                                "Skipping chunk {} in file {}: {}",
+                                chunk.chunkIndex(),
+                                file.relativePath(),
+                                e.getMessage()
+                        );
                     }
                 }
+                processedCount++;
+                if (processedCount % 5 == 0) {
+                    repo.setProcessedFiles(processedCount);
+                    repo.setTotalChunks(chunkCount);
+                    repoRepository.save(repo);
+                    log.info("Progress: {}/{} files, {} chunks",
+                            processedCount, files.size(), chunkCount);
+                }
+            }
 
-            // ── 5. Mark as READY ─────────────────────────────────────────────
             repo.setStatus(RepoEntity.IngestionStatus.READY);
+            repo.setLastCommitSha(headSha);
+            repo.setLastSyncedAt(LocalDateTime.now());
             cacheService.evictUserReposCache();
             repo.setProcessedFiles(processedCount);
             repo.setTotalChunks(chunkCount);
@@ -147,7 +131,6 @@ public class IngestionService {
             log.info("Ingestion complete: {} files, {} chunks for repo {}",
                     processedCount, chunkCount, repoId);
         } catch (Exception e) {
-            // Top-level failure: clone failed, no files found, DB connection issue
             log.error("Ingestion failed for repo {}: {}", repoId, e.getMessage(), e);
             repo.setStatus(RepoEntity.IngestionStatus.FAILED);
             cacheService.evictUserReposCache();
@@ -155,16 +138,14 @@ public class IngestionService {
             repoRepository.save(repo);
             throw new RuntimeException(e);
         } finally {
-            // finally block runs whether ingestion succeeded or failed
-            // Always delete the temp directory — never leave cloned repos on disk
-            // A failed ingestion on a large repo could leave gigabytes behind
             if (tempDir != null) {
                 fileCloneService.deleteDirectory(tempDir);
                 log.info("Cleaned up temp directory for repo {}", repoId);
             }
         }
     }
-    private String toLanguage(String extension) {
+
+    public static String toLanguage(String extension) {
         return switch (extension) {
             case ".java" -> "java";
             case ".js", ".jsx" -> "javascript";

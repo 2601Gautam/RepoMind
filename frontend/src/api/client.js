@@ -271,3 +271,8 @@ async function readSseStream(body, onEvent) {
         reader.releaseLock()
     }
 }
+export const syncRepo = (repoId, token = null) =>
+    apiFetch(`${BASE}/repos/${repoId}/sync`, {
+        method: 'POST',
+        body: JSON.stringify({ token })
+    })

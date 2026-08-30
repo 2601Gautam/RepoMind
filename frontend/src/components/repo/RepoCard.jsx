@@ -35,6 +35,16 @@ const IconTrash = () => (
     </svg>
 )
 
+// Sync = re-run diff-based ingestion against the latest commit
+const IconSync = ({ spinning }) => (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        className={`w-3.5 h-3.5 ${spinning ? 'animate-spin' : ''}`}>
+        <path d="M16.667 3.333v4.167h-4.167" />
+        <path d="M3.333 16.667v-4.167h4.167" />
+        <path d="M4.4 7.5a6.667 6.667 0 0111.267-2.617l1 1.284M15.6 12.5a6.667 6.667 0 01-11.267 2.617l-1-1.284" />
+    </svg>
+)
+
 // ─── status meta ──────────────────────────────────────────────────────────────
 
 const STATUS = {
@@ -46,18 +56,23 @@ const STATUS = {
 
 // ─── main component ───────────────────────────────────────────────────────────
 
-export default function RepoCard({ repo, onRemove, viewMode = 'grid' }) {
+export default function RepoCard({ repo, onRemove, onSync, viewMode = 'grid' }) {
     const navigate = useNavigate()
 
     const pct = repo.totalFiles > 0
         ? Math.round((repo.processedFiles / repo.totalFiles) * 100)
         : 0
 
-    const st = STATUS[repo.status] ?? { label: repo.status, dot: 'bg-neutral-600' }
+    // `syncing` is a separate flag from `status` — status stays READY the
+    // whole time a sync runs (chat keeps working), so it needs its own
+    // dot/label override here rather than living in the STATUS map above.
+    const st = repo.syncing
+        ? { label: 'Syncing', dot: 'bg-violet-500 animate-pulse' }
+        : (STATUS[repo.status] ?? { label: repo.status, dot: 'bg-neutral-600' })
 
     // Never render failed repos in any view
     if (repo.status === 'FAILED') return null
-    
+
     // Parse owner and repo separately for a cleaner UI
     const slugRaw = repo.githubUrl?.replace('https://github.com/', '').replace(/\/$/, '') ?? ''
     const slugParts = slugRaw.split('/')
@@ -124,6 +139,20 @@ export default function RepoCard({ repo, onRemove, viewMode = 'grid' }) {
                         </div>
                     )}
 
+                    {/* Sync icon button (only when READY) */}
+                    {repo.status === 'READY' && (
+                        <button
+                            onClick={e => { e.stopPropagation(); onSync?.(repo.id) }}
+                            disabled={repo.syncing}
+                            title={repo.syncing ? 'Syncing…' : 'Sync latest commit'}
+                            className={`cursor-pointer transition-colors disabled:cursor-not-allowed ${
+                                repo.syncing ? 'text-violet-400' : 'text-neutral-500 hover:text-violet-400'
+                            }`}
+                        >
+                            <IconSync spinning={repo.syncing} />
+                        </button>
+                    )}
+
                     {/* Status badge */}
                     <div className="flex items-center gap-2 text-[12px] font-medium text-neutral-400 min-w-[70px] justify-end">
                         <span className={`w-2 h-2 rounded-full ${st.dot}`} />
@@ -146,10 +175,10 @@ export default function RepoCard({ repo, onRemove, viewMode = 'grid' }) {
     // Default Grid view card (Professional)
     return (
         <div className="group relative flex flex-col rounded-xl bg-[#0a0a0a] border border-white/[0.08] p-5 hover:border-white/[0.15] hover:bg-[#111] transition-colors">
-            
+
             {/* Header Section */}
             <div className="flex items-start justify-between gap-4">
-                
+
                 {/* Repo Info */}
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 text-[14px] leading-tight">
@@ -171,8 +200,22 @@ export default function RepoCard({ repo, onRemove, viewMode = 'grid' }) {
                     )}
                 </div>
 
-                {/* Top-Right Area: Status & Delete */}
+                {/* Top-Right Area: Sync, Status & Delete */}
                 <div className="shrink-0 flex items-center gap-3">
+                    {repo.status === 'READY' && (
+                        <button
+                            onClick={e => { e.stopPropagation(); onSync?.(repo.id) }}
+                            disabled={repo.syncing}
+                            title={repo.syncing ? 'Syncing…' : 'Sync latest commit'}
+                            className={`cursor-pointer transition-colors disabled:cursor-not-allowed ${
+                                repo.syncing
+                                    ? 'opacity-100 text-violet-400'
+                                    : 'opacity-0 group-hover:opacity-100 text-neutral-500 hover:text-violet-400'
+                            }`}
+                        >
+                            <IconSync spinning={repo.syncing} />
+                        </button>
+                    )}
                     <button
                         onClick={e => { e.stopPropagation(); onRemove?.(repo.id) }}
                         title="Remove"
