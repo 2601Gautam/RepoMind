@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { listRepos, getRepoStatus, deleteRepo } from '../api/client'
+import { listRepos, getRepoStatus, deleteRepo, syncRepo } from '../api/client'
 import RepoCard from '../components/repo/RepoCard'
 import NavBar from '../components/layout/NavBar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
@@ -27,7 +27,8 @@ export default function AllReposPage() {
             setRepos(visible)
             setTotalPages(data.totalPages || (Array.isArray(data) ? 1 : 0))
             visible.forEach(repo => {
-                if (repo.status === 'PROCESSING' || repo.status === 'PENDING') startPollingRepo(repo.id)
+                if (repo.status === 'PROCESSING' || repo.status === 'PENDING') startPollingIngest(repo.id)
+                if (repo.syncing) startPollingSync(repo.id)
             })
         } catch (e) {
             console.error('Failed to load repos:', e)
@@ -36,7 +37,8 @@ export default function AllReposPage() {
         }
     }
 
-    function startPollingRepo(repoId) {
+    // Polls until a full ingest finishes (status leaves PROCESSING/PENDING)
+    function startPollingIngest(repoId) {
         if (pollsRef.current[repoId]) return
         pollsRef.current[repoId] = setInterval(async () => {
             try {
@@ -55,6 +57,36 @@ export default function AllReposPage() {
                 }
             } catch { /* silent retry */ }
         }, 3000)
+    }
+
+    // Polls until a sync finishes (syncing flips back to false).
+    // status stays READY the whole time, so it's not the thing to watch here.
+    function startPollingSync(repoId) {
+        if (pollsRef.current[repoId]) return
+        pollsRef.current[repoId] = setInterval(async () => {
+            try {
+                const updated = await getRepoStatus(repoId)
+                setRepos(prev => prev.map(r => r.id === repoId ? updated : r))
+                if (!updated.syncing) {
+                    clearInterval(pollsRef.current[repoId])
+                    delete pollsRef.current[repoId]
+                }
+            } catch { /* silent retry */ }
+        }, 3000)
+    }
+
+    async function handleSync(repoId) {
+        // Optimistic — spinner starts immediately instead of waiting for the
+        // next poll tick to catch up with the backend
+        setRepos(prev => prev.map(r => r.id === repoId ? { ...r, syncing: true } : r))
+        try {
+            await syncRepo(repoId)
+            startPollingSync(repoId)
+        } catch (e) {
+            // Sync never actually started — revert the optimistic state
+            setRepos(prev => prev.map(r => r.id === repoId ? { ...r, syncing: false } : r))
+            console.error('Failed to start sync:', e)
+        }
     }
 
     async function handleRemove(repoId) {
@@ -139,7 +171,7 @@ export default function AllReposPage() {
                             ) : (
                                 <div className="flex flex-col gap-2.5">
                                     {filtered.map(repo => (
-                                        <RepoCard key={repo.id} repo={repo} viewMode="list" onRemove={handleRemove} />
+                                        <RepoCard key={repo.id} repo={repo} viewMode="list" onRemove={handleRemove} onSync={handleSync} />
                                     ))}
                                 </div>
                             )}
@@ -153,7 +185,8 @@ export default function AllReposPage() {
                             onClick={() => setPage(p => Math.max(0, p - 1))}
                             disabled={page === 0}
                             className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
+                        >v
+
                             ← Previous
                         </button>
                         <span className="text-[12px] text-neutral-600">{page + 1} / {totalPages}</span>

@@ -195,7 +195,7 @@ public class IngestionController {
     // S3 upload failed at ingestion time, or this repo predates the feature).
     @GetMapping("/{repoId}/archive")
     public ResponseEntity<Map<String, Object>> getArchiveDownloadUrl(@PathVariable UUID repoId,
-                                                        @AuthenticationPrincipal User currentUser) {
+                                                                     @AuthenticationPrincipal User currentUser) {
         boolean hasAccess = userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), repoId).isPresent();
         if (!hasAccess) {
             return ResponseEntity.notFound().build();
