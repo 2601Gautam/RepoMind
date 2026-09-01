@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: repomind
+  config:
+    import: optional:file:.env[.properties]
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  cache:
+    redis:
+      time-to-live: 5m
+
+# Add these under the existing config:
+app:
+  jwt:
+    # Secret key for signing JWTs — must be at least 256 bits (32 characters)
+    # Generate a random one: https://generate-secret.vercel.app/32
+    # Store as environment variable — never hardcode in yml
+    secret: ${JWT_SECRET}
+    # Token valid for 7 days in milliseconds (604800000 = 7*24*60*60*1000)
+    expiration: 604800000
+  cookie:
+    secure: true
+    same-site: None
+
+  cors:
+    # Your Vercel frontend URL — update after deployment
+    allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:5173}
+
+aws:
+  region: ${AWS_REGION:ap-south-1}
+  accessKeyId: ${AWS_ACCESS_KEY_ID}
+  secretKey: ${AWS_SECRET_ACCESS_KEY}
+  s3:
+    bucket: ${AWS_S3_BUCKET}
+  ses:
+    from-email: ${AWS_SES_FROM_EMAIL}
+  sqs:
+    # Required: no fallback URL exists because an accepted ingestion request
+    # must have a durable SQS message behind it.
+    ingestion-queue-url: ${AWS_SQS_INGESTION_QUEUE_URL}
+    consumer:
+      enabled: ${AWS_SQS_CONSUMER_ENABLED:true}
+    long-poll-seconds: 20
+    # Configure the queue in AWS Console with the same or longer timeout.
+    visibility-timeout-seconds: 1200
+    ingestion-lease-seconds: 1500
+    poll-delay-ms: 1000
+
+logging:
+  level:
+    com.repomind: DEBUG
+    org.springframework.ai: INFO

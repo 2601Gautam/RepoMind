@@ -1,0 +1,86 @@
+# This profile activates on Render with SPRING_PROFILES_ACTIVE=prod
+spring:
+  datasource:
+    # Your NeonDB connection string from neon.tech dashboard
+    # Project → Connection Details → copy the "Connection string"
+    # It looks like: postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb?sslmode=require
+    url: ${DATABASE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # NeonDB free tier sleeps after inactivity
+      # These settings handle the reconnection when it wakes up
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            # Scopes we request from Google:
+            # openid = required for OAuth2
+            # email = user's email address
+            # profile = user's name and profile picture
+            scope: openid, email, profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          # GitHub registration — add this block
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            # GitHub scopes:
+            # read:user = access to user's public profile info
+            # user:email = access to user's email addresses
+            # Without user:email, GitHub may not return email for private accounts
+            scope: read:user, user:email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  data:
+    redis:
+      url: ${REDIS_URL}
+
+  # spring cache backed by redis (this must sit directly under `spring:`,
+  # not under `spring.data:` — a stray extra indent here previously made
+  # this bind to the meaningless `spring.data.cache.*` instead of
+  # `spring.cache.*`, and only "worked" because Spring Boot auto-detects
+  # Redis as the sole cache provider on the classpath either way)
+  # @Cacheable will use redis as the cache provider
+  cache:
+    type: redis
+    redis:
+      # Cache entries expire after 5 minutes
+      time-to-live: 300000 # 5 minutes in milliseconds
+
+  ai:
+    openai:
+      base-url: https://openrouter.ai/api/v1
+      api-key: ${OPENROUTER_API_KEY}
+      chat:
+        model: ${CHAT_MODEL:openrouter/free}
+        options:
+          temperature: 0.3
+      # Tell Spring AI: do NOT create an OpenAI embedding bean
+      # Without this, Spring sees two EmbeddingModel beans and picks OpenAI's
+      embedding:
+        enabled: false
+
+    mistralai:
+      api-key: ${MISTRAL_API_KEY}
+      embedding:
+        options:
+          model: mistral-embed
+
+app:
+  models:
+    chat: ${CHAT_MODEL:openrouter/free}
+    reasoning: ${REASONING_MODEL:openrouter/free}
+    structured: ${STRUCTURED_MODEL:openrouter/free}
+    summary: ${SUMMARY_MODEL}
+
+
+logging:
+  level:
+    com.repomind.repomind: INFO
+

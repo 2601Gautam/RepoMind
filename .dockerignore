@@ -1,0 +1,28 @@
+# Exclude frontend entirely from Docker build context
+# Without this, Docker sends the entire frontend folder (including node_modules)
+# to the Docker daemon before building — massively slows down every build
+frontend/
+
+# Exclude IntelliJ files
+.idea/
+*.iml
+
+# Exclude git files
+.git/
+.gitignore
+.gitattributes
+
+# Exclude environment files — secrets should come from Render env vars, not baked into image
+.env
+*.env
+
+# Exclude Maven build output — Docker rebuilds this inside the container anyway
+target/
+
+# Exclude docs
+*.md
+HELP.md
+
+# Exclude OS files
+.DS_Store
+Thumbs.db
