@@ -8,13 +8,13 @@ import com.repomind.repomind.dto.response.InterviewSessionDto;
 import com.repomind.repomind.model.entity.*;
 import com.repomind.repomind.repository.*;
 import com.repomind.repomind.service.ingestion.EmbeddingService;
-import jakarta.persistence.SecondaryTable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,7 +58,7 @@ public class InterviewService {
 
         // Load the repo and verify it exists and is ready
         UserRepo userRepo = userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), request.getRepoId())
-                .orElseThrow(() -> new RuntimeException("Access denied"));
+                .orElseThrow(() -> new AccessDeniedException("Access denied"));
         RepoEntity repo = userRepo.getRepo();
         if(repo.getStatus() != RepoEntity.IngestionStatus.READY){
             throw  new RuntimeException("Repository is not ready yet");
@@ -112,7 +112,7 @@ public class InterviewService {
 
         // Security check - users can only see their own sessions
         if(!session.getUser().getId().equals(currentUser.getId())){
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         List<InterviewQuestion> questions = questionRepository

@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.sql.Update;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -18,10 +17,9 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -131,8 +129,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 return;
             }
             // If the provider matches, update providerId if not set
-            if (!finalProviderId.equals(user.getProviderId())) {
-
+            if (!Objects.equals(finalProviderId, user.getProviderId())) {
                 log.warn(
                         "Provider ID mismatch for email {}",
                         finalEmail

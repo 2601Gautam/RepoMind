@@ -1,7 +1,7 @@
 package com.repomind.repomind.exception;
 
 
-import kotlin.io.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,6 @@ public class ChatService {
     private final ConversationMemoryService memoryService;
     private final GenerateEmbeddingQuery generateEmbeddingQuery;
     private final GenerateSummary summaryGenerator;
-    private final CacheManager cacheManager;
     // Returns Flux<String> for SSE streaming
     // The controller converts this to text/event-stream automatically
     // Each emitted String is one SSE data event
@@ -120,11 +119,18 @@ public class ChatService {
                 .doOnComplete(() -> {
                     // Streaming finished — save complete response to Redis and DB
                     String completeAnswer = fullResponse.get().toString();
+                    CompletableFuture.runAsync(() -> {
+                        try {
+                            String updatedSummary = summaryGenerator.generateSummary(userQuestion,completeAnswer,conversationSummary);
 
-                    String updatedSummary = summaryGenerator.generateSummary(userQuestion,completeAnswer,conversationSummary);
+                            conversation.setSummary(updatedSummary);
+                            conversationRepository.save(conversation);
 
-                    conversation.setSummary(updatedSummary);
-                    conversationRepository.save(conversation);
+                        } catch (Exception e) {
+                            log.error("Failed to update conversation summary", e);
+                        }
+                    });
+
 
                     memoryService.addMessage(conversationIdFinal,"Assistant",completeAnswer);
 
@@ -211,7 +217,10 @@ public class ChatService {
             );
         }
         return conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found: " + conversationId));
+                .filter(c -> c.getUser() != null &&
+                        c.getUser().getId().equals(currentUser.getId()))
+                .orElseThrow(() ->
+                        new RuntimeException("Conversation not found: " + conversationId));
     }
 
     private void saveMessageToDB(Conversation conversation,String question,String answer,List<String>sources)
@@ -276,13 +285,9 @@ public class ChatService {
 
     public String getUserSummary(UUID conversationId)
     {
-        Optional<Conversation> conversation = conversationRepository.findById(conversationId);
-        Conversation conversation1 = conversation.get();
-
-        if(conversation1 != null && conversation1.getSummary() != null)
-            return conversation1.getSummary();
-
-        return  "";
+        return conversationRepository.findById(conversationId)
+                .map(Conversation::getSummary)
+                .orElse("");
     }
 
 }

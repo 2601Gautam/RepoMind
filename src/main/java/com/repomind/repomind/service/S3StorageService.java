@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -94,6 +95,34 @@ public class S3StorageService {
 
         PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
         return presignedRequest.url().toString();
+    }
+
+    /**
+     * Deletes a repository's archived source ZIP from S3, if one exists.
+     * <p>
+     * Called when the last user reference to a repository is removed (see
+     * IngestionController#removeRepo), so a deleted repository does not leave
+     * an orphaned object behind — otherwise every "delete" from the app just
+     * hides the row while S3 storage keeps growing forever.
+     * <p>
+     * Best-effort, same as the upload path: a delete failure (bucket outage,
+     * a stale/missing key, a permissions issue) must never fail the repo
+     * deletion the user asked for. It is logged so it can be cleaned up
+     * manually or by a periodic reconciliation job.
+     */
+    public void deleteArchive(String key) {
+        if (key == null) {
+            return;
+        }
+        try {
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build());
+            log.info("Deleted repo archive s3://{}/{}", bucketName, key);
+        } catch (Exception e) {
+            log.warn("Could not delete S3 archive {}: {}", key, e.getMessage());
+        }
     }
 
     private byte[] zipFiles(List<FileCloneService.ParsedFile> files) throws IOException {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { listRepos, getRepoStatus, deleteRepo, syncRepo } from '../api/client'
+import { listRepos, getRepoStatus, deleteRepo, syncRepo, getRepoArchive } from '../api/client'
 import RepoCard from '../components/repo/RepoCard'
 import NavBar from '../components/layout/NavBar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
@@ -10,6 +10,8 @@ export default function AllReposPage() {
     const [totalPages, setTotalPages] = useState(0)
     const [loadingRepos, setLoadingRepos] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
+    const [downloadingId, setDownloadingId] = useState(null)
+    const [downloadError, setDownloadError] = useState(null)
     const pollsRef = useRef({})
 
     useEffect(() => {
@@ -98,6 +100,25 @@ export default function AllReposPage() {
         try { await deleteRepo(repoId) } catch { /* silent */ }
     }
 
+    // Fetches a fresh presigned URL right before navigating to it, rather
+    // than caching one — it expires in 15 minutes, and there's no reason
+    // to race that window when a new one is one call away.
+    async function handleDownload(repoId) {
+        setDownloadError(null)
+        setDownloadingId(repoId)
+        try {
+            const { downloadUrl } = await getRepoArchive(repoId)
+            window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+        } catch (e) {
+            // Most likely: no archive exists yet for this repo (predates
+            // the feature, or the S3 upload failed at ingestion time).
+            setDownloadError('Could not get a download link for this repository.')
+            console.error('Failed to get archive download URL:', e)
+        } finally {
+            setDownloadingId(null)
+        }
+    }
+
     return (
         <div className="min-h-screen bg-[#070709] text-white antialiased">
             <NavBar />
@@ -139,6 +160,18 @@ export default function AllReposPage() {
 
                     return (
                         <div className="space-y-5">
+                            {downloadError && (
+                                <div className="flex items-center justify-between gap-3 rounded-lg border border-red-500/20 bg-red-500/[0.06] px-3.5 py-2 text-[12.5px] text-red-300">
+                                    <span>{downloadError}</span>
+                                    <button
+                                        onClick={() => setDownloadError(null)}
+                                        className="cursor-pointer text-red-400/70 hover:text-red-300"
+                                    >
+                                        Dismiss
+                                    </button>
+                                </div>
+                            )}
+
                             {/* Toolbar controls */}
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.04] pb-3.5">
                                 <span className="text-[11.5px] font-bold uppercase tracking-widest text-neutral-500">
@@ -171,7 +204,15 @@ export default function AllReposPage() {
                             ) : (
                                 <div className="flex flex-col gap-2.5">
                                     {filtered.map(repo => (
-                                        <RepoCard key={repo.id} repo={repo} viewMode="list" onRemove={handleRemove} onSync={handleSync} />
+                                        <RepoCard
+                                            key={repo.id}
+                                            repo={repo}
+                                            viewMode="list"
+                                            onRemove={handleRemove}
+                                            onSync={handleSync}
+                                            onDownload={handleDownload}
+                                            downloading={downloadingId === repo.id}
+                                        />
                                     ))}
                                 </div>
                             )}

@@ -61,8 +61,17 @@ public class SyncService {
             GitHubApiService.CompareResult diff =
                     gitHubApiService.compare(coords, repo.getLastCommitSha(), latestSha, token);
 
-            if (diff.tooLargeToDiff()) {
-                log.warn("Diff for repo {} too large/untrustworthy — falling back to full re-ingest", repoId);
+            // Either signal means the file-level diff can't be trusted as a
+            // complete picture of what changed since repo.getLastCommitSha():
+            // tooLargeToDiff() also covers a 404 (base commit fully gone),
+            // and diverged() covers the trickier case where the base commit
+            // is still reachable but history was rewritten around it — see
+            // GitHubApiService.compare for why that diff isn't safe to apply
+            // incrementally.
+            if (diff.tooLargeToDiff() || diff.diverged()) {
+                log.warn("Diff for repo {} is not a trustworthy incremental diff " +
+                                "(tooLarge={}, diverged={}) — falling back to full re-ingest",
+                        repoId, diff.tooLargeToDiff(), diff.diverged());
                 fallbackToFullReingest(repo, token);
                 return;
             }

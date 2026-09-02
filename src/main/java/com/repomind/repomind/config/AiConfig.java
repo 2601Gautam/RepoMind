@@ -20,6 +20,9 @@ public class AiConfig {
     @Value("${app.models.summary}")
     private String summaryModel;
 
+    @Value("${app.models.generateEmbedding}")
+    private String generateEmbeddingModel;
+
     @Value("${app.models.chat}")
     private String chatModel;
 
@@ -83,6 +86,21 @@ public class AiConfig {
                 .baseUrl(baseUrl)
                 .apiKey(apiKey)
                 .model(summaryModel)
+                .temperature(0.1)
+                .build();
+
+        OpenAiChatModel model = OpenAiChatModel.builder()
+                .options(options)
+                .build();
+
+        return ChatClient.builder(model).build();
+    }
+    @Bean("generateEmbeddingClient")
+    public ChatClient embeddingGenerateClient() {
+        OpenAiChatOptions options = OpenAiChatOptions.builder()
+                .baseUrl(baseUrl)
+                .apiKey(apiKey)
+                .model(generateEmbeddingModel)
                 .temperature(0.1)
                 .build();
 

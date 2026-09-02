@@ -7,12 +7,12 @@ import com.repomind.repomind.dto.request.SyncRequest;
 import com.repomind.repomind.dto.response.RepoStatusResponse;
 import com.repomind.repomind.model.entity.RepoEntity;
 import com.repomind.repomind.model.entity.User;
-import com.repomind.repomind.model.entity.UserRepo;
 import com.repomind.repomind.repository.CodeChunkRepository;
 import com.repomind.repomind.repository.RepoJpaRepository;
 import com.repomind.repomind.repository.UserRepoRepository;
 import com.repomind.repomind.service.CacheService;
 import com.repomind.repomind.service.S3StorageService;
+import com.repomind.repomind.service.ingestion.GitHubApiService;
 import com.repomind.repomind.service.ingestion.SyncService;
 import com.repomind.repomind.service.queue.IngestionQueuePublisher;
 import jakarta.validation.Valid;
@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,7 @@ public class IngestionController {
     private final CodeChunkRepository chunkRepository;
     private final CacheService cacheService;
     private final S3StorageService s3StorageService;
+    private final GitHubApiService gitHubApiService;
 
     @RateLimit(requests = 2, windowSeconds = 3600)  // 2 per hour
     @PostMapping("/ingest")
@@ -59,50 +61,40 @@ public class IngestionController {
         Optional<RepoEntity> existing = repoRepository
                 .findFirstByGithubUrlOrderByCreatedAtDesc(request.getGithubUrl());
 
-        if(existing.isPresent())
-        {
-            RepoEntity existingRepo = existing.get();
-
-            if(existingRepo.getStatus() == RepoEntity.IngestionStatus.READY)
-            {
-                // Give this user access to the existing repo without re-ingesting
-                grantUserAccess(currentUser,existingRepo);
-                cleanupDuplicates(request.getGithubUrl(),existingRepo.getId());
-                return ResponseEntity.ok(toDto(existingRepo));
-            }
-
-            if (existingRepo.getStatus() == RepoEntity.IngestionStatus.PROCESSING) {
-                grantUserAccess(currentUser, existingRepo);
-                return ResponseEntity.accepted().body(toDto(existingRepo));
-            }
-            if (existingRepo.getStatus() == RepoEntity.IngestionStatus.FAILED) {
-                cleanupDuplicates(request.getGithubUrl(), existingRepo.getId());
-                chunkRepository.deleteByRepositoryId(existingRepo.getId());
-                existingRepo.setStatus(RepoEntity.IngestionStatus.PENDING);
-                existingRepo.setErrorMessage(null);
-                existingRepo.setProcessedFiles(0);
-                existingRepo.setTotalFiles(0);
-                existingRepo.setTotalChunks(0);
-                repoRepository.save(existingRepo);
-                grantUserAccess(currentUser, existingRepo);
-                // Other users sharing this repo may have FAILED cached in Redis
-                // Evict all so they see the fresh PENDING status immediately
-                cacheService.evictUserReposCache();
-                if (!enqueueIngestion(existingRepo, request.getGithubUrl(), request.getToken())) {
-                    return ResponseEntity.status(503).body(toDto(existingRepo));
-                }
-                return ResponseEntity.accepted().body(toDto(existingRepo));
-
-            }
+        if (existing.isPresent()) {
+            return reuseExistingRepo(existing.get(), request, currentUser);
         }
+        GitHubApiService.RepositoryMetadata metadata;
+        try {
+            // Establish the privacy classification before persisting the new
+            // repository. The job is still queued through the existing SQS flow.
+            metadata = gitHubApiService.getRepositoryMetadata(request.getGithubUrl(), request.getToken());
+        } catch (GitHubApiService.RepositoryAccessDeniedException e) {
+            return ResponseEntity.status(403).build();
+        }
+
         // Save the repo row immediately — gives it a UUID right now
         // Status starts as PENDING from @PrePersist in the entity
         RepoEntity repo = RepoEntity.builder()
                 .githubUrl(request.getGithubUrl())
                 .repoName(repoName)
+                .isPrivate(metadata.isPrivate())
                 .build();
 
-        repo = repoRepository.save(repo);
+        try {
+            // Flush now so the database's unique index decides concurrent
+            // creates before this request grants access or queues any work.
+            repo = repoRepository.saveAndFlush(repo);
+        } catch (DataIntegrityViolationException e) {
+            // Another request won the same-url insert race. PostgreSQL only
+            // reports this after that transaction commits, so re-read its row
+            // and follow the ordinary existing-repository path. This request
+            // must not enqueue a second ingestion job.
+            RepoEntity concurrentlyCreatedRepo = repoRepository
+                    .findFirstByGithubUrlOrderByCreatedAtDesc(request.getGithubUrl())
+                    .orElseThrow(() -> e);
+            return reuseExistingRepo(concurrentlyCreatedRepo, request, currentUser);
+        }
         grantUserAccess(currentUser, repo);
 
         // Publish the durable job before returning 202. The SQS worker picks it
@@ -114,6 +106,56 @@ public class IngestionController {
         // 202 Accepted = "I received your request and started working, but not done yet"
         // More honest than 200 OK which implies the work is complete
         return  ResponseEntity.accepted().body(toDto(repo));
+    }
+
+    private ResponseEntity<RepoStatusResponse> reuseExistingRepo(
+            RepoEntity existingRepo,
+            IngestRequest request,
+            User currentUser
+    ) {
+        // A URL match is a deduplication key, not proof that this user can
+        // read its contents. Legacy rows (null) are also fail-closed: their
+        // old privacy state is unknown, so they require verification too.
+        // This executes before every path that can grant UserRepo access.
+        if (requiresGitHubAccessVerification(existingRepo)
+                && !hasVerifiedGitHubAccess(existingRepo, request.getToken())) {
+            return ResponseEntity.status(403).build();
+        }
+
+        if (existingRepo.getStatus() == RepoEntity.IngestionStatus.READY) {
+            // Public repos deduplicate immediately. Private repos reach here
+            // only after the token was verified against this exact URL.
+            grantUserAccess(currentUser, existingRepo);
+            cleanupDuplicates(request.getGithubUrl(), existingRepo.getId());
+            return ResponseEntity.ok(toDto(existingRepo));
+        }
+
+        if (existingRepo.getStatus() == RepoEntity.IngestionStatus.PENDING
+                || existingRepo.getStatus() == RepoEntity.IngestionStatus.PROCESSING) {
+            grantUserAccess(currentUser, existingRepo);
+            return ResponseEntity.accepted().body(toDto(existingRepo));
+        }
+
+        if (existingRepo.getStatus() == RepoEntity.IngestionStatus.FAILED) {
+            cleanupDuplicates(request.getGithubUrl(), existingRepo.getId());
+            chunkRepository.deleteByRepositoryId(existingRepo.getId());
+            existingRepo.setStatus(RepoEntity.IngestionStatus.PENDING);
+            existingRepo.setErrorMessage(null);
+            existingRepo.setProcessedFiles(0);
+            existingRepo.setTotalFiles(0);
+            existingRepo.setTotalChunks(0);
+            repoRepository.save(existingRepo);
+            grantUserAccess(currentUser, existingRepo);
+            // Other users sharing this repo may have FAILED cached in Redis
+            // Evict all so they see the fresh PENDING status immediately
+            cacheService.evictUserReposCache();
+            if (!enqueueIngestion(existingRepo, request.getGithubUrl(), request.getToken())) {
+                return ResponseEntity.status(503).body(toDto(existingRepo));
+            }
+            return ResponseEntity.accepted().body(toDto(existingRepo));
+        }
+
+        throw new IllegalStateException("Unsupported repository status: " + existingRepo.getStatus());
     }
 
     /**
@@ -227,6 +269,12 @@ public class IngestionController {
 
         // If nobody else has this repo, clean it up entirely
         if (userRepoRepository.countByRepoId(repoId) == 0) {
+            // Delete the S3 archive (if any) before dropping the row that
+            // holds its key — otherwise the object becomes unreachable and
+            // sits in the bucket forever with no reference left to find it.
+            repoRepository.findById(repoId).ifPresent(repo ->
+                    s3StorageService.deleteArchive(repo.getArchiveKey()));
+
             chunkRepository.deleteByRepositoryId(repoId);
             repoRepository.deleteById(repoId);
         }
@@ -234,15 +282,21 @@ public class IngestionController {
         return ResponseEntity.noContent().build();
     }
 
-    // Helper — grants a user access to a repo, ignoring if they already have it
+    // Helper — authorization must already have succeeded before this call.
+    // The database's unique constraint makes the insert idempotent when two
+    // otherwise-valid requests race to grant the same mapping.
 
     private void grantUserAccess(User user,RepoEntity repo){
-        if(!userRepoRepository.existsByUserIdAndRepoId(user.getId(),repo.getId())){
-            userRepoRepository.save(UserRepo.builder()
-                    .user(user)
-                    .repo(repo)
-                    .build());
-        }
+        userRepoRepository.grantAccess(user.getId(), repo.getId());
+    }
+
+    private boolean requiresGitHubAccessVerification(RepoEntity repo) {
+        return !Boolean.FALSE.equals(repo.getIsPrivate());
+    }
+
+    private boolean hasVerifiedGitHubAccess(RepoEntity repo, String token) {
+        return token != null && !token.isBlank()
+                && gitHubApiService.canAccessRepository(repo.getGithubUrl(), token);
     }
 
     // Converts entity → DTO

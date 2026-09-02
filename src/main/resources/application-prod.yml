@@ -78,6 +78,7 @@ app:
     reasoning: ${REASONING_MODEL:openrouter/free}
     structured: ${STRUCTURED_MODEL:openrouter/free}
     summary: ${SUMMARY_MODEL}
+    generateEmbedding: ${GENERATE_EMBEDDING_MODEL}
 
 
 logging:

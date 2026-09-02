@@ -276,3 +276,9 @@ export const syncRepo = (repoId, token = null) =>
         method: 'POST',
         body: JSON.stringify({ token })
     })
+
+// Returns {downloadUrl, expiresInMinutes}. The URL is presigned and expires
+// in 15 minutes, so callers should navigate to it immediately after this
+// resolves rather than storing/reusing it.
+export const getRepoArchive = (repoId) =>
+    apiFetch(`${BASE}/repos/${repoId}/archive`)
