@@ -9,20 +9,20 @@ import java.util.List;
 @Service
 public class ChunkingService {
 
-    // Why 500 lines per chunk:
+    // Why 100 lines per chunk:
     // nomic-embed-text accepts up to 8192 tokens
-    // 500 lines of average code ≈ 600-800 tokens — safely inside the limit
+    // 100 lines of average code stays safely inside the limit
     // Smaller chunks = more specific embeddings = more precise search results
     // If you make chunks too large, the embedding becomes an "average" of too
     // many things and loses specificity
     private static final int MAX_LINES = 100;
 
-    // Why 40 lines of overlap between consecutive chunks:
-    // Imagine a method that starts at line 498 of a file
-    // Without overlap: lines 1-500 are chunk 0, lines 501-1000 are chunk 1
+    // Why 15 lines of overlap between consecutive chunks:
+    // Imagine a method that starts at line 98 of a file
+    // Without overlap: lines 1-100 are chunk 0, lines 101-200 are chunk 1
     // The method is split — neither chunk has the complete method
-    // With overlap: chunk 1 starts at line 460 (500 - 40)
-    // So the full method appears in chunk 1 with 40 lines of context before it
+    // With overlap: chunk 1 starts at line 86 (zero-based offset 85 = 100 - 15)
+    // So the full method appears in chunk 1 with 15 lines of context before it
     private static final int OVERLAP = 15;
 
     public List<Chunk> chunkFile(String filePath, String content){

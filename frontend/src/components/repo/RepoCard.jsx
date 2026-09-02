@@ -45,6 +45,15 @@ const IconSync = ({ spinning }) => (
     </svg>
 )
 
+// Download = fetch a fresh 15-minute presigned S3 URL and open it
+const IconDownload = ({ loading }) => (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        className={`w-3.5 h-3.5 ${loading ? 'animate-pulse' : ''}`}>
+        <path d="M10 2.5v10M6.25 8.75L10 12.5l3.75-3.75" />
+        <path d="M3.333 14.167v1.666a1.667 1.667 0 001.667 1.667h10a1.667 1.667 0 001.667-1.667v-1.666" />
+    </svg>
+)
+
 // ─── status meta ──────────────────────────────────────────────────────────────
 
 const STATUS = {
@@ -56,7 +65,7 @@ const STATUS = {
 
 // ─── main component ───────────────────────────────────────────────────────────
 
-export default function RepoCard({ repo, onRemove, onSync, viewMode = 'grid' }) {
+export default function RepoCard({ repo, onRemove, onSync, onDownload, downloading, viewMode = 'grid' }) {
     const navigate = useNavigate()
 
     const pct = repo.totalFiles > 0
@@ -153,6 +162,18 @@ export default function RepoCard({ repo, onRemove, onSync, viewMode = 'grid' }) 
                         </button>
                     )}
 
+                    {/* Download source archive (only when READY) */}
+                    {repo.status === 'READY' && (
+                        <button
+                            onClick={e => { e.stopPropagation(); onDownload?.(repo.id) }}
+                            disabled={downloading}
+                            title={downloading ? 'Preparing download…' : 'Download source archive'}
+                            className="cursor-pointer transition-colors disabled:cursor-not-allowed text-neutral-500 hover:text-emerald-400"
+                        >
+                            <IconDownload loading={downloading} />
+                        </button>
+                    )}
+
                     {/* Status badge */}
                     <div className="flex items-center gap-2 text-[12px] font-medium text-neutral-400 min-w-[70px] justify-end">
                         <span className={`w-2 h-2 rounded-full ${st.dot}`} />
@@ -200,7 +221,7 @@ export default function RepoCard({ repo, onRemove, onSync, viewMode = 'grid' }) 
                     )}
                 </div>
 
-                {/* Top-Right Area: Sync, Status & Delete */}
+                {/* Top-Right Area: Sync, Download, Status & Delete */}
                 <div className="shrink-0 flex items-center gap-3">
                     {repo.status === 'READY' && (
                         <button
@@ -214,6 +235,20 @@ export default function RepoCard({ repo, onRemove, onSync, viewMode = 'grid' }) 
                             }`}
                         >
                             <IconSync spinning={repo.syncing} />
+                        </button>
+                    )}
+                    {repo.status === 'READY' && (
+                        <button
+                            onClick={e => { e.stopPropagation(); onDownload?.(repo.id) }}
+                            disabled={downloading}
+                            title={downloading ? 'Preparing download…' : 'Download source archive'}
+                            className={`cursor-pointer transition-colors disabled:cursor-not-allowed ${
+                                downloading
+                                    ? 'opacity-100 text-emerald-400'
+                                    : 'opacity-0 group-hover:opacity-100 text-neutral-500 hover:text-emerald-400'
+                            }`}
+                        >
+                            <IconDownload loading={downloading} />
                         </button>
                     )}
                     <button

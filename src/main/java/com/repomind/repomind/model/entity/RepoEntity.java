@@ -25,11 +25,17 @@ public class RepoEntity {
     @Enumerated(EnumType.STRING)
     private IngestionStatus status;
 
-    @Column(name = "github_url", nullable = false)
+    @Column(name = "github_url", nullable = false, unique = true)
     private String githubUrl;
 
     @Column(name = "repo_name")
     private String repoName;
+
+    // Null is reserved for repositories created before this column existed.
+    // Treat those legacy rows as requiring an access check until their privacy
+    // can be established from GitHub; never silently classify them as public.
+    @Column(name = "is_private")
+    private Boolean isPrivate;
 
     @Column(name = "total_files")
     private Integer totalFiles;

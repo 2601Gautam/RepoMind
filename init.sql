@@ -152,3 +152,12 @@ CREATE INDEX IF NOT EXISTS idx_code_chunks_repo_file ON code_chunks(repo_id, fil
 -- AWS integration columns (S3 archive + SQS ingestion lease)
 ALTER TABLE repositories ADD COLUMN IF NOT EXISTS archive_key VARCHAR(512);
 ALTER TABLE repositories ADD COLUMN IF NOT EXISTS ingestion_lease_until TIMESTAMP;
+
+-- Null is intentional for repositories ingested before this migration. The
+-- application treats an unknown value as private until GitHub confirms it,
+-- preventing legacy private repositories from being accidentally exposed.
+ALTER TABLE repositories ADD COLUMN IF NOT EXISTS is_private BOOLEAN;
+
+-- Only one ingestion record may exist for a normalized GitHub repository URL.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_repositories_github_url_unique
+ON repositories (github_url);

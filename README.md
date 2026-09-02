@@ -383,6 +383,14 @@ Run the provided `init.sql` against your PostgreSQL instance to create the requi
 psql -U postgres -d repomind -f init.sql
 ```
 
+For an existing deployment, run the privacy migration before deploying the
+application update:
+
+```bash
+psql -U postgres -d repomind -f migrations/20260902_add_repository_is_private.sql
+psql -U postgres -d repomind -f migrations/20260902_enforce_unique_repository_urls.sql
+```
+
 > Note: `application.yml` sets `ddl-auto: validate` — meaning Hibernate will **validate** the schema against your entities but will **not** auto-create tables. Running `init.sql` first is required.
 
 ---

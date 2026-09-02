@@ -10,7 +10,7 @@ public class GenerateEmbeddingQuery {
     private final ChatClient chatClient;
     private final PromptBuilder promptBuilder;
 
-    public GenerateEmbeddingQuery(@Qualifier("summaryChatClient") ChatClient chatClient, PromptBuilder promptBuilder) {
+    public GenerateEmbeddingQuery(@Qualifier("generateEmbeddingClient") ChatClient chatClient, PromptBuilder promptBuilder) {
         this.chatClient = chatClient;
         this.promptBuilder = promptBuilder;
     }
