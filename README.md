@@ -10,6 +10,7 @@ RepoMind ingests a public or private GitHub repository, understands its codebase
   <img src="https://img.shields.io/badge/Spring%20AI-2.0.0-6DB33F?logo=spring&logoColor=white" alt="Spring AI"/>
   <img src="https://img.shields.io/badge/PostgreSQL-pgvector-336791?logo=postgresql&logoColor=white" alt="PostgreSQL + pgvector"/>
   <img src="https://img.shields.io/badge/Redis-cache%20%26%20memory-DC382D?logo=redis&logoColor=white" alt="Redis"/>
+  <img src="https://img.shields.io/badge/AWS-SQS%20%7C%20S3%20%7C%20SES-FF9900?logo=amazonaws&logoColor=white" alt="AWS"/>
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19"/>
   <img src="https://img.shields.io/badge/Vite-Frontend-646CFF?logo=vite&logoColor=white" alt="Vite"/>
 </p>
@@ -43,7 +44,7 @@ RepoMind ingests a public or private GitHub repository, understands its codebase
 
 **RepoMind** is a full-stack AI application that turns any GitHub repository into an interactive, queryable knowledge base. Point it at a repo URL, and once ingestion completes, you can chat with the codebase — ask where something is implemented, how a module works, or why a piece of logic exists — and get answers grounded in the real code, complete with file names and line numbers.
 
-Beyond chat, RepoMind also includes an AI-assisted error/debug analyzer and an auto-generated interview Q&A feature based on the ingested codebase.
+Beyond chat, RepoMind also includes an AI-assisted error/debug analyzer, an auto-generated interview Q&A feature based on the ingested codebase, and a durable AWS-backed ingestion pipeline.
 
 ## Problem Statement
 
@@ -64,16 +65,19 @@ The result: accurate, source-grounded answers about a codebase the AI model has 
 ## Key Features
 
 - **Conversational Codebase Chat** — Ask natural-language questions about any ingested repository and get streamed, real-time answers (via Server-Sent Events) with cited source files.
-- **Automated Repository Ingestion** — Paste a GitHub URL; RepoMind clones it (via JGit), extracts source files, chunks them intelligently, and generates embeddings — all asynchronously in the background.
+- **Durable, Queue-Backed Ingestion** — Paste a GitHub URL; the API persists the job and publishes it to an Amazon SQS queue before returning `202 Accepted`, so an in-flight ingestion survives an application restart or redeploy instead of silently vanishing.
 - **Context-Aware Chunking** — Uses a sliding-window chunking strategy with overlap so functions and logical blocks are never split across chunk boundaries.
 - **Semantic Vector Search** — Powered by PostgreSQL's `pgvector` extension using cosine-similarity nearest-neighbor search, scoped per repository.
 - **Multi-Turn Conversational Memory** — Redis-backed short-term memory (with TTL expiry) keeps track of recent conversation context so follow-up questions make sense, while PostgreSQL retains permanent chat history.
+- **Incremental Repository Sync** — Re-syncing a repo diffs against its last indexed commit SHA instead of re-cloning and re-embedding everything from scratch.
+- **Private Source Archival (Amazon S3)** — After ingestion, the extracted source is zipped and uploaded to a private S3 bucket, since the local clone is deleted to avoid filling server disk. Owners can request a short-lived (15-minute) presigned download URL for the archive.
+- **Transactional Welcome Email (Amazon SES)** — New email/password registrations trigger an asynchronous welcome email via SES v2; a delivery failure never blocks registration.
 - **AI-Powered Debug Analyzer** — A dedicated `/api/debug` flow using a lower-temperature "reasoning" LLM client tuned for careful error analysis.
 - **Auto-Generated Interview Questions** — Generates structured interview-style Q&A based on the ingested repository, using a low-temperature, structured-output LLM client.
 - **Secure Authentication** — Stateless JWT authentication (HttpOnly cookies), BCrypt password hashing, plus Google and GitHub OAuth2 login.
 - **API Rate Limiting** — Token-bucket rate limiting (Bucket4j) applied declaratively via a custom `@RateLimit` annotation and an AOP aspect.
 - **Real-Time Token Streaming** — Answers stream token-by-token to the frontend using reactive `Flux` + SSE, instead of waiting for the full response.
-- **Per-User Repository Dashboard** — Every ingested repo, its ingestion status (`PROCESSING` / `READY` / `FAILED`), and its conversations are scoped to the authenticated user.
+- **Per-User Repository Dashboard** — Every ingested repo, its ingestion status (`PENDING` / `PROCESSING` / `READY` / `FAILED`), and its conversations are scoped to the authenticated user.
 
 ---
 
@@ -89,7 +93,8 @@ flowchart LR
 
     subgraph Backend["Spring Boot Backend"]
         Auth["Auth (JWT + OAuth2)"]
-        Ingest["Ingestion Service (Async)"]
+        IngestAPI["IngestionController"]
+        Consumer["IngestionQueueConsumer\n(4 worker pool)"]
         Chat["Chat Service"]
         Debug["Debug Service"]
         Interview["Interview Service"]
@@ -101,21 +106,33 @@ flowchart LR
         Redis[("Redis\n(conversation memory + rate-limit buckets)")]
     end
 
+    subgraph AWS["AWS"]
+        SQS[("Amazon SQS\ningestion queue")]
+        S3[("Amazon S3\nprivate source archives")]
+        SES["Amazon SES v2\nwelcome email"]
+    end
+
     subgraph External["External Services"]
         GH["GitHub (source repo, cloned via JGit)"]
-        Groq["Groq LLM API\n(chat / reasoning / structured models)"]
+        LLM["LLM APIs via OpenRouter\n(chat / reasoning / structured models)"]
+        Mistral["Mistral AI\n(embeddings)"]
     end
 
     UI -->|REST + SSE| Backend
-    Ingest -->|clone| GH
-    Ingest -->|store chunks + embeddings| PG
+    IngestAPI -->|publish job| SQS
+    SQS -->|long-poll| Consumer
+    Consumer -->|clone| GH
+    Consumer -->|zip + upload source| S3
+    Consumer -->|store chunks + embeddings| PG
     Chat -->|vector similarity search| PG
     Chat -->|read/write short-term memory| Redis
-    Chat -->|prompt + stream| Groq
-    Debug --> Groq
-    Interview --> Groq
+    Chat -->|prompt + stream| LLM
+    Chat -->|embed query| Mistral
+    Debug --> LLM
+    Interview --> LLM
     RateLimit --> Redis
     Auth --> PG
+    Auth -->|welcome email| SES
 ```
 
 ### Ingestion Pipeline
@@ -124,26 +141,34 @@ flowchart LR
 sequenceDiagram
     participant User
     participant API as IngestionController
-    participant Svc as IngestionService (Async)
+    participant SQS as Amazon SQS
+    participant Consumer as IngestionQueueConsumer
+    participant Svc as IngestionService
     participant Git as JGit
+    participant S3 as Amazon S3
     participant Chunker as ChunkingService
     participant Embed as EmbeddingService
     participant DB as PostgreSQL (pgvector)
 
     User->>API: POST /api/repos/ingest {githubUrl}
-    API->>Svc: ingestAsync() [runs on background thread]
-    API-->>User: 200 OK (status: PROCESSING)
+    API->>DB: Save repository row (status: PENDING)
+    API->>SQS: Publish ingestion job
+    API-->>User: 202 Accepted (status: PENDING)
+    SQS-->>Consumer: Long-poll delivers message
+    Consumer->>Svc: processIngestionJob() [one of 4 worker threads]
     Svc->>Git: Clone repository
     Git-->>Svc: Local file tree
+    Svc->>S3: Upload zipped source archive (best-effort)
     loop for each source file
         Svc->>Chunker: chunkFile(content)
         Chunker-->>Svc: Overlapping code chunks
         Svc->>Embed: embed(chunk text)
-        Embed-->>Svc: 1024-dim vector
+        Embed-->>Svc: embedding vector
         Svc->>DB: Save chunk + embedding
     end
     Svc->>DB: Update repo.status = READY
     Svc->>Git: Delete temp clone directory
+    Consumer->>SQS: Delete message (only after a terminal DB state)
 ```
 
 ### Chat / Query Pipeline
@@ -155,7 +180,7 @@ sequenceDiagram
     participant Svc as ChatService
     participant Redis
     participant DB as PostgreSQL (pgvector)
-    participant LLM as Groq (via Spring AI)
+    participant LLM as OpenRouter (via Spring AI)
 
     User->>API: POST /api/chat {repoId, message}
     API->>Svc: streamChat()
@@ -170,7 +195,7 @@ sequenceDiagram
     Svc->>DB: save message (permanent history)
 ```
 
-> **Note on ingestion status:** the underlying schema (`init.sql`) defines a `PENDING → PROCESSING → READY/FAILED` state machine, though the actively used ingestion flow primarily transitions through `PROCESSING → READY/FAILED`.
+> **Note on ingestion status:** the schema (`init.sql`) defines a `PENDING → PROCESSING → READY/FAILED` state machine. A repository sits in `PENDING` from the moment its row is created until an `IngestionQueueConsumer` worker picks up the SQS message and moves it to `PROCESSING`.
 
 ---
 
@@ -182,15 +207,18 @@ sequenceDiagram
 | Language | Java 21 |
 | Framework | Spring Boot |
 | AI Orchestration | Spring AI 2.0.0 (`spring-ai-starter-model-openai`, `spring-ai-starter-model-mistral-ai`) |
-| LLM Provider | Groq (accessed via Spring AI's OpenAI-compatible client) |
+| LLM Provider | Routed through [OpenRouter](https://openrouter.ai) (OpenAI-compatible endpoint), so the underlying model per role (chat / reasoning / structured / summary) is configurable without a code change |
 | Embedding Model | Mistral AI (`mistral-embed`) |
 | Database | PostgreSQL with the `pgvector` extension |
 | Caching / Memory | Redis (`spring-boot-starter-data-redis`) |
+| Background Jobs | Amazon SQS — durable ingestion queue, long-polled by a bounded worker pool |
+| Object Storage | Amazon S3 — private, presigned-URL-only archive of each ingested repository's source |
+| Transactional Email | Amazon SES v2 — async welcome email on registration |
 | Auth | JWT (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`), Spring Security, OAuth2 Client (Google & GitHub) |
-| Rate Limiting | Bucket4j (`bucket4j_jdk17-core`, `bucket4j_jdk17-lettuce`) via a custom AOP aspect |
+| Rate Limiting | Bucket4j (`bucket4j_jdk17-core`, `bucket4j_jdk17-lettuce`) via a custom AOP aspect, with buckets stored in Redis so limits hold across multiple backend instances |
 | Repository Access | JGit (`org.eclipse.jgit`) |
 | Reactive/Streaming | Spring WebFlux (`Flux`), Server-Sent Events |
-| Utilities | Lombok, Spring Retry, Spring Dotenv |
+| Utilities | Lombok, Spring Retry, Spring Dotenv, AWS SDK for Java v2 (S3, SQS, SES) |
 | Build Tool | Maven (via `mvnw` wrapper) |
 
 ### Frontend
@@ -211,6 +239,7 @@ sequenceDiagram
 | Backend Hosting | Render |
 | Frontend Hosting | Vercel |
 | Database Hosting | NeonDB (managed PostgreSQL, referenced in `application-prod.yml`) |
+| Background Queue / Storage / Email | AWS (SQS, S3, SES) — see [AWS_SERVICES_EXPLAINED.md](AWS_SERVICES_EXPLAINED.md) for the full setup and design rationale |
 
 ---
 
@@ -222,27 +251,33 @@ RepoMind/
 ├── init.sql                            # Database schema: users, repositories, code_chunks, etc.
 ├── pom.xml                             # Maven dependencies & build config
 ├── mvnw / mvnw.cmd                     # Maven wrapper scripts
+├── AWS_SERVICES_EXPLAINED.md           # Deep dive: why/how SQS, S3, SES, and IAM are used
+├── SETUP_AWS.md                        # Step-by-step AWS console setup guide
 │
 ├── src/main/java/com/repomind/repomind/
-│   ├── config/                         # AiConfig (LLM beans), SecurityConfig, CacheConfig, CorsConfig
+│   ├── config/                         # AiConfig (LLM beans), AwsConfig (S3/SQS/SES clients),
+│   │                                    # SecurityConfig, JacksonConfig
 │   ├── controller/                     # ChatController, IngestionController, DebugController,
 │   │                                    # AuthController, InterviewController, HealthController
 │   ├── service/
-│   │   ├── ingestion/                  # FileCloneService, ChunkingService, EmbeddingService
+│   │   ├── ingestion/                  # FileCloneService, ChunkingService, EmbeddingService,
+│   │   │                                # GitHubApiService, SyncService, IngestionService
+│   │   ├── queue/                      # IngestionQueuePublisher, IngestionQueueConsumer (SQS)
 │   │   ├── ChatService.java            # Core RAG chat/streaming logic
-│   │   ├── IngestionService.java       # Async repo ingestion orchestration
+│   │   ├── S3StorageService.java       # Repo-archive upload/download/delete on S3
+│   │   ├── EmailService.java           # SES welcome email
 │   │   ├── RedisConversationMemoryService.java
 │   │   ├── RateLimitService.java
 │   │   └── PromptBuilder.java
 │   ├── security/                       # JwtFilter, JwtUtil, OAuth2SuccessHandler
 │   ├── aspect/                         # RateLimitAspect (AOP)
 │   ├── repository/                     # Spring Data JPA repositories (incl. native pgvector query)
-│   ├── entity/                         # User, RepoEntity, CodeChunk, Conversation, Message, etc.
-│   ├── dto/                            # Request/response DTOs
+│   ├── model/entity/                   # User, RepoEntity, CodeChunk, Conversation, Message, etc.
+│   ├── dto/                            # request/, response/, queue/ (IngestionJobMessage) DTOs
 │   └── annotation/                     # Custom @RateLimit annotation
 │
 ├── src/main/resources/
-│   ├── application.yml                 # Base configuration
+│   ├── application.yml                 # Base configuration (incl. AWS properties)
 │   └── application-prod.yml            # Production overrides (DB, Redis, OAuth2, model routing)
 │
 └── frontend/
@@ -275,8 +310,9 @@ RepoMind/
 - **Node.js** (v18+) and **npm** — for the frontend
 - **PostgreSQL** with the `pgvector` extension installed
 - **Redis** (local instance or a managed service)
+- An **AWS account** with an SQS queue, S3 bucket, and SES-verified sender — see [SETUP_AWS.md](SETUP_AWS.md) (the app requires `AWS_SQS_INGESTION_QUEUE_URL` at startup)
 - API keys for:
-  - **Groq** (chat/reasoning/structured LLM inference)
+  - **OpenRouter** (chat/reasoning/structured LLM inference)
   - **Mistral AI** (embeddings)
   - **Google OAuth2** and **GitHub OAuth2** (optional, only if you want social login)
 
@@ -300,11 +336,18 @@ RepoMind reads secrets and environment-specific values via environment variables
 | `DB_USER` | Yes (prod) | Database username. |
 | `DB_PASSWORD` | Yes (prod) | Database password. |
 | `REDIS_URL` | Yes (prod) | Redis connection URL. |
-| `GROQ_API_KEY` | Yes | API key for Groq (LLM inference). |
-| `GROQ_CHAT_MODEL` | No | Overrides the default fast chat model (`meta-llama/llama-4-scout-17b-16e-instruct`). |
-| `GROQ_REASONING_MODEL` | No | Overrides the default reasoning model (`meta-llama/llama3-70b-8192`). |
-| `GROQ_STRUCTURED_MODEL` | No | Overrides the default structured-output model (`meta-llama/mixtral-8x7b-32768`). |
+| `OPENROUTER_API_KEY` | Yes | API key for OpenRouter (routes to the configured chat/reasoning/structured LLMs). |
+| `CHAT_MODEL` | No | Overrides the fast chat model used for normal conversation (defaults to `openrouter/free`). |
+| `REASONING_MODEL` | No | Overrides the model used by the debug analyzer. |
+| `STRUCTURED_MODEL` | No | Overrides the model used for structured/interview output. |
+| `SUMMARY_MODEL` | Yes (prod) | Model used to summarize/condense conversation context. |
 | `MISTRAL_API_KEY` | Yes | API key for Mistral AI (used for embeddings). |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Yes | Static credentials for the dedicated least-privilege IAM user (S3, SQS, SES). |
+| `AWS_REGION` | No | Defaults to `ap-south-1`. |
+| `AWS_S3_BUCKET` | Yes | Bucket for private per-repository source archives. |
+| `AWS_SES_FROM_EMAIL` | Yes | Verified SES sender address for the welcome email. |
+| `AWS_SQS_INGESTION_QUEUE_URL` | Yes | No fallback — the app fails at startup without it, since accepting an ingestion request without a durable queue behind it would be misleading. |
+| `AWS_SQS_CONSUMER_ENABLED` | No | Defaults to `true`. Set to `false` only in tests, to stop a test context from polling AWS. |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | No | Required only if enabling Google OAuth2 login. |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | No | Required only if enabling GitHub OAuth2 login. |
 | `CORS_ALLOWED_ORIGIN` | No | Frontend origin allowed by CORS (defaults to `http://localhost:5173`). |
@@ -319,10 +362,18 @@ DATABASE_URL=jdbc:postgresql://localhost:5432/repomind
 DB_USER=postgres
 DB_PASSWORD=postgres
 REDIS_URL=redis://localhost:6379
-GROQ_API_KEY=your_groq_api_key
+OPENROUTER_API_KEY=your_openrouter_api_key
 MISTRAL_API_KEY=your_mistral_api_key
+AWS_ACCESS_KEY_ID=your_iam_access_key_id
+AWS_SECRET_ACCESS_KEY=your_iam_secret_access_key
+AWS_REGION=ap-south-1
+AWS_S3_BUCKET=repomind-dev-archives
+AWS_SES_FROM_EMAIL=verified-sender@example.com
+AWS_SQS_INGESTION_QUEUE_URL=https://sqs.ap-south-1.amazonaws.com/123456789012/repomind-dev-ingestion
 CORS_ALLOWED_ORIGIN=http://localhost:5173
 ```
+
+See [SETUP_AWS.md](SETUP_AWS.md) for how to create the queue, bucket, SES identity, and IAM user referenced above.
 
 ### Database Setup
 
@@ -379,12 +430,14 @@ docker run -p 8080:8080 --env-file .env repomind-backend
 
 ## Usage Guide
 
-1. **Register / Log in** — create an account (email/password) or sign in with Google/GitHub OAuth2.
-2. **Ingest a Repository** — from the dashboard, submit a public (or token-authenticated private) GitHub repository URL. RepoMind clones, chunks, and embeds it in the background; progress is shown via polling the repo's status.
+1. **Register / Log in** — create an account (email/password) or sign in with Google/GitHub OAuth2. A new email/password registration triggers an async welcome email via SES.
+2. **Ingest a Repository** — from the dashboard, submit a public (or token-authenticated private) GitHub repository URL. The API queues the job on SQS and returns `202 Accepted`; a worker clones, archives to S3, chunks, and embeds it in the background, and progress is shown via polling the repo's status.
 3. **Chat** — once a repo's status is `READY`, open the Chat page and ask questions in natural language. Answers stream in real time and cite the specific files they were drawn from.
 4. **Debug** — use the Debug page to paste an error/stack trace and get an AI-assisted analysis grounded in the ingested repository's code.
 5. **Interview Prep** — generate structured interview-style questions and answers based on the ingested codebase from the Interview page.
-6. **Manage Repositories** — view all your ingested repositories, their status, and delete ones you no longer need from the "All Repos" page.
+6. **Sync** — re-sync a `READY` repository to pick up new commits without a full re-ingestion.
+7. **Download Archive** — request a 15-minute presigned S3 download link for the exact source snapshot that was indexed.
+8. **Manage Repositories** — view all your ingested repositories, their status, and delete ones you no longer need from the "All Repos" page.
 
 ---
 
@@ -395,7 +448,7 @@ All endpoints are prefixed under `/api`. Authentication uses a JWT stored in an 
 ### Auth — `/api/auth`
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/register` | Register a new user (triggers an async SES welcome email) |
 | POST | `/api/auth/login` | Log in and receive a JWT (HttpOnly cookie) |
 | GET | `/api/auth/me` | Get the current authenticated user |
 | POST | `/api/auth/logout` | Log out (clears the auth cookie) |
@@ -404,10 +457,12 @@ All endpoints are prefixed under `/api`. Authentication uses a JWT stored in an 
 ### Repository Ingestion — `/api/repos`
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/repos/ingest` | Submit a GitHub URL for asynchronous ingestion |
+| POST | `/api/repos/ingest` | Submit a GitHub URL; the job is durably queued on SQS. Returns `202 Accepted`. |
+| POST | `/api/repos/{repoId}/sync` | Incrementally re-sync a `READY` repository against its last-indexed commit |
 | GET | `/api/repos/{repoId}/status` | Poll ingestion status/progress |
+| GET | `/api/repos/{repoId}/archive` | Get a 15-minute presigned S3 download URL for the repo's source archive |
 | GET | `/api/repos` | List all repositories for the current user |
-| DELETE | `/api/repos/{repoId}` | Delete a repository and its associated data |
+| DELETE | `/api/repos/{repoId}` | Remove this user's access; if no user has access left, delete the repo, its chunks, and its S3 archive |
 
 ### Chat — `/api/chat`
 | Method | Endpoint | Description |
@@ -439,10 +494,6 @@ All endpoints are prefixed under `/api`. Authentication uses a JWT stored in an 
 
 ## Screenshots
 
-> Screenshots are not yet included in the repository. Add images to a `docs/screenshots/` folder and reference them below.
-
-## Screenshots
-
 ### Landing Page
 ![Landing Page](docs/screenshots/landing.png)
 
@@ -462,12 +513,13 @@ All endpoints are prefixed under `/api`. Authentication uses a JWT stored in an 
 
 ## Roadmap and Future Improvements
 
-- [ ] **Query condensing** — use a dedicated LLM call to rewrite follow-up questions into standalone queries for more accurate retrieval (current implementation uses a simpler heuristic of prepending recent conversation context).
-- [ ] **Distributed rate limiting and caching** — move rate-limit buckets and the cache manager to Redis-backed implementations to support true horizontal scaling across multiple backend instances.
+- [ ] **Query condensing** — use a dedicated LLM call to rewrite follow-up questions into standalone queries for more accurate retrieval (current implementation composites the last 2 messages + the current one, which can degrade retrieval confidence on topic changes).
+- [x] ~~Distributed rate limiting~~ — done. Rate-limit buckets are Redis-backed (`DistributedRateLimitConfig` + `bucket4j_jdk17-lettuce`), so limits hold across multiple backend instances instead of resetting per instance. (The `@Cacheable` cache manager was already Redis-backed via `spring.cache.type: redis` — an earlier version of this README incorrectly listed it here as still pending.)
 - [ ] **API documentation** — add Swagger/OpenAPI documentation for all endpoints.
-- [ ] **Automated tests** — expand test coverage (currently scaffolded via `spring-boot-starter-test` and `spring-security-test`).
+- [ ] **Automated tests** — expand test coverage (currently scaffolded via `spring-boot-starter-test` and `spring-security-test`); add mocked SQS/S3/SES unit tests and LocalStack integration tests for the AWS layer.
 - [ ] **Docker Compose** — provide a full `docker-compose.yml` covering backend, frontend, PostgreSQL, and Redis for one-command local setup.
-- [ ] **Screenshots and demo video** — add visual documentation of the UI.
+- [ ] **Re-index from S3** — use the archived source ZIP to re-embed a repository (new chunking strategy, new embedding model) without re-cloning from GitHub.
+- [ ] **Short-lived GitHub tokens for private repos** — migrate the SQS ingestion job's GitHub token to a short-lived GitHub App installation token instead of a long-lived PAT.
 - [ ] **License** — add an explicit open-source license.
 
 ---
@@ -500,9 +552,9 @@ B.Tech ICT-CS student, Dhirubhai Ambani University (DAU), Gandhinagar
 
 - [Spring AI](https://spring.io/projects/spring-ai) — for LLM/embedding orchestration within the Spring ecosystem
 - [pgvector](https://github.com/pgvector/pgvector) — for enabling vector similarity search directly in PostgreSQL
-- [Groq](https://groq.com/) — for fast LLM inference
+- [OpenRouter](https://openrouter.ai/) — for unified, swappable access to multiple LLM providers
 - [Mistral AI](https://mistral.ai/) — for the embedding model
 - [JGit](https://www.eclipse.org/jgit/) — for pure-Java Git repository access
 - [Bucket4j](https://bucket4j.com/) — for token-bucket rate limiting
+- [AWS SDK for Java v2](https://github.com/aws/aws-sdk-java-v2) — for SQS, S3, and SES integration
 - [NeonDB](https://neon.tech/) — managed serverless PostgreSQL used in production
-
