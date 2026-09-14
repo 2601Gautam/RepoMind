@@ -18,7 +18,7 @@ public class GenerateEmbeddingQuery {
     public String generateEmbeddingQueryFromContext(String userQuestion,String recentContext)
     {
 
-        String prompt = promptBuilder.contextualizeQueryPrompt(recentContext,userQuestion);
+        String prompt = promptBuilder.contextualizeQueryPrompt(recentContext, userQuestion);
         String output = chatClient.prompt()
                 .user(prompt)
                 .call()

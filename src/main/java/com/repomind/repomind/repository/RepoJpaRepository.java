@@ -23,9 +23,6 @@ public interface RepoJpaRepository extends JpaRepository<RepoEntity, UUID> {
     // THIS must exist — used for dedup check in ingest endpoint
     Optional<RepoEntity> findFirstByGithubUrlOrderByCreatedAtDesc(String githubUrl);
 
-    // THIS must exist — used to find duplicate rows for same URL
-    List<RepoEntity> findByGithubUrlAndIdNot(String githubUrl, UUID excludeId);
-
     /**
      * Atomically claims a queued job. Standard SQS provides at-least-once
      * delivery, so the same message can occasionally be delivered twice.
@@ -55,5 +52,44 @@ public interface RepoJpaRepository extends JpaRepository<RepoEntity, UUID> {
             @Param("now") LocalDateTime now,
             @Param("leaseUntil") LocalDateTime leaseUntil
     );
+
+    /**
+     * Atomically claims an incremental sync.  A read of {@code syncing}
+     * followed by a later write is not safe: two HTTP requests can both read
+     * false before either async worker stores true.  The conditional update is
+     * the compare-and-set operation, so it is safe across application nodes as
+     * well as across threads in one node.
+     *
+     * Full ingestion deliberately does not use this method.  It has its own
+     * PENDING/PROCESSING lease claim above because it is driven by SQS.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("""
+        update RepoEntity r
+           set r.syncing = true,
+               r.syncMessage = :syncMessage
+         where r.id = :repoId
+           and r.status = :readyStatus
+           and r.syncing = false
+        """)
+    int claimIncrementalSync(
+            @Param("repoId") UUID repoId,
+            @Param("readyStatus") RepoEntity.IngestionStatus readyStatus,
+            @Param("syncMessage") String syncMessage
+    );
+
+    /**
+     * Releases a successfully claimed incremental sync.  This is a bulk
+     * update so it cannot overwrite progress fields saved by the worker.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("""
+        update RepoEntity r
+           set r.syncing = false
+         where r.id = :repoId
+        """)
+    int releaseIncrementalSync(@Param("repoId") UUID repoId);
 
 }

@@ -85,3 +85,8 @@ logging:
   level:
     com.repomind.repomind: INFO
 
+  worker-count: ${WORKER_COUNT:4}
+
+ingestion:
+  embedding-batch-size: ${INGESTION_EMBEDDING_BATCH_SIZE:20}
+  max-embed-retries: ${INGESTION_MAX_EMBED_RETRIES:5}

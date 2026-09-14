@@ -171,7 +171,7 @@ public class InterviewService {
         uniqueFiles.forEach(f -> summary.append("  - ").append(f).append("\n"));
 
         summary.append("\nSample code context:\n");
-        sampleChunks.stream().limit(30).forEach(chunk ->
+        sampleChunks.stream().limit(25).forEach(chunk ->
                 summary.append("\n")
                         .append(chunk.getContent(), 0, Math.min(100, chunk.getContent().length()))
                         .append("...\n")

@@ -41,13 +41,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class IngestionQueueConsumer {
 
-    private static final int WORKER_COUNT = 4;
-
+    private final int workerCount;
+//
     private final SqsClient sqsClient;
     private final IngestionService ingestionService;
     private final ObjectMapper objectMapper;
-    private final ExecutorService workerPool = Executors.newFixedThreadPool(WORKER_COUNT);
-    private final Semaphore workerSlots = new Semaphore(WORKER_COUNT);
+    private final ExecutorService workerPool;
+    private final Semaphore workerSlots;
 
     @Value("${aws.sqs.ingestion-queue-url}")
     private String queueUrl;
@@ -68,11 +68,15 @@ public class IngestionQueueConsumer {
     public IngestionQueueConsumer(
             SqsClient sqsClient,
             IngestionService ingestionService,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            @Value("${app.worker-count:4}") int workerCount
     ) {
         this.sqsClient = sqsClient;
         this.ingestionService = ingestionService;
         this.objectMapper = objectMapper;
+        this.workerCount = workerCount;
+        this.workerPool = Executors.newFixedThreadPool(workerCount);
+        this.workerSlots = new Semaphore(workerCount);
     }
 
     @Scheduled(fixedDelayString = "${aws.sqs.poll-delay-ms:1000}")

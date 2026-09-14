@@ -22,6 +22,7 @@ public class RepoStatusResponse implements Serializable {
     private String errorMessage;
     private LocalDateTime createdAt;
     private LocalDateTime lastSyncedAt;
+    private String syncMessage;
     private boolean syncing;
     // true once this repo's extracted source has been archived to S3
     // (see S3StorageService) — tells the frontend whether to show a

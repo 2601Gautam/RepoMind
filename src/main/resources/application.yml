@@ -1,6 +1,14 @@
 spring:
   application:
     name: repomind
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiChatAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiAudioSpeechAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiAudioTranscriptionAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiImageAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiModerationAutoConfiguration
   config:
     import: optional:file:.env[.properties]
   profiles:
@@ -33,6 +41,8 @@ app:
     # Your Vercel frontend URL — update after deployment
     allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:5173}
 
+  worker-count: ${WORKER_COUNT:4}
+
 aws:
   region: ${AWS_REGION:ap-south-1}
   accessKeyId: ${AWS_ACCESS_KEY_ID}
@@ -50,10 +60,11 @@ aws:
     long-poll-seconds: 20
     # Configure the queue in AWS Console with the same or longer timeout.
     visibility-timeout-seconds: 1200
-    ingestion-lease-seconds: 1500
+    ingestion-lease-seconds: 1200
     poll-delay-ms: 1000
 
 logging:
   level:
-    com.repomind: DEBUG
+    com.repomind: INFO
     org.springframework.ai: INFO
+

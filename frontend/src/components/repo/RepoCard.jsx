@@ -63,6 +63,25 @@ const STATUS = {
     FAILED:     { label: 'Failed',   dot: 'bg-red-500' },
 }
 
+function SyncNote({ message }) {
+    if (!message) return null
+    return (
+        <div className="mt-3 flex items-start gap-3 rounded-lg border border-white/[0.07] bg-white/[0.025] px-3.5 py-3">
+            <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-violet-400/15 bg-violet-400/[0.08] text-violet-300">
+                <IconSync spinning={false} />
+            </div>
+            <div className="min-w-0 flex-1">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
+                    Sync update
+                </div>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-neutral-300 whitespace-normal break-words">
+                    {message}
+                </p>
+            </div>
+        </div>
+    )
+}
+
 // ─── main component ───────────────────────────────────────────────────────────
 
 export default function RepoCard({ repo, onRemove, onSync, onDownload, downloading, viewMode = 'grid' }) {
@@ -90,104 +109,110 @@ export default function RepoCard({ repo, onRemove, onSync, onDownload, downloadi
 
     if (viewMode === 'list') {
         return (
-            <div className="group relative flex items-center justify-between gap-4 rounded-xl bg-[#0a0a0a] border border-white/[0.08] py-3.5 px-4 hover:border-white/[0.15] hover:bg-[#111] transition-colors">
-                {/* Left: Info */}
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <span className="text-neutral-400">
-                        <IconGitHub />
-                    </span>
-                    <div className="min-w-0 flex items-center gap-1.5 text-[14px]">
-                        {owner && (
-                            <>
-                                <span className="text-neutral-500 truncate max-w-[120px] sm:max-w-[180px]">{owner}</span>
-                                <span className="text-neutral-600">/</span>
-                            </>
-                        )}
-                        <span className="font-semibold text-neutral-200 truncate tracking-tight">{repoStr}</span>
-                    </div>
-                </div>
-
-                {/* Right Area */}
-                <div className="flex items-center gap-5 shrink-0">
-                    {/* Files index count */}
-                    {repo.status === 'READY' && repo.totalFiles > 0 && (
-                        <span className="hidden md:block text-[12px] text-neutral-500">
-                            {repo.totalFiles.toLocaleString()} files
-                        </span>
-                    )}
-
-                    {/* Processing progress bar in list view */}
-                    {repo.status === 'PROCESSING' && (
-                        <div className="flex items-center gap-2">
-                            <div className="w-16 h-1 bg-neutral-800 rounded-full overflow-hidden hidden sm:block">
-                                <div className="h-full bg-white rounded-full" style={{ width: `${Math.max(pct, 2)}%` }} />
+            <div className="group relative flex flex-col gap-3 rounded-xl bg-[#0a0a0a] border border-white/[0.08] py-3.5 px-4 hover:border-white/[0.15] hover:bg-[#111] transition-colors">
+                <div className="flex items-start justify-between gap-4">
+                    {/* Left: Info */}
+                    <div className="flex flex-col min-w-0 flex-1">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <span className="text-neutral-400">
+                                <IconGitHub />
+                            </span>
+                            <div className="min-w-0 flex items-center gap-1.5 text-[14px]">
+                                {owner && (
+                                    <>
+                                        <span className="text-neutral-500 truncate max-w-[120px] sm:max-w-[180px]">{owner}</span>
+                                        <span className="text-neutral-600">/</span>
+                                    </>
+                                )}
+                                <span className="font-semibold text-neutral-200 truncate tracking-tight">{repoStr}</span>
                             </div>
-                            <span className="text-[12px] text-neutral-400 tabular-nums">{pct}%</span>
                         </div>
-                    )}
 
-                    {/* Action buttons (only when READY) */}
-                    {repo.status === 'READY' && (
-                        <div className="flex items-center gap-2">
-                            <MiniActionBtn
-                                icon={<IconChat />}
-                                label="Chat"
-                                primary
-                                onClick={() => navigate(`/chat/${repo.id}`)}
-                            />
-                            <MiniActionBtn
-                                icon={<IconInterview />}
-                                label="Interview"
-                                onClick={() => navigate(`/interview/${repo.id}`)}
-                            />
-                            <MiniActionBtn
-                                icon={<IconDebug />}
-                                label="Debug"
-                                onClick={() => navigate(`/debug/${repo.id}`)}
-                            />
-                        </div>
-                    )}
-
-                    {/* Sync icon button (only when READY) */}
-                    {repo.status === 'READY' && (
-                        <button
-                            onClick={e => { e.stopPropagation(); onSync?.(repo.id) }}
-                            disabled={repo.syncing}
-                            title={repo.syncing ? 'Syncing…' : 'Sync latest commit'}
-                            className={`cursor-pointer transition-colors disabled:cursor-not-allowed ${
-                                repo.syncing ? 'text-violet-400' : 'text-neutral-500 hover:text-violet-400'
-                            }`}
-                        >
-                            <IconSync spinning={repo.syncing} />
-                        </button>
-                    )}
-
-                    {/* Download source archive (only when READY) */}
-                    {repo.status === 'READY' && (
-                        <button
-                            onClick={e => { e.stopPropagation(); onDownload?.(repo.id) }}
-                            disabled={downloading}
-                            title={downloading ? 'Preparing download…' : 'Download source archive'}
-                            className="cursor-pointer transition-colors disabled:cursor-not-allowed text-neutral-500 hover:text-emerald-400"
-                        >
-                            <IconDownload loading={downloading} />
-                        </button>
-                    )}
-
-                    {/* Status badge */}
-                    <div className="flex items-center gap-2 text-[12px] font-medium text-neutral-400 min-w-[70px] justify-end">
-                        <span className={`w-2 h-2 rounded-full ${st.dot}`} />
-                        <span className="hidden sm:inline">{st.label}</span>
+                        <SyncNote message={repo.syncMessage} />
                     </div>
 
-                    {/* Remove button */}
-                    <button
-                        onClick={e => { e.stopPropagation(); onRemove?.(repo.id) }}
-                        title="Remove"
-                        className="cursor-pointer text-neutral-600 hover:text-red-400 transition-colors"
-                    >
-                        <IconTrash />
-                    </button>
+                    {/* Right Area */}
+                    <div className="flex items-center gap-5 shrink-0">
+                        {/* Files index count */}
+                        {repo.status === 'READY' && repo.totalFiles > 0 && (
+                            <span className="hidden md:block text-[12px] text-neutral-500">
+                                {repo.totalFiles.toLocaleString()} files
+                            </span>
+                        )}
+
+                        {/* Processing progress bar in list view */}
+                        {repo.status === 'PROCESSING' && (
+                            <div className="flex items-center gap-2">
+                                <div className="w-16 h-1 bg-neutral-800 rounded-full overflow-hidden hidden sm:block">
+                                    <div className="h-full bg-white rounded-full" style={{ width: `${Math.max(pct, 2)}%` }} />
+                                </div>
+                                <span className="text-[12px] text-neutral-400 tabular-nums">{pct}%</span>
+                            </div>
+                        )}
+
+                        {/* Action buttons (only when READY) */}
+                        {repo.status === 'READY' && (
+                            <div className="flex items-center gap-2">
+                                <MiniActionBtn
+                                    icon={<IconChat />}
+                                    label="Chat"
+                                    primary
+                                    onClick={() => navigate(`/chat/${repo.id}`)}
+                                />
+                                <MiniActionBtn
+                                    icon={<IconInterview />}
+                                    label="Interview"
+                                    onClick={() => navigate(`/interview/${repo.id}`)}
+                                />
+                                <MiniActionBtn
+                                    icon={<IconDebug />}
+                                    label="Debug"
+                                    onClick={() => navigate(`/debug/${repo.id}`)}
+                                />
+                            </div>
+                        )}
+
+                        {/* Sync icon button (only when READY) */}
+                        {repo.status === 'READY' && (
+                            <button
+                                onClick={e => { e.stopPropagation(); onSync?.(repo.id) }}
+                                disabled={repo.syncing}
+                                title={repo.syncing ? 'Syncing…' : 'Sync latest commit'}
+                                className={`cursor-pointer transition-colors disabled:cursor-not-allowed ${
+                                    repo.syncing ? 'text-violet-400' : 'text-neutral-500 hover:text-violet-400'
+                                }`}
+                            >
+                                <IconSync spinning={repo.syncing} />
+                            </button>
+                        )}
+
+                        {/* Download source archive (only when READY) */}
+                        {repo.status === 'READY' && (
+                            <button
+                                onClick={e => { e.stopPropagation(); onDownload?.(repo.id) }}
+                                disabled={downloading}
+                                title={downloading ? 'Preparing download…' : 'Download source archive'}
+                                className="cursor-pointer transition-colors disabled:cursor-not-allowed text-neutral-500 hover:text-emerald-400"
+                            >
+                                <IconDownload loading={downloading} />
+                            </button>
+                        )}
+
+                        {/* Status badge */}
+                        <div className="flex items-center gap-2 text-[12px] font-medium text-neutral-400 min-w-[70px] justify-end">
+                            <span className={`w-2 h-2 rounded-full ${st.dot}`} />
+                            <span className="hidden sm:inline">{st.label}</span>
+                        </div>
+
+                        {/* Remove button */}
+                        <button
+                            onClick={e => { e.stopPropagation(); onRemove?.(repo.id) }}
+                            title="Remove"
+                            className="cursor-pointer text-neutral-600 hover:text-red-400 transition-colors"
+                        >
+                            <IconTrash />
+                        </button>
+                    </div>
                 </div>
             </div>
         )
@@ -280,6 +305,8 @@ export default function RepoCard({ repo, onRemove, onSync, onDownload, downloadi
                     </div>
                 </div>
             )}
+
+            <SyncNote message={repo.syncMessage} />
 
             {/* ── PENDING / FAILED ─────────────────────────────────────────── */}
             {repo.status === 'FAILED' && (

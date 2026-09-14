@@ -81,7 +81,16 @@ export default function IngestPage({ onSelect }) {
             <RepoUrlInput onSubmit={handleSubmit} disabled={busy} />
 
             {error && (
-                <p className="text-sm text-red-400">{error}</p>
+                <div className="animate-fade-up rounded-lg border border-white/[0.08] bg-white/[0.035] px-3.5 py-2.5 text-[12.5px] text-neutral-400">
+                    <div className="flex items-start gap-2.5">
+                        <svg className="mt-0.5 h-4 w-4 shrink-0 text-amber-300/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.25">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        </svg>
+                        <div className="min-w-0 leading-relaxed">
+                            {error}
+                        </div>
+                    </div>
+                </div>
             )}
 
             <IngestionProgress repo={current} />
