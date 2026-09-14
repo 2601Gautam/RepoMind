@@ -32,20 +32,35 @@ public class AiConfig {
     @Value("${app.models.structured}")
     private String structuredModel;
 
-    @Value("${spring.ai.openai.api-key}")
-    private String apiKey;
+    @Value("${spring.ai.openai.api-key-for-think}")
+    private String apiKeyForThinking;
 
-    @Value("${spring.ai.openai.base-url}")
-    private String baseUrl;
+    @Value("${spring.ai.openai.api-key-for-fast}")
+    private String apiKeyForFast;
+
+    @Value("${spring.ai.openai.base-url-for-think}")
+    private String thinkingModelBaseUrl;
+
+    @Value("${spring.ai.openai.base-url-for-fast}")
+    private String fastModelBaseUrl;
 
 
 
     @Bean
     @Primary
-    public ChatClient chatClient(@Qualifier("openAiChatModel") ChatModel chatmodel)
+    public ChatClient chatClient()
     {
-        return ChatClient.builder(chatmodel)
+        OpenAiChatOptions options = OpenAiChatOptions.builder()
+                .model(chatModel)
+                .baseUrl(thinkingModelBaseUrl)   // or thinkingModelBaseUrl — whichever backs your default chat client
+                .apiKey(apiKeyForThinking)       // or apiKeyForThinking
                 .build();
+
+        OpenAiChatModel model = OpenAiChatModel.builder()
+                .options(options)
+                .build();
+
+        return ChatClient.builder(model).build();
     }
 
     @Bean("reasoningChatClient")
@@ -53,8 +68,8 @@ public class AiConfig {
 
         OpenAiChatOptions options = OpenAiChatOptions.builder()
                 .model(reasoningModel)
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
+                .baseUrl(thinkingModelBaseUrl)
+                .apiKey(apiKeyForThinking)
                 .temperature(0.2)
                 .build();
 
@@ -68,8 +83,8 @@ public class AiConfig {
     @Bean("structuredChatClient")
     public ChatClient structuredChatClient() {
         OpenAiChatOptions options = OpenAiChatOptions.builder()
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
+                .baseUrl(thinkingModelBaseUrl)
+                .apiKey(apiKeyForThinking)
                 .model(structuredModel)
                 .temperature(0.1)
                 .build();
@@ -83,8 +98,8 @@ public class AiConfig {
     @Bean("summaryChatClient")
     public ChatClient summaryChatClient() {
         OpenAiChatOptions options = OpenAiChatOptions.builder()
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
+                .baseUrl(fastModelBaseUrl)
+                .apiKey(apiKeyForFast)
                 .model(summaryModel)
                 .temperature(0.1)
                 .build();
@@ -98,8 +113,8 @@ public class AiConfig {
     @Bean("generateEmbeddingClient")
     public ChatClient embeddingGenerateClient() {
         OpenAiChatOptions options = OpenAiChatOptions.builder()
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
+                .baseUrl(fastModelBaseUrl)
+                .apiKey(apiKeyForFast)
                 .model(generateEmbeddingModel)
                 .temperature(0.1)
                 .build();

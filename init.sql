@@ -145,6 +145,7 @@ CREATE INDEX IF NOT EXISTS code_chunks_repo_id_idx ON code_chunks(repo_id);
 
 ALTER TABLE repositories ADD COLUMN IF NOT EXISTS last_commit_sha VARCHAR(40);
 ALTER TABLE repositories ADD COLUMN IF NOT EXISTS last_synced_at TIMESTAMP;
+ALTER TABLE repositories ADD COLUMN IF NOT EXISTS sync_message TEXT;
 ALTER TABLE repositories ADD COLUMN IF NOT EXISTS syncing BOOLEAN NOT NULL DEFAULT FALSE;
 
 CREATE INDEX IF NOT EXISTS idx_code_chunks_repo_file ON code_chunks(repo_id, file_path);

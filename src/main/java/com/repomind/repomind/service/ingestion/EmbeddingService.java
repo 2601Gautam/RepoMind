@@ -3,7 +3,6 @@ package com.repomind.repomind.service.ingestion;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +29,15 @@ public class EmbeddingService {
         // never assume the config worked, always check this log line
         log.debug("Generated embedding with {} dimensions", result.length);
         return result;
+    }
+
+    public List<float[]> embedBatch(List<String> texts) {
+        if (texts.isEmpty()) {
+            return List.of();
+        }
+        List<float[]> results = embeddingModel.embed(texts);
+        log.debug("Generated {} embeddings in batch", results.size());
+        return results;
     }
 
     // pgvector needs the vector in this exact string format for the native SQL query:

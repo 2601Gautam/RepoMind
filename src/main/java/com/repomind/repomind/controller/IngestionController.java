@@ -69,6 +69,7 @@ public class IngestionController {
             // Establish the privacy classification before persisting the new
             // repository. The job is still queued through the existing SQS flow.
             metadata = gitHubApiService.getRepositoryMetadata(request.getGithubUrl(), request.getToken());
+
         } catch (GitHubApiService.RepositoryAccessDeniedException e) {
             return ResponseEntity.status(403).build();
         }
@@ -103,8 +104,7 @@ public class IngestionController {
             return ResponseEntity.status(503).body(toDto(repo));
         }
 
-        // 202 Accepted = "I received your request and started working, but not done yet"
-        // More honest than 200 OK which implies the work is complete
+
         return  ResponseEntity.accepted().body(toDto(repo));
     }
 
@@ -126,7 +126,6 @@ public class IngestionController {
             // Public repos deduplicate immediately. Private repos reach here
             // only after the token was verified against this exact URL.
             grantUserAccess(currentUser, existingRepo);
-            cleanupDuplicates(request.getGithubUrl(), existingRepo.getId());
             return ResponseEntity.ok(toDto(existingRepo));
         }
 
@@ -137,7 +136,6 @@ public class IngestionController {
         }
 
         if (existingRepo.getStatus() == RepoEntity.IngestionStatus.FAILED) {
-            cleanupDuplicates(request.getGithubUrl(), existingRepo.getId());
             chunkRepository.deleteByRepositoryId(existingRepo.getId());
             existingRepo.setStatus(RepoEntity.IngestionStatus.PENDING);
             existingRepo.setErrorMessage(null);
@@ -158,11 +156,6 @@ public class IngestionController {
         throw new IllegalStateException("Unsupported repository status: " + existingRepo.getStatus());
     }
 
-    /**
-     * A 202 response is only honest after SQS accepted the message. If it did
-     * not, persist FAILED so the frontend never polls forever for a job that
-     * cannot run.
-     */
     private boolean enqueueIngestion(RepoEntity repo, String githubUrl, String token) {
         try {
             ingestionQueuePublisher.enqueue(repo.getId(), githubUrl, token);
@@ -172,6 +165,7 @@ public class IngestionController {
             repo.setStatus(RepoEntity.IngestionStatus.FAILED);
             repo.setErrorMessage("Could not queue ingestion job. Please try again.");
             repo.setIngestionLeaseUntil(null);
+            repo.setSyncMessage(null);
             repoRepository.save(repo);
             cacheService.evictUserReposCache();
             return false;
@@ -181,7 +175,7 @@ public class IngestionController {
     // Incremental sync — diffs against last_commit_sha instead of re-cloning.
     // Stays a lightweight direct @Async call for the common (small-diff) case;
     // only its full-re-ingest fallback goes through SQS. See SyncService.
-    @RateLimit(requests = 10, windowSeconds = 3600)
+    @RateLimit(requests = 5, windowSeconds = 3600)
     @PostMapping("/{repoId}/sync")
     public ResponseEntity<RepoStatusResponse> sync(@PathVariable UUID repoId,
                                                    @RequestBody(required = false) SyncRequest request,
@@ -195,15 +189,50 @@ public class IngestionController {
         }
 
         if (repo.getStatus() != RepoEntity.IngestionStatus.READY) {
+            repo.setSyncMessage("Sync is available after repository indexing is complete.");
             return ResponseEntity.status(409).body(toDto(repo));
         }
 
-        if (repo.isSyncing()) {
-            return ResponseEntity.accepted().body(toDto(repo));
+        String token = request != null ? request.getToken() : null;
+        int claimed = repoRepository.claimIncrementalSync(
+                repoId,
+                RepoEntity.IngestionStatus.READY,
+                "Checking repository changes. Incremental sync should finish shortly."
+        );
+        if (claimed == 0) {
+            // Another request either owns the incremental sync already or
+            // transitioned the repository into full ingestion.  Do not queue
+            // a second @Async task; return the authoritative current state.
+            return repoRepository.findById(repoId)
+                    .map(current -> {
+                        if (current.getSyncMessage() == null && current.isSyncing()) {
+                            current.setSyncMessage("Incremental sync is already running. It should finish shortly.");
+                        }
+                        return ResponseEntity.accepted().body(toDto(current));
+                    })
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         }
 
-        String token = request != null ? request.getToken() : null;
-        syncService.syncAsync(repoId, token);
+        cacheService.evictUserReposCache();
+
+        try {
+            syncService.syncAsync(repoId, token);
+        } catch (RuntimeException e) {
+            // @Async can reject execution before the worker starts.  Undo the
+            // claim in that case so the repo is not stuck as "Syncing".
+            repoRepository.releaseIncrementalSync(repoId);
+            repo.setSyncing(false);
+            repo.setSyncMessage("Could not start sync right now. Please try again shortly.");
+            repoRepository.save(repo);
+            cacheService.evictUserReposCache();
+            log.error("Could not start incremental sync for repo {}", repoId, e);
+            return ResponseEntity.status(503).body(toDto(repo));
+        }
+
+        // The bulk claim bypasses this detached entity, but the accepted
+        // response should immediately reflect that the sync is under way.
+        repo.setSyncing(true);
+        repo.setSyncMessage("Checking repository changes. Incremental sync should finish shortly.");
         return ResponseEntity.accepted().body(toDto(repo));
     }
 
@@ -312,6 +341,7 @@ public class IngestionController {
                 .errorMessage(repo.getErrorMessage())
                 .createdAt(repo.getCreatedAt())
                 .lastSyncedAt(repo.getLastSyncedAt())
+                .syncMessage(repo.getSyncMessage())
                 .syncing(repo.isSyncing())
                 .hasArchive(repo.getArchiveKey() != null)
                 .build();
@@ -322,15 +352,5 @@ public class IngestionController {
         return parts.length >= 2
                 ? parts[parts.length - 2] + "/" + parts[parts.length - 1]
                 : url;
-    }
-    private void cleanupDuplicates(String githubUrl, UUID keepId) {
-        List<RepoEntity> duplicates = repoRepository
-                .findByGithubUrlAndIdNot(githubUrl, keepId);
-
-        if (!duplicates.isEmpty()) {
-            log.info("Removing {} duplicate entries for {}",
-                    duplicates.size(), githubUrl);
-            repoRepository.deleteAll(duplicates);
-        }
     }
 }

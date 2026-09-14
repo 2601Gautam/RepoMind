@@ -21,11 +21,9 @@ public class RedisConversationMemoryService implements ConversationMemoryService
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
-    //Converstation history expires after 24 hours of inactivity, to prevent unbounded growth in Redis
-//    An active conversation resets the timer on every message
-//    private static final long CONVERSATION_TTL_HOURS = 24;
 
 
+    private static final long CONVERSATION_TTL_DAYS = 5;
     private static final long  MAX_STORED_MESSAGES = 10;
 
     //Redis key formate: coversation:{conversationId}:messages
@@ -51,6 +49,11 @@ public class RedisConversationMemoryService implements ConversationMemoryService
 
             // Reset expiry on every write active converstation stay alive
 //            redisTemplate.expire(key, CONVERSATION_TTL_HOURS, TimeUnit.HOURS);
+            redisTemplate.expire(
+                    key,
+                    CONVERSATION_TTL_DAYS,
+                    TimeUnit.DAYS
+            );
 
         }catch (JsonProcessingException e)
         {

@@ -76,6 +76,9 @@ public class RepoEntity {
     @Column(name = "last_synced_at")
     private LocalDateTime lastSyncedAt;
 
+    @Column(name = "sync_message")
+    private String syncMessage;
+
     // Deliberately NOT part of `status`. Chat's guard checks status == READY;
     // keeping sync-in-progress out of that enum means chat keeps working for
     // the entire duration of a sync. Purely for UI ("Syncing…" badge) and to

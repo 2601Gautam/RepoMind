@@ -3,6 +3,7 @@ package com.repomind.repomind.controller;
 import com.repomind.repomind.dto.request.IngestRequest;
 import com.repomind.repomind.model.entity.RepoEntity;
 import com.repomind.repomind.model.entity.User;
+import com.repomind.repomind.model.entity.UserRepo;
 import com.repomind.repomind.repository.CodeChunkRepository;
 import com.repomind.repomind.repository.RepoJpaRepository;
 import com.repomind.repomind.repository.UserRepoRepository;
@@ -20,12 +21,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -68,7 +70,6 @@ class IngestionControllerTest {
         RepoEntity repo = readyRepo(false);
         when(repoRepository.findFirstByGithubUrlOrderByCreatedAtDesc(REPO_URL))
                 .thenReturn(Optional.of(repo));
-        when(repoRepository.findByGithubUrlAndIdNot(REPO_URL, repo.getId())).thenReturn(List.of());
 
         ResponseEntity<?> response = controller.ingest(request(REPO_URL, null), currentUser);
 
@@ -82,7 +83,6 @@ class IngestionControllerTest {
         RepoEntity repo = readyRepo(true);
         when(repoRepository.findFirstByGithubUrlOrderByCreatedAtDesc(REPO_URL))
                 .thenReturn(Optional.of(repo));
-        when(repoRepository.findByGithubUrlAndIdNot(REPO_URL, repo.getId())).thenReturn(List.of());
         when(gitHubApiService.canAccessRepository(REPO_URL, "valid-token")).thenReturn(true);
 
         ResponseEntity<?> response = controller.ingest(request(REPO_URL, "valid-token"), currentUser);
@@ -169,6 +169,62 @@ class IngestionControllerTest {
         verify(ingestionQueuePublisher, never()).enqueue(any(), any(), any());
     }
 
+    @Test
+    void syncAtomicallyClaimsReadyRepoBeforeDispatchingTheWorker() {
+        RepoEntity repo = readyRepo(false);
+        grantCurrentUserAccess(repo);
+        when(repoRepository.claimIncrementalSync(
+                eq(repo.getId()),
+                eq(RepoEntity.IngestionStatus.READY),
+                anyString()))
+                .thenReturn(1);
+
+        ResponseEntity<?> response = controller.sync(repo.getId(), null, currentUser);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(202);
+        assertThat(repo.isSyncing()).isTrue();
+        assertThat(repo.getSyncMessage()).contains("Incremental sync");
+        verify(syncService).syncAsync(repo.getId(), null);
+        verify(repoRepository, never()).releaseIncrementalSync(repo.getId());
+    }
+
+    @Test
+    void syncDoesNotDispatchAnotherWorkerWhenAtomicClaimIsAlreadyHeld() {
+        RepoEntity repo = readyRepo(false);
+        repo.setSyncing(true);
+        grantCurrentUserAccess(repo);
+        when(repoRepository.claimIncrementalSync(
+                eq(repo.getId()),
+                eq(RepoEntity.IngestionStatus.READY),
+                anyString()))
+                .thenReturn(0);
+
+        ResponseEntity<?> response = controller.sync(repo.getId(), null, currentUser);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(202);
+        assertThat(repo.getSyncMessage()).contains("already running");
+        verify(syncService, never()).syncAsync(any(), any());
+    }
+
+    @Test
+    void syncReleasesClaimWhenAsyncDispatchIsRejected() {
+        RepoEntity repo = readyRepo(false);
+        grantCurrentUserAccess(repo);
+        when(repoRepository.claimIncrementalSync(
+                eq(repo.getId()),
+                eq(RepoEntity.IngestionStatus.READY),
+                anyString()))
+                .thenReturn(1);
+        org.mockito.Mockito.doThrow(new RuntimeException("executor rejected task"))
+                .when(syncService).syncAsync(repo.getId(), null);
+
+        ResponseEntity<?> response = controller.sync(repo.getId(), null, currentUser);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(503);
+        assertThat(repo.getSyncMessage()).contains("Could not start sync");
+        verify(repoRepository).releaseIncrementalSync(repo.getId());
+    }
+
     private void assertNewIngestionPrivacy(boolean isPrivate, String token) {
         UUID repoId = UUID.randomUUID();
         when(repoRepository.findFirstByGithubUrlOrderByCreatedAtDesc(REPO_URL)).thenReturn(Optional.empty());
@@ -202,6 +258,12 @@ class IngestionControllerTest {
                 .processedFiles(1)
                 .totalChunks(1)
                 .build();
+    }
+
+    private void grantCurrentUserAccess(RepoEntity repo) {
+        when(userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), repo.getId()))
+                .thenReturn(Optional.of(UserRepo.builder().repo(repo).user(currentUser).build()));
+        when(repoRepository.findById(repo.getId())).thenReturn(Optional.of(repo));
     }
 
     private IngestRequest request(String githubUrl, String token) {

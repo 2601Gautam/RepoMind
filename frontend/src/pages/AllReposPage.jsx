@@ -69,6 +69,12 @@ export default function AllReposPage() {
             try {
                 const updated = await getRepoStatus(repoId)
                 setRepos(prev => prev.map(r => r.id === repoId ? updated : r))
+                if (updated.status === 'PENDING' || updated.status === 'PROCESSING') {
+                    clearInterval(pollsRef.current[repoId])
+                    delete pollsRef.current[repoId]
+                    startPollingIngest(repoId)
+                    return
+                }
                 if (!updated.syncing) {
                     clearInterval(pollsRef.current[repoId])
                     delete pollsRef.current[repoId]
@@ -80,13 +86,18 @@ export default function AllReposPage() {
     async function handleSync(repoId) {
         // Optimistic — spinner starts immediately instead of waiting for the
         // next poll tick to catch up with the backend
-        setRepos(prev => prev.map(r => r.id === repoId ? { ...r, syncing: true } : r))
+        setRepos(prev => prev.map(r => r.id === repoId
+            ? { ...r, syncing: true, syncMessage: 'Checking repository changes. Incremental sync should finish shortly.' }
+            : r))
         try {
-            await syncRepo(repoId)
+            const updated = await syncRepo(repoId)
+            setRepos(prev => prev.map(r => r.id === repoId ? updated : r))
             startPollingSync(repoId)
         } catch (e) {
             // Sync never actually started — revert the optimistic state
-            setRepos(prev => prev.map(r => r.id === repoId ? { ...r, syncing: false } : r))
+            setRepos(prev => prev.map(r => r.id === repoId
+                ? { ...r, syncing: false, syncMessage: e.message || 'Sync could not start right now.' }
+                : r))
             console.error('Failed to start sync:', e)
         }
     }

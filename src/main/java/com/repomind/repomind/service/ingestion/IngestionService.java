@@ -14,13 +14,22 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionService {
+
+    @Value("${ingestion.embedding-batch-size:20}")
+    private int embeddingBatchSize;
+
+    @Value("${ingestion.max-embed-retries:5}")
+    private int maxEmbedRetries;
 
     private final FileCloneService fileCloneService;
     private final ChunkingService chunkingService;
@@ -33,19 +42,16 @@ public class IngestionService {
     @Value("${aws.sqs.ingestion-lease-seconds:1500}")
     private long ingestionLeaseSeconds;
 
-    /**
-     * Runs on a worker thread owned by IngestionQueueConsumer. It deliberately
-     * has no @Async annotation: SQS owns delivery and the consumer owns the
-     * bounded concurrency limit.
-     *
-     * A normal return means the job reached a terminal database state (READY
-     * or FAILED), so the consumer may delete its SQS message. An unexpected
-     * infrastructure failure is allowed to escape so the message becomes
-     * visible again after the queue visibility timeout.
-     */
+    // Runs on a worker thread owned by IngestionQueueConsumer. It deliberately
+    // has no @Async annotation: SQS owns delivery and the consumer owns the
+    // bounded concurrency limit. A normal return means the job reached a
+    // terminal database state (READY or FAILED), so the consumer may delete
+    // its SQS message. An unexpected infrastructure failure is allowed to
+    // escape so the message becomes visible again after the queue visibility
+    // timeout.
     public void processIngestionJob(UUID repoId, String githubUrl, String token){
         Path tempDir = null;
-        String headSha = null;
+        String headSha;
 
         LocalDateTime now = LocalDateTime.now();
         int claimed = repoRepository.claimIngestionJob(
@@ -110,7 +116,7 @@ public class IngestionService {
             // ── 4. Process each file ─────────────────────────────────────────
             int processedCount = 0;
             int chunkCount = 0;
-            int maxRetries = 5;
+            List<PendingChunk> pendingChunks = new ArrayList<>();
             for(FileCloneService.ParsedFile file : files) {
 
                     List<ChunkingService.Chunk> chunks = chunkingService.chunkFile(
@@ -118,50 +124,13 @@ public class IngestionService {
                             file.content()
                     );
 
-                    for (ChunkingService.Chunk chunk : chunks) {
-                        try {
-                            long delay = 1000;
-                            float[] embedding = new float[0];
-                            for (int i = 0; i < maxRetries; i++) {
-                                try {
-
-                                    embedding = embeddingService.embed(chunk.content());
-                                    log.debug("Embedding done on {} try", i + 1);
-                                    break;
-                                } catch (NonTransientAiException e) {
-                                    if (i == maxRetries - 1) {
-                                        throw e; // Give up after the last retry
-                                    }
-                                    Thread.sleep(delay);
-                                    log.warn("Rate limit hit. Retrying in {} ms...", delay);
-                                    delay *= 2; // 1s -> 2s -> 4s -> 8s -> 16s
-                                }
-                            }
-
-
-                            CodeChunk entity = CodeChunk.builder()
-                                    .repository(repo)
-                                    .filePath(chunk.filePath())
-                                    .language(toLanguage(file.extension()))
-                                    .content(chunk.content())
-                                    .chunkIndex(chunk.chunkIndex())
-                                    .startLine(chunk.startLine())
-                                    .endLine(chunk.endLine())
-                                    .embedding(embedding)
-                                    .build();
-
-                            chunkRepository.save(entity);
-                            chunkCount++;
-                        } catch (Exception e) {
-                            log.error("Exception class: {}", e.getClass().getName(), e);
-                            log.warn(
-                                    "Skipping chunk {} in file {}: {}",
-                                    chunk.chunkIndex(),
-                                    file.relativePath(),
-                                    e.getMessage()
-                            );
-                        }
+                    enqueueChunks(pendingChunks, file.extension(), chunks);
+                    while (pendingChunks.size() >= embeddingBatchSize) {
+                        List<PendingChunk> batch = new ArrayList<>(pendingChunks.subList(0, embeddingBatchSize));
+                        chunkCount += flushPendingChunks(repo, batch);
+                        pendingChunks.subList(0, embeddingBatchSize).clear();
                     }
+
                     processedCount++;
                     // Update progress every 5 files so the frontend progress
                     // bar moves visibly — updating every file would be too many DB writes
@@ -174,7 +143,11 @@ public class IngestionService {
                     }
                 }
 
-            // ── 5. Mark as READY ─────────────────────────────────────────────
+            if (!pendingChunks.isEmpty()) {
+                chunkCount += flushPendingChunks(repo, new ArrayList<>(pendingChunks));
+            }
+
+            // ── 5. Mark as READY ────────��───────────────────────────────────
             repo.setStatus(RepoEntity.IngestionStatus.READY);
             // Baseline for /sync: the commit this ingestion actually indexed.
             repo.setLastCommitSha(headSha);
@@ -183,6 +156,7 @@ public class IngestionService {
             repo.setProcessedFiles(processedCount);
             repo.setTotalChunks(chunkCount);
             repo.setIngestionLeaseUntil(null);
+            repo.setSyncMessage(null);
             repoRepository.save(repo);
             log.info("Ingestion complete: {} files, {} chunks for repo {}",
                     processedCount, chunkCount, repoId);
@@ -193,6 +167,7 @@ public class IngestionService {
             cacheService.evictUserReposCache();
             repo.setErrorMessage(e.getMessage());
             repo.setIngestionLeaseUntil(null);
+            repo.setSyncMessage(null);
             repoRepository.save(repo);
         } finally {
             // finally block runs whether ingestion succeeded or failed
@@ -230,4 +205,104 @@ public class IngestionService {
             default -> "text";
         };
     }
+
+    private void enqueueChunks(List<PendingChunk> pendingChunks, String extension, List<ChunkingService.Chunk> chunks) {
+        for (ChunkingService.Chunk chunk : chunks) {
+            pendingChunks.add(new PendingChunk(extension, chunk));
+        }
+    }
+
+    private int flushPendingChunks(RepoEntity repo, List<PendingChunk> batch) {
+        int savedChunks = 0;
+
+        try {
+            List<float[]> embeddings = embedBatchWithRetry(batch);
+            for (int i = 0; i < batch.size(); i++) {
+                saveChunk(repo, batch.get(i), embeddings.get(i));
+                savedChunks++;
+            }
+        } catch (Exception batchException) {
+            log.warn("Batch embedding failed for {} chunks. Falling back to per-chunk embeddings: {}",
+                    batch.size(), batchException.getMessage());
+            for (PendingChunk item : batch) {
+                try {
+                    float[] embedding = embedSingleWithRetry(item.chunk().content());
+                    saveChunk(repo, item, embedding);
+                    savedChunks++;
+                } catch (Exception chunkException) {
+                    log.warn(
+                            "Skipping chunk {} in file {}: {}",
+                            item.chunk().chunkIndex(),
+                            item.chunk().filePath(),
+                            chunkException.getMessage()
+                    );
+                }
+            }
+        }
+
+        return savedChunks;
+    }
+
+    private List<float[]> embedBatchWithRetry(List<PendingChunk> chunks) {
+        List<String> texts = chunks.stream().map(item -> item.chunk().content()).toList();
+        long delay = 1000;
+        for (int i = 0; i < maxEmbedRetries; i++) {
+            try {
+                List<float[]> embeddings = embeddingService.embedBatch(texts);
+                log.debug("Batch embedding done on {} try for {} chunks", i + 1, chunks.size());
+                return embeddings;
+            } catch (NonTransientAiException e) {
+                if (i == maxEmbedRetries - 1) {
+                    throw e;
+                }
+                backoff(delay);
+                log.warn("Rate limit hit for batch. Retrying in {} ms...", delay);
+                delay *= 2;
+            }
+        }
+        throw new IllegalStateException("Batch embedding retry loop exited unexpectedly");
+    }
+
+    private float[] embedSingleWithRetry(String text) {
+        long delay = 1000;
+        for (int i = 0; i < maxEmbedRetries; i++) {
+            try {
+                float[] embedding = embeddingService.embed(text);
+                log.debug("Embedding done on {} try", i + 1);
+                return embedding;
+            } catch (NonTransientAiException e) {
+                if (i == maxEmbedRetries - 1) {
+                    throw e;
+                }
+                backoff(delay);
+                log.warn("Rate limit hit. Retrying in {} ms...", delay);
+                delay *= 2;
+            }
+        }
+        throw new IllegalStateException("Embedding retry loop exited unexpectedly");
+    }
+
+    private void backoff(long delayMillis) {
+        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(delayMillis));
+        if (Thread.currentThread().isInterrupted()) {
+            throw new IllegalStateException("Retry backoff interrupted");
+        }
+    }
+
+    private void saveChunk(RepoEntity repo, PendingChunk pendingChunk, float[] embedding) {
+        CodeChunk entity = CodeChunk.builder()
+                .repository(repo)
+                .filePath(pendingChunk.chunk().filePath())
+                .language(toLanguage(pendingChunk.extension()))
+                .content(pendingChunk.chunk().content())
+                .chunkIndex(pendingChunk.chunk().chunkIndex())
+                .startLine(pendingChunk.chunk().startLine())
+                .endLine(pendingChunk.chunk().endLine())
+                .embedding(embedding)
+                .build();
+
+        chunkRepository.save(entity);
+    }
+
+    private record PendingChunk(String extension, ChunkingService.Chunk chunk) {}
 }

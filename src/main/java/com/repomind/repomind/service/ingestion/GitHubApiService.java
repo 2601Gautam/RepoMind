@@ -172,7 +172,7 @@ public class GitHubApiService {
             //                 base commit is still reachable, so this does
             //                 NOT 404 the way a fully garbage-collected
             //                 rewrite does)
-            // A "diverged" result's files[] is computed from the merge-base,
+            // A is computed from the merge- "diverged" result's files[]base,
             // not from base directly, so it is not a reliable incremental
             // diff against what this repo has indexed. Flag it and let the
             // caller fall back to a full re-ingest instead of silently

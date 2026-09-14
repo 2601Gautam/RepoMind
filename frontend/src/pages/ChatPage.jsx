@@ -8,6 +8,23 @@ import RateLimitBanner from '../components/common/RateLimitBanner'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import RepoSelector from '../components/repo/RepoSelector'
 
+function FollowupInfo() {
+    return (
+        <div className="group relative inline-flex items-center">
+            <button
+                type="button"
+                aria-label="Follow-up accuracy note"
+                className="flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-violet-400/30 bg-transparent text-[11px] font-bold text-violet-300 transition-colors duration-150 hover:border-violet-300/50 hover:text-violet-100 focus:outline-none focus-visible:border-violet-300/60 focus-visible:text-violet-100"
+            >
+                i
+            </button>
+            <div className="pointer-events-none absolute bottom-7 left-1/2 z-50 w-72 -translate-x-1/2 rounded-xl border border-white/[0.08] bg-[#111114] px-3.5 py-3 text-left text-[11.5px] leading-relaxed text-neutral-300 opacity-0 shadow-2xl shadow-black/50 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
+                After 5 days of inactivity, try not to use short follow-up questions. Ask the full question with the key details for better results.
+            </div>
+        </div>
+    )
+}
+
 // Inner component — all hooks run unconditionally here
 function ChatPageInner({ repoId }) {
     const navigate = useNavigate()
@@ -238,9 +255,10 @@ function ChatPageInner({ repoId }) {
                         directValue={directValue}
                         onDirectConsumed={() => setDirectValue(null)}
                     />
-                    <p className="text-center text-[10px] text-neutral-800">
-                        Enter to send &middot; Shift+Enter for newline
-                    </p>
+                    <div className="flex items-center justify-center gap-2 text-[10px] text-violet-300/65">
+                        <span>Enter to send &middot; Shift+Enter for newline</span>
+                        <FollowupInfo />
+                    </div>
                 </div>
             </div>
         </div>

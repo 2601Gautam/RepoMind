@@ -58,8 +58,17 @@ async function apiFetch(url, options={}){
         let message = `Request failed: ${res.status}`
         try {
             const data = JSON.parse(text)
-            message = data.message || data.error || message
-        } catch { }
+            message = data.message || data.error || data.syncMessage || message
+        } catch {
+            // Plain-text and empty error responses have no structured message.
+        }
+
+        // The ingestion endpoint intentionally returns an empty 403 when
+        // GitHub cannot verify access to a private repository. Give that flow
+        // a useful explanation without changing other forbidden responses.
+        if (res.status === 403 && url.endsWith('/repos/ingest') && message === `Request failed: ${res.status}`) {
+            message = 'GitHub could not access this repository. Check the URL and use a personal access token that has permission to access it.'
+        }
         throw new Error(message)
     }
 
