@@ -55,12 +55,14 @@ spring:
 
   ai:
     openai:
-      base-url: https://openrouter.ai/api/v1
-      api-key: ${OPENROUTER_API_KEY}
-      chat:
-        model: ${CHAT_MODEL:openrouter/free}
-        options:
-          temperature: 0.3
+      base-url-for-think: https://openrouter.ai/api/v1
+      base-url-for-fast: https://api.groq.com/openai/v1
+      api-key-for-think: ${OPENROUTER_API_KEY}
+      api-key-for-fast: ${GROQ_API_KEY}
+      # chat:
+      #   model: ${CHAT_MODEL:openrouter/free}
+      #   options:
+      #     temperature: 0.3
       # Tell Spring AI: do NOT create an OpenAI embedding bean
       # Without this, Spring sees two EmbeddingModel beans and picks OpenAI's
       embedding:
@@ -79,6 +81,7 @@ app:
     structured: ${STRUCTURED_MODEL:openrouter/free}
     summary: ${SUMMARY_MODEL}
     generateEmbedding: ${GENERATE_EMBEDDING_MODEL}
+    worker-count: ${WORKER_COUNT:4}
 
 
 logging:
