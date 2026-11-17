@@ -27,7 +27,7 @@ public class ChunkingService {
 
     public List<Chunk> chunkFile(String filePath, String content){
         List<Chunk> chunks = new ArrayList<>();
-        String[] lines = content.split("\n");
+        String[] lines = content.lines().toArray(String[]::new);
 
         if(lines.length == 0)return chunks;
 
@@ -51,6 +51,7 @@ public class ChunkingService {
             // Move forward by (MAX_LINES - OVERLAP) not by MAX_LINES
             // This creates the overlap: chunk N ends at line X
             // chunk N+1 starts at line X - OVERLAP
+            if (end == lines.length - 1) break;
             int nextStart = start + MAX_LINES - OVERLAP;
             if (nextStart >= lines.length) break;
             start = nextStart;

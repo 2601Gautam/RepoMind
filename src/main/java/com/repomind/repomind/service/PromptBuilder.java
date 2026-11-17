@@ -9,8 +9,7 @@ import java.util.List;
 // not modifying existing ones
 @Component
 public class PromptBuilder {
-    // Sliding window size — how many recent message PAIRS to include
-    // 8 pairs = 16 messages = enough context without overwhelming the LLM
+    // Chat reads up to four messages. Query rewriting uses the most recent two.
     public static final int MEMORY_WINDOW_SIZE = 4;
 
     public String buildChatSystemPrompt(){
@@ -93,30 +92,23 @@ public class PromptBuilder {
                 : "";
 
         return """
-            You are an expert software engineer debugging a technical error.
-            Analyze this error thoroughly and provide a structured response.
-            
-            ERROR:
-            %s
-            Code Section:
-            %s
-            AdditionalContext:
-            %s
-            
-            Respond in this EXACT format with these EXACT section headers.
-            Use markdown for code examples. Be specific and actionable.
-            
+            Investigate the reported symptom using only the trace and code below.
+            A symptom alone may have several causes. Name the cause only if supported.
+            When evidence is insufficient, say so and ask for the specific missing observation.
+            Keep each section to one or two sentences. Preserve these exact headings.
+
+            Error: %s
+            Repository evidence: %s
+            Additional information: %s
+
             ## Root Cause
-            [One clear sentence identifying the exact cause]
-            
+            State the observed cause or say it is undetermined.
             ## Explanation
-            [Plain English explanation of why this error occurs]
-            
+            Relate the relevant trace or source line to the symptom.
             ## Suggested Fix
-            [Concrete steps with code examples if applicable]
-            
+            Give a targeted correction or the next diagnostic check.
             ## Prevention
-            [How to prevent this class of error in future]
+            Give one practical check for recurrence.
             """.formatted(errorText,codeSection,contextSection);
     }
     public String buildInterviewPrompt(String repoSummary , String repoName , String difficulty){
@@ -162,7 +154,9 @@ public class PromptBuilder {
                 %s
     
                 Generate exactly 5 interview questions specific to THIS project.
-                The questions must reference actual files, classes, or patterns visible in the code above.
+                Every question and its expected answer must be directly supported by the excerpts.
+                Ask about visible behavior, inputs, control flow or warranted trade-offs. Do not invent
+                validation, exception handling or persistence. Keep each expected answer to one sentence.
                 Do NOT generate generic programming questions.
     
                 CRITICAL: Respond with ONLY a valid JSON array. No explanation. No markdown. No code blocks.
@@ -173,7 +167,7 @@ public class PromptBuilder {
                   {
                     "question": "Specific question about this project",
                     "expectedAnswer": "Detailed answer based on the actual code",
-                    "conceptTested": "e.g. Authentication, Database Design, Error Handling",
+                    "conceptTested": "The specific concept demonstrated by the excerpt",
                     "difficulty": "%s"
                   }
                 ]

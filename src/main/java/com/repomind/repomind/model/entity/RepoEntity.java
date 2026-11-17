@@ -62,6 +62,9 @@ public class RepoEntity {
     @Column(name = "ingestion_lease_until")
     private LocalDateTime ingestionLeaseUntil;
 
+    @Column(name = "ingestion_owner")
+    private UUID ingestionOwner;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

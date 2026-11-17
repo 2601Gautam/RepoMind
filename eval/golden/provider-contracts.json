@@ -1,0 +1,243 @@
+[
+  {
+    "id": "C01",
+    "feature": "chat",
+    "scenario": "empty",
+    "input": "How are jobs indexed?",
+    "replay": "",
+    "paths": [],
+    "expected": "empty"
+  },
+  {
+    "id": "C02",
+    "feature": "chat",
+    "scenario": "normal",
+    "input": "Which file builds the index?",
+    "replay": "IndexService builds it.",
+    "paths": [
+      "src/Index.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "C03",
+    "feature": "chat",
+    "scenario": "normal",
+    "input": "Preserve whitespace in code",
+    "replay": "if (ready)\treturn;\n",
+    "paths": [
+      "src/Ready.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "C04",
+    "feature": "chat",
+    "scenario": "normal",
+    "input": "Show the progress message",
+    "replay": "line one\r\nline two",
+    "paths": [
+      "src/Progress.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "C05",
+    "feature": "chat",
+    "scenario": "normal",
+    "input": "Show an escaped quote",
+    "replay": "A \"quoted\" path \\\\server",
+    "paths": [
+      "src/Fmt.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "C06",
+    "feature": "chat",
+    "scenario": "normal",
+    "input": "Which file contains the constant?",
+    "replay": "The constant is defined here.",
+    "paths": [
+      "src/part,one.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "C07",
+    "feature": "chat",
+    "scenario": "normal",
+    "input": "List the modules",
+    "replay": "Two modules",
+    "paths": [
+      "src/A.java",
+      "src/B.java",
+      "src/A.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "C08",
+    "feature": "chat",
+    "scenario": "normal",
+    "input": "What does the label say?",
+    "replay": "नमस्ते 🚀",
+    "paths": [
+      "資料/索引.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "C09",
+    "feature": "chat",
+    "scenario": "timeout",
+    "input": "Find the cache code",
+    "replay": "partial",
+    "paths": [
+      "src/Cache.java"
+    ],
+    "expected": "error"
+  },
+  {
+    "id": "C10",
+    "feature": "chat",
+    "scenario": "unready",
+    "input": "Can I ask while indexing?",
+    "replay": "",
+    "paths": [],
+    "expected": "reject"
+  },
+  {
+    "id": "C11",
+    "feature": "chat",
+    "scenario": "wrongRepo",
+    "input": "Continue a conversation in a different project",
+    "replay": "",
+    "paths": [],
+    "expected": "deny"
+  },
+  {
+    "id": "C12",
+    "feature": "chat",
+    "scenario": "otherUser",
+    "input": "Load someone else's history",
+    "replay": "",
+    "paths": [],
+    "expected": "deny"
+  },
+  {
+    "id": "D01",
+    "feature": "debug",
+    "scenario": "trace",
+    "input": "Missing datasource URL",
+    "replay": "## Root Cause\nNo URL configured.\n## Explanation\nThe test profile lacks a database.\n## Suggested Fix\nSet the test JDBC URL.\n## Prevention\nBoot a clean test profile.",
+    "paths": [],
+    "expected": "success"
+  },
+  {
+    "id": "D02",
+    "feature": "debug",
+    "scenario": "repo",
+    "input": "Upload failed",
+    "replay": "Review upload handling.",
+    "paths": [
+      "src/Archive.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "D03",
+    "feature": "debug",
+    "scenario": "repo",
+    "input": "Malformed record",
+    "replay": "A tab\tand carriage\rreturn.",
+    "paths": [
+      "src/path,one.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "D04",
+    "feature": "debug",
+    "scenario": "repo",
+    "input": "A config path was unreadable",
+    "replay": "Check the path.",
+    "paths": [
+      "src/a\\b.java",
+      "src/q\"r.java"
+    ],
+    "expected": "success"
+  },
+  {
+    "id": "D05",
+    "feature": "debug",
+    "scenario": "repo",
+    "input": "Missing class",
+    "replay": "Insufficient evidence.",
+    "paths": [],
+    "expected": "success"
+  },
+  {
+    "id": "D06",
+    "feature": "debug",
+    "scenario": "timeout",
+    "input": "The provider disconnected",
+    "replay": "partial",
+    "paths": [],
+    "expected": "error"
+  },
+  {
+    "id": "I01",
+    "feature": "interview",
+    "scenario": "valid",
+    "input": "BEGINNER",
+    "replay": "",
+    "paths": [],
+    "expected": "accept"
+  },
+  {
+    "id": "I02",
+    "feature": "interview",
+    "scenario": "fenced",
+    "input": "INTERMEDIATE",
+    "replay": "",
+    "paths": [],
+    "expected": "accept"
+  },
+  {
+    "id": "I03",
+    "feature": "interview",
+    "scenario": "short",
+    "input": "ADVANCED",
+    "replay": "",
+    "paths": [],
+    "expected": "reject"
+  },
+  {
+    "id": "I04",
+    "feature": "interview",
+    "scenario": "duplicate",
+    "input": "INTERMEDIATE",
+    "replay": "",
+    "paths": [],
+    "expected": "reject"
+  },
+  {
+    "id": "I05",
+    "feature": "interview",
+    "scenario": "blank",
+    "input": "BEGINNER",
+    "replay": "",
+    "paths": [],
+    "expected": "reject"
+  },
+  {
+    "id": "I06",
+    "feature": "interview",
+    "scenario": "malformed",
+    "input": "ADVANCED",
+    "replay": "",
+    "paths": [],
+    "expected": "reject"
+  }
+]

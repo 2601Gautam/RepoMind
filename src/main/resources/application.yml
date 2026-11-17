@@ -23,6 +23,16 @@ spring:
   cache:
     redis:
       time-to-live: 5m
+  ai:
+    retry:
+      # Spring AI's default is 10 attempts waiting 2 s, 10 s, 50 s, then 180 s each: about 19 minutes per call, and the
+      # app's own EmbeddingRetryPolicy wraps it. Keep this inner layer short so retries do not multiply.
+      # 429 is a client error and is deliberately left to EmbeddingRetryPolicy (paced, jittered, time-budgeted).
+      max-attempts: 3
+      backoff:
+        initial-interval: 1s
+        multiplier: 2
+        max-interval: 8s
 
 # Add these under the existing config:
 app:

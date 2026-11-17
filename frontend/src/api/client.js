@@ -1,3 +1,5 @@
+import { readSseStream } from './readSseStream.js'
+
 // All API calls live in one file
 // Reason: if backend URL changes or you add auth headers later,
 // you change this one file and every page benefits automatically
@@ -43,9 +45,9 @@ async function apiFetch(url, options={}){
         // /auth/me returning 401 just means not logged in — not an error
         if (!url.includes('/auth/me')) {
             window.location.href = '/login'
-            return
+            throw Object.assign(new Error('Your session expired. Please sign in again.'), { status: 401 })
         }
-        throw new Error('Unauthorized')
+        throw Object.assign(new Error('Unauthorized'), { status: 401 })
     }
 
     if(res.status == 429){
@@ -81,6 +83,7 @@ async function apiFetch(url, options={}){
 // ── Auth ──────────────────────────────────────────────────────────────────
 
 export const getMe = () => apiFetch(`${BASE}/auth/me`)
+export const getActivity = () => apiFetch(`${BASE}/activity`)
 
 export const getProfileStats = () => apiFetch(`${BASE}/auth/profile/stats`)
 
@@ -120,9 +123,11 @@ export const clearChatConversation = (conversationId) =>
 
 // ── Interview ──────────────────────────────────────────────────────────────
 
-export const generateInterview = (repoId, difficulty) =>
+export const generateInterview = (repoId, difficulty, options = {}) =>
     apiFetch(`${BASE}/interview/generate`, {
         method: 'POST',
+        signal: options.signal,
+        headers: options.requestId ? { 'X-Request-ID': options.requestId } : {},
         body: JSON.stringify({ repoId, difficulty })
     })
 
@@ -139,21 +144,21 @@ export const getInterviewSession = (sessionId) =>
 // Chat SSE event format from backend (ChatService.java):
 //   {"type":"start","content":"<conversationId>","conversationId":"<uuid>"}
 //   {"type":"token","content":"word","conversationId":"<uuid>"}
-//   {"type":"sources","sources":"file1.java,file2.java","conversationId":"<uuid>"}
+//   {"type":"sources","sources":["file1.java","file2.java"],"conversationId":"<uuid>"}
 //   {"type":"done","content":"","conversationId":"<uuid>"}
 //   {"type":"error","content":"message","conversationId":"<uuid>"}
 //
-// NOTE: sources event sends "sources" as comma-separated STRING not array
-// Parse with: event.sources.split(',') — see ChatPage.jsx
+// Current clients use the structured sources array. Older clients can still read content.
 //
 // onEvent(eventObj) called for each parsed event
 // onError(Error) called if stream fails
-export async function streamChat(repoId, message, conversationId, onEvent, onError) {
+export async function streamChat(repoId, message, conversationId, onEvent, onError, options = {}) {
     try {
         const res = await fetch(`${BASE}/chat`, {
+            signal: options.signal,
             method: 'POST',
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...(options.requestId ? { 'X-Request-ID': options.requestId } : {}) },
             body: JSON.stringify({
                 repoId,
                 message,
@@ -168,7 +173,7 @@ export async function streamChat(repoId, message, conversationId, onEvent, onErr
         }
 
         if (!res.ok) {
-            onError(new Error(`Chat failed: ${res.status}`))
+            onError(new Error('The AI service is temporarily unavailable. Please try again in a few moments.'))
             return
         }
 
@@ -189,12 +194,13 @@ export async function streamChat(repoId, message, conversationId, onEvent, onErr
 //
 // NOTE: sources event uses "files" key (not "sources") and is a JSON array
 // Different from chat SSE format — check DebugPage.jsx for handling
-export async function streamDebug(errorText, repoId, additionalContext, onEvent, onError) {
+export async function streamDebug(errorText, repoId, additionalContext, onEvent, onError, options = {}) {
     try {
         const res = await fetch(`${BASE}/debug/analyze`, {
+            signal: options.signal,
             method: 'POST',
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...(options.requestId ? { 'X-Request-ID': options.requestId } : {}) },
             body: JSON.stringify({
                 errorText,
                 repoId: repoId,
@@ -220,66 +226,6 @@ export async function streamDebug(errorText, repoId, additionalContext, onEvent,
     }
 }
 
-// ── SSE Core Reader ───────────────────────────────────────────────────────
-//
-// Reads a ReadableStream byte by byte, decodes to text, splits on newlines
-// Each line starting with "data:" is parsed as JSON and passed to onEvent
-// The stream closes when a "done" event is received or the stream ends
-//
-// Why fetch + ReadableStream instead of EventSource:
-//   EventSource only supports GET requests — our endpoints are POST
-//   EventSource doesn't send cookies properly cross-origin in all browsers
-//   fetch + ReadableStream gives us full control and works everywhere
-async function readSseStream(body, onEvent) {
-    const reader = body.getReader()
-    const decoder = new TextDecoder()
-    let buffer = ''
-
-    try {
-        while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
-
-            // Decode incoming bytes and append to buffer
-            // { stream: true } handles multi-byte characters split across chunks
-            buffer += decoder.decode(value, { stream: true })
-
-            // Split buffer on newlines — SSE events end with \n
-            const lines = buffer.split('\n')
-
-            // Last element may be an incomplete line — keep it in buffer
-            buffer = lines.pop() || ''
-
-            for (const line of lines) {
-                const trimmed = line.trim()
-
-                // SSE data lines start with "data:"
-                // Empty lines are event separators — skip them
-                if (!trimmed || !trimmed.startsWith('data:')) continue
-
-                const jsonStr = trimmed.slice(5).trim()
-                if (!jsonStr) continue
-
-                try {
-                    const event = JSON.parse(jsonStr)
-                    onEvent(event)
-
-                    // Stop reading when stream signals completion
-                    if (event.type === 'done' || event.type === 'error') {
-                        reader.cancel()
-                        return
-                    }
-                } catch {
-                    // Malformed JSON in one event — skip it, keep reading
-                    // This can happen with partial chunks, just ignore
-                }
-            }
-        }
-    } finally {
-        // Always release the lock even if an error occurred
-        reader.releaseLock()
-    }
-}
 export const syncRepo = (repoId, token = null) =>
     apiFetch(`${BASE}/repos/${repoId}/sync`, {
         method: 'POST',

@@ -133,7 +133,8 @@ Attach this inline policy after replacing the placeholders:
       "Action": [
         "sqs:SendMessage",
         "sqs:ReceiveMessage",
-        "sqs:DeleteMessage"
+        "sqs:DeleteMessage",
+        "sqs:ChangeMessageVisibility"
       ],
       "Resource": "arn:aws:sqs:YOUR_REGION:YOUR_ACCOUNT_ID:YOUR_QUEUE_NAME"
     },

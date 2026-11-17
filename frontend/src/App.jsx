@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { ActivityProvider } from './context/ActivityContext'
 // Pages
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
@@ -90,7 +91,7 @@ export default function App() {
     return (
         // AuthProvider wraps everything so useAuth() works anywhere in the tree
         <AuthProvider>
-            <AppRoutes />
+            <ActivityProvider><AppRoutes /></ActivityProvider>
         </AuthProvider>
     )
 }

@@ -28,6 +28,7 @@ class SyncServiceTest {
     @Mock private RepoJpaRepository repoRepository;
     @Mock private CodeChunkRepository chunkRepository;
     @Mock private CacheService cacheService;
+    @Mock private IndexSnapshotWriter snapshotWriter;
     @Mock private IngestionQueuePublisher ingestionQueuePublisher;
 
     @Test
@@ -47,10 +48,11 @@ class SyncServiceTest {
                 fileCloneService,
                 chunkingService,
                 embeddingService,
+                new EmbeddingRetryPolicy(1,1,1,1,1,1,ms -> {},System::nanoTime,() -> 0.5),
                 repoRepository,
                 chunkRepository,
                 cacheService,
-                ingestionQueuePublisher
+                ingestionQueuePublisher, snapshotWriter
         ).syncAsync(repoId, "token");
 
         assertThat(repo.getStatus()).isEqualTo(RepoEntity.IngestionStatus.PENDING);

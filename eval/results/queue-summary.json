@@ -1,0 +1,70 @@
+{
+  "configuration": {
+    "cloneDelayMs": 250,
+    "pollDelayMs": 1000,
+    "visibilitySeconds": 1200,
+    "warmupJobsPerArm": 4,
+    "longPollSeconds": 20,
+    "filesPerJob": 2
+  },
+  "arms": {
+    "direct1": {
+      "jobs": 36,
+      "medianBatchSeconds": 3.3641,
+      "medianJobsPerSecond": 3.5671,
+      "batchSeconds": [
+        3.4803,
+        3.3641,
+        3.3518
+      ],
+      "submissionP50ms": 0.001,
+      "submissionP95ms": 0.217,
+      "queueWaitP95ms": 3083.028,
+      "completionP95ms": 3363.889
+    },
+    "direct4": {
+      "jobs": 36,
+      "medianBatchSeconds": 0.8547,
+      "medianJobsPerSecond": 14.0399,
+      "batchSeconds": [
+        0.8603,
+        0.8476,
+        0.8547
+      ],
+      "submissionP50ms": 0.002,
+      "submissionP95ms": 0.186,
+      "queueWaitP95ms": 573.964,
+      "completionP95ms": 859.762
+    },
+    "sqs1": {
+      "jobs": 36,
+      "medianBatchSeconds": 11.5324,
+      "medianJobsPerSecond": 1.0405,
+      "batchSeconds": [
+        11.5366,
+        11.5324,
+        11.525
+      ],
+      "submissionP50ms": 4.282,
+      "submissionP95ms": 5.811,
+      "queueWaitP95ms": 11188.233,
+      "completionP95ms": 11480.11
+    },
+    "sqs4": {
+      "jobs": 36,
+      "medianBatchSeconds": 2.373,
+      "medianJobsPerSecond": 5.057,
+      "batchSeconds": [
+        2.373,
+        2.3798,
+        2.3707
+      ],
+      "submissionP50ms": 3.948,
+      "submissionP95ms": 5.506,
+      "queueWaitP95ms": 2050.297,
+      "completionP95ms": 2340.403
+    }
+  },
+  "sqsFourOverOne": 4.86,
+  "directFourOverOne": 3.936
+}

@@ -8,7 +8,7 @@ import LoadingSpinner from './LoadingSpinner'
 // replace={true} means the login page replaces this in browser history
 // so pressing Back after login doesn't loop back to login page
 export default function ProtectedRoute({ children }) {
-    const { user, loading } = useAuth()
+    const { user, loading, authError, checkAuthStatus } = useAuth()
 
     if (loading) {
         return (
@@ -19,6 +19,9 @@ export default function ProtectedRoute({ children }) {
     }
 
     if (!user) {
+        if (authError) return <div role="alert" className="min-h-screen bg-[#0a0a0a] text-white p-10">
+            <p>{authError}</p><button className="underline mt-4" onClick={checkAuthStatus}>Check connection</button>
+        </div>
         return <Navigate to="/login" replace />
     }
 

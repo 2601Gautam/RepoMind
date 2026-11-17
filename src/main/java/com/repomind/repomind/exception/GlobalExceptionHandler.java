@@ -2,6 +2,8 @@ package com.repomind.repomind.exception;
 
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.ai.retry.NonTransientAiException;
+import com.repomind.repomind.service.ingestion.EmbeddingRetryPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +70,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse("ACCESS_DENIED", "You do not have permission to access this resource"));
+    }
+
+    // AI provider/model failures are temporary upstream service errors.
+    @ExceptionHandler(NonTransientAiException.class)
+    public ResponseEntity<Map<String, Object>> handleAiProviderFailure(NonTransientAiException ex) {
+        log.error("AI provider failure: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(errorResponse("AI_SERVICE_UNAVAILABLE",
+                        "The AI service is temporarily unavailable. Please try again in a few moments."));
+    }
+
+    // The embedding provider kept rate limiting or failing after every allowed retry. This is a temporary upstream
+    // problem, not a bad request, and the provider's own message must not reach the client.
+    @ExceptionHandler(EmbeddingRetryPolicy.RetryExhaustedException.class)
+    public ResponseEntity<Map<String, Object>> handleEmbeddingRetryExhausted(EmbeddingRetryPolicy.RetryExhaustedException ex) {
+        log.error("Embedding provider unavailable after {} attempts ({}): {}", ex.attempts(), ex.kind(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(errorResponse("AI_SERVICE_UNAVAILABLE",
+                        "The AI service is temporarily unavailable. Please try again in a few moments."));
     }
 
     // Business logic errors - 400 Bad Request

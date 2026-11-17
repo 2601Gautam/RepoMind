@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { streamChat, getRepoStatus, getChatHistory, clearChatConversation, RateLimitError } from '../api/client'
+import { useActivity } from '../context/ActivityContext'
+import { useAiOperation } from '../hooks/useAiOperation'
+import RepositoryNotice from '../components/repo/RepositoryNotice'
 import NavBar from '../components/layout/NavBar'
 import MessageList from '../components/chat/MessageList'
 import ChatInput from '../components/chat/ChatInput'
@@ -27,7 +30,12 @@ function FollowupInfo() {
 
 // Inner component — all hooks run unconditionally here
 function ChatPageInner({ repoId }) {
-    const navigate = useNavigate()
+    const { tasks } = useActivity()
+    const operation = useAiOperation('CHAT',repoId)
+    const [restoreError,setRestoreError] = useState('')
+    const loadingRef = useRef(false)
+    const completed = tasks.filter(t=>t.repoId===repoId && t.kind==='CHAT' && t.status==='COMPLETED').map(t=>t.id).join(',')
+    const [reload,setReload] = useState(0)
     const [repo, setRepo] = useState(null)
     const [messages, setMessages] = useState([])
     const [conversationId, setConversationId] = useState(null)
@@ -37,48 +45,40 @@ function ChatPageInner({ repoId }) {
     const [directValue, setDirectValue] = useState(null)
     const messageIdRef = useRef(0)
 
-    // Load repo info
     useEffect(() => {
-        getRepoStatus(repoId).then(setRepo).catch(console.error)
-        // Track this repo as recently chatted
-        if (repoId) {
+        let active = true
+        getRepoStatus(repoId).then(data => { if(active) setRepo(data) })
+            .catch(e => { if(active) setRestoreError(e.message) })
+        return () => { active = false }
+    }, [repoId,reload])
+
+    useEffect(() => {
+        let active = true
+        async function restore() {
+            if (loadingRef.current) return
+            setHistoryLoading(true)
             try {
-                const recent = JSON.parse(localStorage.getItem('recent_chat_repos') || '[]')
-                const updated = [repoId, ...recent.filter(id => id !== repoId)].slice(0, 5)
-                localStorage.setItem('recent_chat_repos', JSON.stringify(updated))
-            } catch (e) {
-                console.error('Failed to update recent chat repos:', e)
-            }
-        }
-    }, [repoId])
-
-    // On mount: fetch chat history from the database (per user + per repo)
-    // This replaces localStorage — history survives across devices and sessions
-    useEffect(() => {
-        setHistoryLoading(true)
-        setMessages([])
-        setConversationId(null)
-
-        getChatHistory(repoId)
-            .then(data => {
-                if (data && data.messages?.length > 0) {
-                    // Map DB messages to the shape the MessageList component expects
-                    const restored = data.messages.map(m => ({
-                        role: m.role,
-                        content: m.content,
-                        // sources is a comma-separated string from DB — convert to array
-                        sources: m.sources ? m.sources.split(',').filter(Boolean) : []
-                    }))
-                    setMessages(restored)
+                const data = await getChatHistory(repoId)
+                if (!active || loadingRef.current) return
+                if (data) {
+                    setMessages(data.messages.map(m=>({ role:m.role, content:m.content,
+                        sources:m.sourcePaths ?? (m.sources ? m.sources.split(',').filter(Boolean) : []) })))
                     setConversationId(data.conversationId)
                 }
-            })
-            .catch(err => console.error('Failed to load chat history:', err))
-            .finally(() => setHistoryLoading(false))
-    }, [repoId])
+                setRestoreError('')
+            } catch (e) { if(active) setRestoreError('Could not restore saved chat: ' + e.message) }
+            finally { if(active) setHistoryLoading(false) }
+        }
+        restore()
+        window.addEventListener('online',restore)
+        return () => { active=false; window.removeEventListener('online',restore) }
+    }, [repoId,completed,reload])
 
     async function handleSend(text) {
-        if (loading) return
+        if (loading || operation.runningElsewhere || repo?.status !== 'READY') return
+        const attempt = operation.start()
+        if (!attempt) return
+        loadingRef.current = true
 
         setMessages(prev => [...prev, { role: 'user', content: text }])
         setLoading(true)
@@ -100,6 +100,7 @@ function ChatPageInner({ repoId }) {
             text,
             conversationId,
             (event) => {
+                if (!attempt.live()) return
                 switch (event.type) {
                     case 'start':
                         if (event.content && !resolvedConversationId) {
@@ -115,7 +116,7 @@ function ChatPageInner({ repoId }) {
                         ))
                         break
                     case 'sources':
-                        // The backend sends sources in event.content as a comma-separated string
+                        // Current responses carry file paths as a structured array.
                         const sourceStr = event.sources || event.content || ''
                         const sourceList = Array.isArray(sourceStr) 
                             ? sourceStr 
@@ -146,23 +147,27 @@ function ChatPageInner({ repoId }) {
                 }
             },
             (err) => {
+                if (!attempt.live()) return
                 if (err instanceof RateLimitError) {
                     setRateLimitSeconds(err.retryAfterSeconds)
                     setMessages(prev => prev.filter(msg => msg.id !== streamId))
                 } else {
                     setMessages(prev => prev.map(msg =>
                         msg.id === streamId
-                            ? { ...msg, content: `Error: ${err.message}`, streaming: false }
+                            ? { ...msg, content: msg.content + '\n\nResponse interrupted. ' + err.message + ' Check saved history before sending again.', streaming: false }
                             : msg
                     ))
                 }
                 setLoading(false)
-            }
+            },
+            attempt.options
         )
+        if (attempt.live()) { loadingRef.current=false; setLoading(false) }
+        attempt.finish()
     }
 
     // Show spinner while repo info or history is loading
-    if (!repo || historyLoading) {
+    if ((!repo || historyLoading) && !restoreError) {
         return (
             <div className="min-h-screen bg-[#080809] flex items-center justify-center">
                 <LoadingSpinner size="lg" />
@@ -170,7 +175,7 @@ function ChatPageInner({ repoId }) {
         )
     }
 
-    const slug = repo.githubUrl?.replace('https://github.com/', '') ?? ''
+    const slug = repo?.githubUrl?.replace('https://github.com/', '') ?? ''
 
     return (
         <div className="flex flex-col h-screen bg-[#080809] text-white overflow-hidden">
@@ -186,12 +191,13 @@ function ChatPageInner({ repoId }) {
                 action={
                     messages.length > 0 && (
                         <button
+                            disabled={loading || operation.runningElsewhere}
                             onClick={async () => {
                                 if (conversationId) {
                                     try {
                                         await clearChatConversation(conversationId)
                                     } catch (e) {
-                                        console.error('Failed to clear database conversation:', e)
+                                        setRestoreError('Could not clear saved conversation: ' + e.message); return
                                     }
                                 }
                                 setMessages([])
@@ -228,6 +234,9 @@ function ChatPageInner({ repoId }) {
                 }
             />
 
+            {restoreError && <p role="alert" className="px-8 py-3 text-amber-300">{restoreError} <button className="underline" onClick={()=>setReload(x=>x+1)}>Reload saved history</button></p>}
+            {operation.runningElsewhere && !loading && <p role="status" className="px-8 py-3 text-violet-200">A chat request is running. Saved history will refresh when it finishes.</p>}
+            {repo && repo.status !== 'READY' && <RepositoryNotice repo={repo} />}
             {/* ── Message area ─────────────────────────────────────── */}
             <div className="flex-1 overflow-hidden relative z-10">
                 <div className="h-full px-4 sm:px-8 flex flex-col">
@@ -251,7 +260,7 @@ function ChatPageInner({ repoId }) {
                     )}
                     <ChatInput
                         onSend={handleSend}
-                        disabled={loading || !!rateLimitSeconds}
+                        disabled={loading || operation.runningElsewhere || historyLoading || !!restoreError || repo?.status !== 'READY' || !!rateLimitSeconds}
                         directValue={directValue}
                         onDirectConsumed={() => setDirectValue(null)}
                     />

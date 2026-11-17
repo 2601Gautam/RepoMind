@@ -45,6 +45,8 @@ CREATE TABLE IF NOT EXISTS repositories (
 -- file_path stores which file this chunk came from — shown as sources in chat.
 --
 
+ALTER TABLE repositories ADD COLUMN IF NOT EXISTS ingestion_owner UUID;
+
 CREATE TABLE IF NOT EXISTS code_chunks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     repo_id UUID REFERENCES repositories(id) ON DELETE CASCADE,
@@ -68,6 +70,7 @@ CREATE TABLE IF NOT EXISTS conversations (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     repo_id UUID REFERENCES repositories(id) ON DELETE CASCADE,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    summary TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- MESSAGES TABLE
@@ -82,6 +85,7 @@ CREATE TABLE IF NOT EXISTS messages (
     role VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
     sources TEXT,
+    source_paths TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -141,6 +145,9 @@ WITH (lists = 100);
 
 -- Regular index for filtering by repo before doing similarity search
 CREATE INDEX IF NOT EXISTS code_chunks_repo_id_idx ON code_chunks(repo_id);
+ALTER TABLE code_chunks ADD COLUMN IF NOT EXISTS identifier_terms tsvector
+    GENERATED ALWAYS AS (to_tsvector('simple', regexp_replace(content, '[^a-zA-Z0-9_]+', ' ', 'g'))) STORED;
+CREATE INDEX IF NOT EXISTS code_chunks_identifier_terms_idx ON code_chunks USING gin (identifier_terms);
 
 
 ALTER TABLE repositories ADD COLUMN IF NOT EXISTS last_commit_sha VARCHAR(40);
@@ -162,3 +169,16 @@ ALTER TABLE repositories ADD COLUMN IF NOT EXISTS is_private BOOLEAN;
 -- Only one ingestion record may exist for a normalized GitHub repository URL.
 CREATE UNIQUE INDEX IF NOT EXISTS idx_repositories_github_url_unique
 ON repositories (github_url);
+-- Activity metadata only; prompts, tokens and credentials are never stored here.
+CREATE TABLE IF NOT EXISTS ai_activity (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    repo_id UUID REFERENCES repositories(id) ON DELETE CASCADE,
+    kind VARCHAR(16) NOT NULL,
+    status VARCHAR(16) NOT NULL,
+    result_id UUID,
+    started_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
+    touched_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
+);
+CREATE INDEX IF NOT EXISTS idx_ai_activity_user_started ON ai_activity(user_id, started_at DESC);
+

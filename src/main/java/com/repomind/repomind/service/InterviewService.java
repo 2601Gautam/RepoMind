@@ -89,11 +89,19 @@ public class InterviewService {
                 .difficulty(request.getDifficulty())
                 .build();
 
-        session = sessionRepository.save(session);
+        if (parsedQuestions.size() != 5) throw new IllegalArgumentException("Expected five interview questions");
+        Set<String> seen = new HashSet<>();
 
         List<InterviewQuestion> savedQuestions = new ArrayList<>();
         for(int i = 0 ; i<parsedQuestions.size(); i++){
             ParsedQuestion pq = parsedQuestions.get(i);
+            if (pq == null || pq.question() == null || pq.question().isBlank()
+                    || pq.expectedAnswer() == null || pq.expectedAnswer().isBlank()
+                    || pq.conceptTested() == null || pq.conceptTested().isBlank()
+                    || !request.getDifficulty().equals(pq.difficulty())
+                    || !seen.add(pq.question().strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT))) {
+                throw new IllegalArgumentException("Invalid or duplicate interview question");
+            }
             InterviewQuestion q = InterviewQuestion.builder()
                     .session(session)
                     .question(pq.question())
@@ -102,9 +110,12 @@ public class InterviewService {
                     .conceptTested(pq.conceptTested())
                     .questionOrder(i+1)
                     .build();
-            savedQuestions.add(questionRepository.save(q));
+            savedQuestions.add(q);
         }
-        return toDto(session,savedQuestions,repo);
+        session.setQuestions(savedQuestions);
+        // CascadeType.ALL persists the validated graph in one repository transaction.
+        InterviewSession saved = sessionRepository.save(session);
+        return toDto(saved,saved.getQuestions(),repo);
     }
     public InterviewSessionDto getSession(UUID sessionId , User currentUser){
         InterviewSession session = sessionRepository.findById(sessionId)
@@ -173,7 +184,7 @@ public class InterviewService {
         summary.append("\nSample code context:\n");
         sampleChunks.stream().limit(25).forEach(chunk ->
                 summary.append("\n")
-                        .append(chunk.getContent(), 0, Math.min(100, chunk.getContent().length()))
+                        .append(chunk.getContent(), 0, Math.min(480, chunk.getContent().length()))
                         .append("...\n")
         );
 

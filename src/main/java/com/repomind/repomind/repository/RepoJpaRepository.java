@@ -14,6 +14,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RepoJpaRepository extends JpaRepository<RepoEntity, UUID> {
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("select r from RepoEntity r where r.id = :id")
+    Optional<RepoEntity> lockForIndexUpdate(@Param("id") UUID id);
 
     // Spring reads this method name and generates:
     // SELECT * FROM repositories ORDER BY created_at DESC

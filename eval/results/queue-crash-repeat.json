@@ -1,0 +1,42 @@
+{
+  "direct" : {
+    "afterRestart" : {
+      "pending" : 8,
+      "processing" : 4,
+      "ready" : 0,
+      "failed" : 0,
+      "chunks" : 4,
+      "distinctChunks" : 4
+    },
+    "accepted" : 12,
+    "observedMs" : 13023,
+    "afterHalt" : {
+      "pending" : 8,
+      "processing" : 4,
+      "ready" : 0,
+      "failed" : 0,
+      "chunks" : 4,
+      "distinctChunks" : 4
+    }
+  },
+  "sqs" : {
+    "afterRestart" : {
+      "pending" : 0,
+      "processing" : 0,
+      "ready" : 12,
+      "failed" : 0,
+      "chunks" : 24,
+      "distinctChunks" : 24
+    },
+    "accepted" : 12,
+    "observedMs" : 8103,
+    "afterHalt" : {
+      "pending" : 8,
+      "processing" : 4,
+      "ready" : 0,
+      "failed" : 0,
+      "chunks" : 4,
+      "distinctChunks" : 4
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "retrieval": {
+    "vector": {
+      "hits": 27,
+      "questions": 40,
+      "identifierHits": 13,
+      "proseHits": 14,
+      "mrrAt12": 0.2328,
+      "lookupSamples": 200,
+      "lookupMs": {
+        "50": 9.249,
+        "95": 10.53
+      },
+      "misses": [
+        "ID04",
+        "ID07",
+        "ID09",
+        "ID10",
+        "ID15",
+        "ID18",
+        "ID20",
+        "NL01",
+        "NL02",
+        "NL05",
+        "NL06",
+        "NL09",
+        "NL14"
+      ]
+    },
+    "candidate": {
+      "hits": 34,
+      "questions": 40,
+      "identifierHits": 20,
+      "proseHits": 14,
+      "mrrAt12": 0.44,
+      "lookupSamples": 200,
+      "lookupMs": {
+        "50": 11.337,
+        "95": 18.61
+      },
+      "misses": [
+        "NL01",
+        "NL02",
+        "NL05",
+        "NL06",
+        "NL09",
+        "NL14"
+      ]
+    },
+    "gains": [
+      "ID04",
+      "ID07",
+      "ID09",
+      "ID10",
+      "ID15",
+      "ID18",
+      "ID20"
+    ],
+    "losses": []
+  },
+  "generation": {
+    "before": {
+      "features": {
+        "chat": {
+          "pass": 5,
+          "cases": 12
+        },
+        "debug": {
+          "pass": 0,
+          "cases": 6
+        },
+        "interview": {
+          "pass": 0,
+          "cases": 6
+        }
+      },
+      "pass": 5,
+      "finishedWithinCap": 13,
+      "promptTokens": 10076,
+      "completionTokens": 4739
+    },
+    "after": {
+      "features": {
+        "chat": {
+          "pass": 5,
+          "cases": 12
+        },
+        "debug": {
+          "pass": 1,
+          "cases": 6
+        },
+        "interview": {
+          "pass": 0,
+          "cases": 6
+        }
+      },
+      "pass": 6,
+      "finishedWithinCap": 19,
+      "promptTokens": 10320,
+      "completionTokens": 4534
+    }
+  }
+}

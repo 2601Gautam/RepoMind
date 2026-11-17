@@ -1,0 +1,898 @@
+{
+  "corpusRevision": "7988a6d76bc4e82169645eabc8e15bf05f37defb",
+  "embeddingModel": "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "replaySha256": "3b2d636baeaccc5f4c0b1bfd8b2ca6e62189d4ed399e34e860cf521cdaa1e541",
+  "labelsSha256": "27921f1e95b9dc2d9c725304dac83e1105f24d73fcce22ba564ace8f04eab0c9",
+  "files": 116,
+  "chunks": 206,
+  "topK": 12,
+  "timedPasses": 5,
+  "postgres": "16.16 (Debian 16.16-1.pgdg12+1)",
+  "pgvector": "0.8.7",
+  "variants": {
+    "vector": [
+      {
+        "id": "ID01",
+        "firstSupportingRank": 12,
+        "lookupMicros": [
+          10235,
+          9684,
+          9504,
+          10991,
+          8232
+        ]
+      },
+      {
+        "id": "ID02",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          9310,
+          9081,
+          10070,
+          9842,
+          9136
+        ]
+      },
+      {
+        "id": "ID03",
+        "firstSupportingRank": 9,
+        "lookupMicros": [
+          9397,
+          9317,
+          9384,
+          10032,
+          9169
+        ]
+      },
+      {
+        "id": "ID04",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          10051,
+          8938,
+          9272,
+          9824,
+          12202
+        ]
+      },
+      {
+        "id": "ID05",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          9527,
+          9536,
+          9699,
+          9235,
+          9447
+        ]
+      },
+      {
+        "id": "ID06",
+        "firstSupportingRank": 10,
+        "lookupMicros": [
+          9368,
+          9099,
+          9664,
+          14444,
+          9041
+        ]
+      },
+      {
+        "id": "ID07",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9428,
+          9286,
+          9720,
+          10108,
+          8438
+        ]
+      },
+      {
+        "id": "ID08",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          9527,
+          8717,
+          10049,
+          9332,
+          9402
+        ]
+      },
+      {
+        "id": "ID09",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9197,
+          9769,
+          8881,
+          9248,
+          8628
+        ]
+      },
+      {
+        "id": "ID10",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9543,
+          9714,
+          9609,
+          8551,
+          9488
+        ]
+      },
+      {
+        "id": "ID11",
+        "firstSupportingRank": 12,
+        "lookupMicros": [
+          9282,
+          9730,
+          9301,
+          9472,
+          8981
+        ]
+      },
+      {
+        "id": "ID12",
+        "firstSupportingRank": 12,
+        "lookupMicros": [
+          10497,
+          9684,
+          10173,
+          8944,
+          8969
+        ]
+      },
+      {
+        "id": "ID13",
+        "firstSupportingRank": 3,
+        "lookupMicros": [
+          9683,
+          9849,
+          10064,
+          9795,
+          8915
+        ]
+      },
+      {
+        "id": "ID14",
+        "firstSupportingRank": 3,
+        "lookupMicros": [
+          10008,
+          9280,
+          9423,
+          9778,
+          9390
+        ]
+      },
+      {
+        "id": "ID15",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          11296,
+          9319,
+          9796,
+          10428,
+          8986
+        ]
+      },
+      {
+        "id": "ID16",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          10413,
+          8875,
+          10511,
+          10537,
+          9352
+        ]
+      },
+      {
+        "id": "ID17",
+        "firstSupportingRank": 5,
+        "lookupMicros": [
+          9579,
+          9473,
+          9422,
+          9018,
+          8642
+        ]
+      },
+      {
+        "id": "ID18",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9594,
+          8481,
+          9976,
+          8848,
+          8805
+        ]
+      },
+      {
+        "id": "ID19",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          9796,
+          9204,
+          10837,
+          9776,
+          8277
+        ]
+      },
+      {
+        "id": "ID20",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9652,
+          8626,
+          10803,
+          9245,
+          9025
+        ]
+      },
+      {
+        "id": "NL01",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9428,
+          9041,
+          11276,
+          8931,
+          8694
+        ]
+      },
+      {
+        "id": "NL02",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9171,
+          8870,
+          11094,
+          8380,
+          8379
+        ]
+      },
+      {
+        "id": "NL03",
+        "firstSupportingRank": 11,
+        "lookupMicros": [
+          9314,
+          9151,
+          10593,
+          8415,
+          8623
+        ]
+      },
+      {
+        "id": "NL04",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          12966,
+          9508,
+          12146,
+          8588,
+          9335
+        ]
+      },
+      {
+        "id": "NL05",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9358,
+          8971,
+          11087,
+          8395,
+          8863
+        ]
+      },
+      {
+        "id": "NL06",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9151,
+          9232,
+          10480,
+          8906,
+          9152
+        ]
+      },
+      {
+        "id": "NL07",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          8850,
+          9916,
+          10483,
+          16282,
+          8684
+        ]
+      },
+      {
+        "id": "NL08",
+        "firstSupportingRank": 6,
+        "lookupMicros": [
+          9121,
+          9105,
+          10112,
+          10948,
+          9215
+        ]
+      },
+      {
+        "id": "NL09",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          8902,
+          9647,
+          9973,
+          10706,
+          9322
+        ]
+      },
+      {
+        "id": "NL10",
+        "firstSupportingRank": 3,
+        "lookupMicros": [
+          8660,
+          9808,
+          10107,
+          9696,
+          9447
+        ]
+      },
+      {
+        "id": "NL11",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          8813,
+          9478,
+          9732,
+          8843,
+          8868
+        ]
+      },
+      {
+        "id": "NL12",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          9117,
+          9528,
+          9586,
+          8686,
+          10130
+        ]
+      },
+      {
+        "id": "NL13",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          9413,
+          10347,
+          9890,
+          8831,
+          9760
+        ]
+      },
+      {
+        "id": "NL14",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9305,
+          9833,
+          10229,
+          8823,
+          9845
+        ]
+      },
+      {
+        "id": "NL15",
+        "firstSupportingRank": 10,
+        "lookupMicros": [
+          9588,
+          10000,
+          10238,
+          9183,
+          9704
+        ]
+      },
+      {
+        "id": "NL16",
+        "firstSupportingRank": 8,
+        "lookupMicros": [
+          9577,
+          10135,
+          10188,
+          9621,
+          8807
+        ]
+      },
+      {
+        "id": "NL17",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          9264,
+          9473,
+          10250,
+          9061,
+          8381
+        ]
+      },
+      {
+        "id": "NL18",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          8819,
+          9588,
+          9447,
+          8537,
+          9044
+        ]
+      },
+      {
+        "id": "NL19",
+        "firstSupportingRank": 6,
+        "lookupMicros": [
+          9087,
+          9607,
+          9896,
+          8285,
+          9291
+        ]
+      },
+      {
+        "id": "NL20",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          10652,
+          9036,
+          9938,
+          8509,
+          8771
+        ]
+      }
+    ],
+    "candidate": [
+      {
+        "id": "ID01",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          87607,
+          95224,
+          91219,
+          94412,
+          86419
+        ]
+      },
+      {
+        "id": "ID02",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          86294,
+          90870,
+          89600,
+          88647,
+          85923
+        ]
+      },
+      {
+        "id": "ID03",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          88340,
+          87097,
+          87419,
+          88901,
+          88175
+        ]
+      },
+      {
+        "id": "ID04",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          96084,
+          86409,
+          89607,
+          88339,
+          83604
+        ]
+      },
+      {
+        "id": "ID05",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          94142,
+          86058,
+          84634,
+          87286,
+          85281
+        ]
+      },
+      {
+        "id": "ID06",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          88699,
+          87816,
+          85830,
+          87009,
+          88170
+        ]
+      },
+      {
+        "id": "ID07",
+        "firstSupportingRank": 3,
+        "lookupMicros": [
+          87857,
+          87531,
+          86627,
+          88538,
+          85237
+        ]
+      },
+      {
+        "id": "ID08",
+        "firstSupportingRank": 3,
+        "lookupMicros": [
+          85938,
+          86266,
+          87373,
+          84185,
+          86994
+        ]
+      },
+      {
+        "id": "ID09",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          90453,
+          87564,
+          90095,
+          85744,
+          87107
+        ]
+      },
+      {
+        "id": "ID10",
+        "firstSupportingRank": 5,
+        "lookupMicros": [
+          86304,
+          89714,
+          87455,
+          86688,
+          86892
+        ]
+      },
+      {
+        "id": "ID11",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          83828,
+          85265,
+          88451,
+          89650,
+          85186
+        ]
+      },
+      {
+        "id": "ID12",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          87365,
+          87299,
+          90657,
+          89141,
+          84985
+        ]
+      },
+      {
+        "id": "ID13",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          90250,
+          87337,
+          92315,
+          94053,
+          89817
+        ]
+      },
+      {
+        "id": "ID14",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          88960,
+          87817,
+          93523,
+          95151,
+          89850
+        ]
+      },
+      {
+        "id": "ID15",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          93531,
+          86402,
+          93159,
+          92697,
+          87147
+        ]
+      },
+      {
+        "id": "ID16",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          92332,
+          89709,
+          94203,
+          93545,
+          85590
+        ]
+      },
+      {
+        "id": "ID17",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          88551,
+          89239,
+          88058,
+          89830,
+          84323
+        ]
+      },
+      {
+        "id": "ID18",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          89582,
+          85839,
+          89499,
+          89377,
+          85867
+        ]
+      },
+      {
+        "id": "ID19",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          89712,
+          87224,
+          105804,
+          89420,
+          94726
+        ]
+      },
+      {
+        "id": "ID20",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          84688,
+          87999,
+          97364,
+          85789,
+          85795
+        ]
+      },
+      {
+        "id": "NL01",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          8904,
+          9849,
+          10572,
+          9045,
+          8498
+        ]
+      },
+      {
+        "id": "NL02",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9110,
+          8814,
+          10824,
+          8619,
+          8425
+        ]
+      },
+      {
+        "id": "NL03",
+        "firstSupportingRank": 11,
+        "lookupMicros": [
+          9353,
+          8814,
+          11756,
+          8458,
+          9053
+        ]
+      },
+      {
+        "id": "NL04",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          9514,
+          10393,
+          11176,
+          8753,
+          8731
+        ]
+      },
+      {
+        "id": "NL05",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9349,
+          9393,
+          10124,
+          8517,
+          8654
+        ]
+      },
+      {
+        "id": "NL06",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9405,
+          11112,
+          11001,
+          8646,
+          9169
+        ]
+      },
+      {
+        "id": "NL07",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          9386,
+          10054,
+          10381,
+          8782,
+          8754
+        ]
+      },
+      {
+        "id": "NL08",
+        "firstSupportingRank": 6,
+        "lookupMicros": [
+          9059,
+          9388,
+          9945,
+          10603,
+          9103
+        ]
+      },
+      {
+        "id": "NL09",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          9334,
+          8833,
+          9739,
+          14269,
+          10046
+        ]
+      },
+      {
+        "id": "NL10",
+        "firstSupportingRank": 3,
+        "lookupMicros": [
+          9075,
+          8925,
+          9577,
+          9253,
+          9955
+        ]
+      },
+      {
+        "id": "NL11",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          9084,
+          8863,
+          9842,
+          8538,
+          10136
+        ]
+      },
+      {
+        "id": "NL12",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          9353,
+          10581,
+          10649,
+          9846,
+          10007
+        ]
+      },
+      {
+        "id": "NL13",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          9570,
+          11974,
+          10535,
+          9882,
+          9929
+        ]
+      },
+      {
+        "id": "NL14",
+        "firstSupportingRank": null,
+        "lookupMicros": [
+          8893,
+          10031,
+          9791,
+          8380,
+          9034
+        ]
+      },
+      {
+        "id": "NL15",
+        "firstSupportingRank": 10,
+        "lookupMicros": [
+          9706,
+          9720,
+          10245,
+          8726,
+          9696
+        ]
+      },
+      {
+        "id": "NL16",
+        "firstSupportingRank": 8,
+        "lookupMicros": [
+          9285,
+          9905,
+          9691,
+          9758,
+          9390
+        ]
+      },
+      {
+        "id": "NL17",
+        "firstSupportingRank": 1,
+        "lookupMicros": [
+          9068,
+          9723,
+          9544,
+          9207,
+          8288
+        ]
+      },
+      {
+        "id": "NL18",
+        "firstSupportingRank": 2,
+        "lookupMicros": [
+          9446,
+          9699,
+          10276,
+          8636,
+          8373
+        ]
+      },
+      {
+        "id": "NL19",
+        "firstSupportingRank": 6,
+        "lookupMicros": [
+          9535,
+          9485,
+          9117,
+          8630,
+          8865
+        ]
+      },
+      {
+        "id": "NL20",
+        "firstSupportingRank": 4,
+        "lookupMicros": [
+          10622,
+          9409,
+          9555,
+          8403,
+          8814
+        ]
+      }
+    ]
+  }
+}

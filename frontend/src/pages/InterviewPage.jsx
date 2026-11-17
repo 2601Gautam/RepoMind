@@ -12,6 +12,8 @@ import {
     getInterviewSession,
     RateLimitError
 } from '../api/client'
+import { useActivity } from '../context/ActivityContext'
+import { useAiOperation } from '../hooks/useAiOperation'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import RateLimitBanner from '../components/common/RateLimitBanner'
 import ToolNavLinks from '../components/common/ToolNavLinks'
@@ -24,6 +26,10 @@ export default function InterviewPage() {
     const { repoId } = useParams()
     const location = useLocation()
     const navigate = useNavigate()
+    const operation = useAiOperation('INTERVIEW',repoId)
+    const { tasks } = useActivity()
+    const completed = tasks.filter(t=>t.repoId===repoId && t.kind==='INTERVIEW' && t.status==='COMPLETED').map(t=>t.id).join(',')
+    const generationRef = useRef(false)
 
     // Read active session ID from URL query parameters
     const queryParams = new URLSearchParams(location.search)
@@ -48,32 +54,45 @@ export default function InterviewPage() {
     const [copiedAll, setCopiedAll] = useState(false)
     const [copiedQuestionId, setCopiedQuestionId] = useState(null)
 
-    // Effect: Load repository status and previous sessions list on mount/repoId change
     useEffect(() => {
         if (!repoId) return
-        getRepoStatus(repoId).then(setRepo).catch(console.error)
-        loadPreviousSessions()
-    }, [repoId])
+        let active = true
+        async function restore() {
+            try {
+                const [metadata, saved] = await Promise.all([getRepoStatus(repoId),getInterviewSessions()])
+                if(!active) return
+                setRepo(metadata); setSessions((saved || []).filter(s=>s.repoId===repoId))
+                setLoadingSessions(false)
+            } catch(e) { if(active) { setError('Could not restore saved sessions: ' + e.message); setLoadingSessions(false) } }
+        }
+        restore()
+        window.addEventListener('online',restore)
+        return () => { active=false; window.removeEventListener('online',restore); generationRef.current=false }
+    }, [repoId,completed])
 
     // Effect: Sync active session content with URL sessionId parameter change (back/forward support)
     useEffect(() => {
         if (!repoId) return
+        let active = true
         if (querySessionId) {
             setLoading(true)
             getInterviewSession(querySessionId)
                 .then(data => {
+                    if(!active) return
                     setSession(data)
                     setCurrentQuestionIdx(0)
                     setIsAnswerRevealed(false)
                 })
                 .catch(e => {
+                    if(!active) return
                     setError(e.message)
                     setSession(null)
                 })
-                .finally(() => setLoading(false))
+                .finally(() => { if(active) setLoading(false) })
         } else {
             setSession(null)
         }
+        return () => { active=false }
     }, [repoId, querySessionId])
 
     async function loadPreviousSessions() {
@@ -91,21 +110,28 @@ export default function InterviewPage() {
 
 
     async function handleGenerate() {
+        if (generationRef.current || operation.runningElsewhere) return
+        const attempt = operation.start()
+        if(!attempt) return
+        generationRef.current=true
         setLoading(true)
         setError('')
         try {
-            const result = await generateInterview(repoId, difficulty)
+            const result = await generateInterview(repoId, difficulty, attempt.options)
+            if(!attempt.live()) return
             // Navigate to active session parameter URL (replace in history stack)
             navigate(`/interview/${repoId}?sessionId=${result.id}`, { replace: true })
             loadPreviousSessions()
         } catch (e) {
+            if(!attempt.live()) return
             if (e instanceof RateLimitError) {
                 setRateLimitSeconds(e.retryAfterSeconds)
             } else {
                 setError(e.message)
             }
         } finally {
-            setLoading(false)
+            if(attempt.live()) { setLoading(false); generationRef.current=false }
+            attempt.finish()
         }
     }
 
@@ -182,6 +208,7 @@ export default function InterviewPage() {
     return (
         <div className="min-h-screen bg-[#080809] text-white font-sans flex flex-col relative overflow-x-hidden">
             <NavBar repoName={repo?.repoName} />
+            {operation.runningElsewhere && !loading && <p role="status" className="px-8 py-3 text-violet-200">Interview generation is running. Open Saved Sessions when it finishes.</p>}
             {/* Subtle glow background — matches Dashboard/Chat/Debug */}
             <div className="pointer-events-none fixed top-0 right-0 w-[500px] h-[500px] z-0 opacity-30"
                 style={{ background: 'radial-gradient(circle at 100% 0%, rgba(139,92,246,0.12) 0%, transparent 70%)' }} />
@@ -560,7 +587,7 @@ export default function InterviewPage() {
                             </div>
 
                             <button onClick={handleGenerate}
-                                disabled={loading || !!rateLimitSeconds}
+                                disabled={loading || operation.runningElsewhere || !!rateLimitSeconds}
                                 className="w-full bg-white/[0.06] border border-white/[0.1] text-white/80 hover:bg-white/[0.1] hover:text-white font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer text-xs">
                                 {loading ? 'Preparing Prep Deck...' : 'Generate 5 Questions'}
                             </button>

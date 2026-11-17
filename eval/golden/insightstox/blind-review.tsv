@@ -1,0 +1,45 @@
+id	my_file	my_start	my_end	blind_file	blind_start	blind_end	same_file	overlap	jaccard	blind_flagged_ambiguous
+DEV1	backend/src/controllers/dashBoard/marketMovers.controller.js	86	93	backend/src/controllers/dashBoard/marketMovers.controller.js	86	93	True	True	1.0	
+DEV2	backend/src/utils/cloudinary.js	14	18	backend/src/utils/cloudinary.js	14	18	True	True	1.0	
+DEV3	frontend/src/utils/dataCleaningFuncs.jsx	82	87	frontend/src/utils/dataCleaningFuncs.jsx	82	88	True	True	0.86	
+DEV4	backend/src/utils/removeActivityHistoryPdf.js	13	17	backend/src/utils/removeActivityHistoryPdf.js	13	21	True	True	0.56	
+ID01	backend/src/middlewares/verifyUserLoginStatus.middleware.js	31	38	backend/src/middlewares/verifyUserLoginStatus.middleware.js	31	38	True	True	1.0	
+ID02	backend/src/middlewares/auth.middleware.js	27	37	backend/src/middlewares/auth.middleware.js	27	37	True	True	1.0	
+ID03	backend/src/utils/registrationOtpStore.js	3	12	backend/src/utils/registrationOtpStore.js	3	12	True	True	1.0	
+ID04	backend/src/controllers/user/registerOtpGeneration.controller.js	26	37	backend/src/controllers/user/registerOtpGeneration.controller.js	27	37	True	True	0.92	
+ID05	backend/src/utils/getQuotes.js	29	30	backend/src/utils/getQuotes.js	29	29	True	True	0.5	
+ID06	backend/src/utils/getQuotes.js	31	37	backend/src/utils/getQuotes.js	31	37	True	True	1.0	
+ID07	backend/src/db/insertTransaction.js	21	22	backend/src/db/insertTransaction.js	21	22	True	True	1.0	
+ID08	backend/src/db/insertTransaction.js	73	75	backend/src/db/insertTransaction.js	73	75	True	True	1.0	
+ID09	backend/src/controllers/dashBoard/portfolioCalculation.controller.js	46	49	backend/src/controllers/dashBoard/portfolioCalculation.controller.js	46	49	True	True	1.0	
+ID10	backend/src/controllers/dashBoard/portfolioCalculation.controller.js	4	9	backend/src/controllers/dashBoard/portfolioCalculation.controller.js	4	9	True	True	1.0	
+ID11	backend/src/controllers/dashBoard/marketMovers.controller.js	47	52	backend/src/controllers/dashBoard/marketMovers.controller.js	51	51	True	True	0.17	
+ID12	frontend/src/utils/dataCleaningFuncs.jsx	43	57	frontend/src/utils/dataCleaningFuncs.jsx	47	56	True	True	0.67	
+ID13	frontend/src/utils/dataCleaningFuncs.jsx	73	78	frontend/src/utils/dataCleaningFuncs.jsx	73	78	True	True	1.0	
+ID14	frontend/src/context/AppContext.jsx	49	67	frontend/src/context/AppContext.jsx	48	69	True	True	0.86	
+ID15	frontend/src/utils/validation.js	24	29	frontend/src/utils/validation.js	24	29	True	True	1.0	
+ID16	frontend/src/utils/dataCleaningFuncs.jsx	18	22	frontend/src/utils/dataCleaningFuncs.jsx	18	21	True	True	0.8	
+ID17	backend/src/utils/agent.js	27	31	backend/src/utils/agent.js	28	31	True	True	0.8	
+ID18	backend/src/utils/agent.js	336	339	backend/src/utils/agent.js	336	339	True	True	1.0	
+ID19	backend/src/utils/chatBotTools/riskAnalysis.js	59	63	backend/src/utils/chatBotTools/riskAnalysis.js	59	63	True	True	1.0	
+ID20	backend/src/utils/removeOldProfile.js	5	11	backend/src/utils/removeOldProfile.js	5	11	True	True	1.0	
+NL01	backend/src/controllers/user/login.controller.js	111	118	backend/src/controllers/user/login.controller.js	111	119	True	True	0.89	
+NL02	backend/src/controllers/user/login.controller.js	48	50	backend/src/controllers/user/login.controller.js	48	50	True	True	1.0	
+NL03	backend/src/controllers/user/login.controller.js	101	109	backend/src/controllers/user/login.controller.js	101	109	True	True	1.0	
+NL04	backend/src/middlewares/verifyUserLoginStatus.middleware.js	19	29	backend/src/middlewares/verifyUserLoginStatus.middleware.js	19	29	True	True	1.0	
+NL05	backend/src/utils/checkUserSyntax.js	6	13	backend/src/utils/checkUserSyntax.js	6	13	True	True	1.0	frontend/src/utils/validation.js:24-29 (client side, not the server)
+NL06	backend/src/middlewares/multer.middleware.js	14	19	backend/src/middlewares/multer.middleware.js	14	31	True	True	0.33	
+NL07	backend/src/controllers/user/deleteAccount.controller.js	19	32	backend/src/controllers/user/deleteAccount.controller.js	19	32	True	True	1.0	
+NL08	backend/src/utils/stores/priceRates.js	14	24	backend/src/utils/stores/priceRates.js	13	24	True	True	0.92	
+NL09	backend/src/utils/getQuotes.js	15	18	backend/src/utils/getQuotes.js	15	24	True	True	0.4	backend/src/db/insertTransaction.js:44-47
+NL10	backend/src/db/insertTransaction.js	82	85	backend/src/db/insertTransaction.js	82	85	True	True	1.0	
+NL11	backend/src/controllers/dashBoard/addTransaction.controller.js	12	16	backend/src/controllers/dashBoard/addTransaction.controller.js	12	16	True	True	1.0	backend/src/db/insertTransaction.js:90-92
+NL12	backend/src/controllers/dashBoard/addTransaction.controller.js	17	22	backend/src/controllers/dashBoard/addTransaction.controller.js	17	22	True	True	1.0	
+NL13	backend/src/utils/agent.js	282	290	backend/src/utils/agent.js	282	291	True	True	0.9	
+NL14	backend/src/utils/agent.js	236	249	backend/src/utils/agent.js	237	249	True	True	0.93	backend/src/utils/agent.js:56-111 (output formatter, under 768 px)
+NL15	backend/src/controllers/aiInsight/sendMessage.controller.js	17	26	backend/src/controllers/aiInsight/sendMessage.controller.js	19	26	True	True	0.8	
+NL16	backend/src/utils/chatBotTools/riskAnalysis.js	78	86	backend/src/utils/chatBotTools/riskAnalysis.js	80	86	True	True	0.78	
+NL17	backend/src/utils/chatBotTools/riskAnalysis.js	88	92	backend/src/utils/chatBotTools/riskAnalysis.js	90	92	True	True	0.6	
+NL18	backend/src/db/watchlist.js	5	27	backend/src/db/watchlist.js	7	27	True	True	0.91	
+NL19	backend/src/routes/dashBoard.routes.js	8	24	backend/src/routes/dashBoard.routes.js	8	16	True	True	0.53	backend/src/middlewares/auth.middleware.js:8-37
+NL20	frontend/src/App.jsx	45	48	frontend/src/App.jsx	45	48	True	True	1.0	

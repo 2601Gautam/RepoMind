@@ -1,0 +1,669 @@
+{
+  "batches" : [ {
+    "round" : 0,
+    "transport" : "direct",
+    "workers" : 1,
+    "peakActive" : 1,
+    "batchMicros" : 3401949,
+    "jobs" : [ {
+      "submitMicros" : 254,
+      "waitMicros" : 1036,
+      "completionMicros" : 287740
+    }, {
+      "submitMicros" : 9,
+      "waitMicros" : 287619,
+      "completionMicros" : 573862
+    }, {
+      "submitMicros" : 2,
+      "waitMicros" : 574007,
+      "completionMicros" : 867193
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 867322,
+      "completionMicros" : 1150854
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 1151017,
+      "completionMicros" : 1429288
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 1429484,
+      "completionMicros" : 1711135
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 1711283,
+      "completionMicros" : 1990540
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 1990682,
+      "completionMicros" : 2270303
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 2270414,
+      "completionMicros" : 2552105
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 2552217,
+      "completionMicros" : 2835918
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 2836030,
+      "completionMicros" : 3117085
+    }, {
+      "submitMicros" : 44,
+      "waitMicros" : 3117172,
+      "completionMicros" : 3401667
+    } ]
+  }, {
+    "round" : 0,
+    "transport" : "sqs",
+    "workers" : 1,
+    "peakActive" : 1,
+    "batchMicros" : 11537642,
+    "jobs" : [ {
+      "submitMicros" : 4743,
+      "waitMicros" : 58431,
+      "completionMicros" : 352268
+    }, {
+      "submitMicros" : 4289,
+      "waitMicros" : 1064415,
+      "completionMicros" : 1353730
+    }, {
+      "submitMicros" : 4051,
+      "waitMicros" : 2079011,
+      "completionMicros" : 2376058
+    }, {
+      "submitMicros" : 4377,
+      "waitMicros" : 3090904,
+      "completionMicros" : 3378259
+    }, {
+      "submitMicros" : 4350,
+      "waitMicros" : 4107971,
+      "completionMicros" : 4392636
+    }, {
+      "submitMicros" : 4297,
+      "waitMicros" : 5112581,
+      "completionMicros" : 5401336
+    }, {
+      "submitMicros" : 4135,
+      "waitMicros" : 6124264,
+      "completionMicros" : 6403227
+    }, {
+      "submitMicros" : 4036,
+      "waitMicros" : 7151125,
+      "completionMicros" : 7440314
+    }, {
+      "submitMicros" : 4114,
+      "waitMicros" : 8162110,
+      "completionMicros" : 8439296
+    }, {
+      "submitMicros" : 4061,
+      "waitMicros" : 9174206,
+      "completionMicros" : 9451798
+    }, {
+      "submitMicros" : 4340,
+      "waitMicros" : 10186008,
+      "completionMicros" : 10466868
+    }, {
+      "submitMicros" : 4396,
+      "waitMicros" : 11195735,
+      "completionMicros" : 11490814
+    } ]
+  }, {
+    "round" : 0,
+    "transport" : "direct",
+    "workers" : 4,
+    "peakActive" : 4,
+    "batchMicros" : 865978,
+    "jobs" : [ {
+      "submitMicros" : 189,
+      "waitMicros" : 1497,
+      "completionMicros" : 293842
+    }, {
+      "submitMicros" : 94,
+      "waitMicros" : 1588,
+      "completionMicros" : 293663
+    }, {
+      "submitMicros" : 88,
+      "waitMicros" : 791,
+      "completionMicros" : 293551
+    }, {
+      "submitMicros" : 108,
+      "waitMicros" : 927,
+      "completionMicros" : 293492
+    }, {
+      "submitMicros" : 7,
+      "waitMicros" : 293499,
+      "completionMicros" : 585639
+    }, {
+      "submitMicros" : 2,
+      "waitMicros" : 293449,
+      "completionMicros" : 585616
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 293463,
+      "completionMicros" : 585604
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 293485,
+      "completionMicros" : 585637
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 585749,
+      "completionMicros" : 865469
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 585717,
+      "completionMicros" : 865431
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 585700,
+      "completionMicros" : 865473
+    }, {
+      "submitMicros" : 4,
+      "waitMicros" : 585730,
+      "completionMicros" : 865444
+    } ]
+  }, {
+    "round" : 0,
+    "transport" : "sqs",
+    "workers" : 4,
+    "peakActive" : 4,
+    "batchMicros" : 2384921,
+    "jobs" : [ {
+      "submitMicros" : 4684,
+      "waitMicros" : 65398,
+      "completionMicros" : 355285
+    }, {
+      "submitMicros" : 6004,
+      "waitMicros" : 60918,
+      "completionMicros" : 350578
+    }, {
+      "submitMicros" : 5789,
+      "waitMicros" : 54478,
+      "completionMicros" : 344595
+    }, {
+      "submitMicros" : 5508,
+      "waitMicros" : 49353,
+      "completionMicros" : 338788
+    }, {
+      "submitMicros" : 5008,
+      "waitMicros" : 1052010,
+      "completionMicros" : 1360696
+    }, {
+      "submitMicros" : 5031,
+      "waitMicros" : 1046964,
+      "completionMicros" : 1355717
+    }, {
+      "submitMicros" : 4531,
+      "waitMicros" : 1041975,
+      "completionMicros" : 1350669
+    }, {
+      "submitMicros" : 4182,
+      "waitMicros" : 1037402,
+      "completionMicros" : 1346098
+    }, {
+      "submitMicros" : 4374,
+      "waitMicros" : 2049953,
+      "completionMicros" : 2344153
+    }, {
+      "submitMicros" : 4657,
+      "waitMicros" : 2045598,
+      "completionMicros" : 2339735
+    }, {
+      "submitMicros" : 4766,
+      "waitMicros" : 2040923,
+      "completionMicros" : 2335088
+    }, {
+      "submitMicros" : 4170,
+      "waitMicros" : 2036155,
+      "completionMicros" : 2330334
+    } ]
+  }, {
+    "round" : 1,
+    "transport" : "sqs",
+    "workers" : 4,
+    "peakActive" : 4,
+    "batchMicros" : 2379326,
+    "jobs" : [ {
+      "submitMicros" : 4342,
+      "waitMicros" : 53192,
+      "completionMicros" : 345739
+    }, {
+      "submitMicros" : 3760,
+      "waitMicros" : 48641,
+      "completionMicros" : 341412
+    }, {
+      "submitMicros" : 3647,
+      "waitMicros" : 44693,
+      "completionMicros" : 337666
+    }, {
+      "submitMicros" : 3712,
+      "waitMicros" : 41626,
+      "completionMicros" : 334029
+    }, {
+      "submitMicros" : 3862,
+      "waitMicros" : 1054478,
+      "completionMicros" : 1344631
+    }, {
+      "submitMicros" : 3928,
+      "waitMicros" : 1050597,
+      "completionMicros" : 1340797
+    }, {
+      "submitMicros" : 3472,
+      "waitMicros" : 1046697,
+      "completionMicros" : 1336858
+    }, {
+      "submitMicros" : 3832,
+      "waitMicros" : 1043257,
+      "completionMicros" : 1333373
+    }, {
+      "submitMicros" : 4252,
+      "waitMicros" : 2056860,
+      "completionMicros" : 2348746
+    }, {
+      "submitMicros" : 3857,
+      "waitMicros" : 2052634,
+      "completionMicros" : 2344435
+    }, {
+      "submitMicros" : 3522,
+      "waitMicros" : 2048746,
+      "completionMicros" : 2340588
+    }, {
+      "submitMicros" : 3715,
+      "waitMicros" : 2045271,
+      "completionMicros" : 2337085
+    } ]
+  }, {
+    "round" : 1,
+    "transport" : "direct",
+    "workers" : 4,
+    "peakActive" : 4,
+    "batchMicros" : 863235,
+    "jobs" : [ {
+      "submitMicros" : 199,
+      "waitMicros" : 1466,
+      "completionMicros" : 289191
+    }, {
+      "submitMicros" : 91,
+      "waitMicros" : 1455,
+      "completionMicros" : 288985
+    }, {
+      "submitMicros" : 69,
+      "waitMicros" : 771,
+      "completionMicros" : 288872
+    }, {
+      "submitMicros" : 66,
+      "waitMicros" : 902,
+      "completionMicros" : 288837
+    }, {
+      "submitMicros" : 6,
+      "waitMicros" : 288884,
+      "completionMicros" : 567806
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 288837,
+      "completionMicros" : 567780
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 288868,
+      "completionMicros" : 567797
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 288846,
+      "completionMicros" : 567807
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 567902,
+      "completionMicros" : 862778
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 567878,
+      "completionMicros" : 862764
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 567913,
+      "completionMicros" : 862791
+    }, {
+      "submitMicros" : 4,
+      "waitMicros" : 567885,
+      "completionMicros" : 862780
+    } ]
+  }, {
+    "round" : 1,
+    "transport" : "sqs",
+    "workers" : 1,
+    "peakActive" : 1,
+    "batchMicros" : 11503851,
+    "jobs" : [ {
+      "submitMicros" : 4582,
+      "waitMicros" : 51761,
+      "completionMicros" : 333495
+    }, {
+      "submitMicros" : 4174,
+      "waitMicros" : 1054610,
+      "completionMicros" : 1331877
+    }, {
+      "submitMicros" : 3848,
+      "waitMicros" : 2064621,
+      "completionMicros" : 2339287
+    }, {
+      "submitMicros" : 3677,
+      "waitMicros" : 3082043,
+      "completionMicros" : 3369137
+    }, {
+      "submitMicros" : 3789,
+      "waitMicros" : 4094923,
+      "completionMicros" : 4378629
+    }, {
+      "submitMicros" : 3956,
+      "waitMicros" : 5106388,
+      "completionMicros" : 5391457
+    }, {
+      "submitMicros" : 3743,
+      "waitMicros" : 6117978,
+      "completionMicros" : 6401625
+    }, {
+      "submitMicros" : 3597,
+      "waitMicros" : 7132469,
+      "completionMicros" : 7427504
+    }, {
+      "submitMicros" : 3549,
+      "waitMicros" : 8145070,
+      "completionMicros" : 8426831
+    }, {
+      "submitMicros" : 3427,
+      "waitMicros" : 9163258,
+      "completionMicros" : 9445375
+    }, {
+      "submitMicros" : 4582,
+      "waitMicros" : 10175425,
+      "completionMicros" : 10463258
+    }, {
+      "submitMicros" : 3693,
+      "waitMicros" : 11184577,
+      "completionMicros" : 11460891
+    } ]
+  }, {
+    "round" : 1,
+    "transport" : "direct",
+    "workers" : 1,
+    "peakActive" : 1,
+    "batchMicros" : 3445722,
+    "jobs" : [ {
+      "submitMicros" : 230,
+      "waitMicros" : 917,
+      "completionMicros" : 320740
+    }, {
+      "submitMicros" : 8,
+      "waitMicros" : 320597,
+      "completionMicros" : 617950
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 618028,
+      "completionMicros" : 901574
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 901686,
+      "completionMicros" : 1180856
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 1180931,
+      "completionMicros" : 1462208
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 1462285,
+      "completionMicros" : 1742389
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 1742459,
+      "completionMicros" : 2038009
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 2038074,
+      "completionMicros" : 2317805
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 2317874,
+      "completionMicros" : 2599893
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 2599964,
+      "completionMicros" : 2883585
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 2883671,
+      "completionMicros" : 3169615
+    }, {
+      "submitMicros" : 3,
+      "waitMicros" : 3169744,
+      "completionMicros" : 3445470
+    } ]
+  }, {
+    "round" : 2,
+    "transport" : "sqs",
+    "workers" : 1,
+    "peakActive" : 1,
+    "batchMicros" : 11534666,
+    "jobs" : [ {
+      "submitMicros" : 4701,
+      "waitMicros" : 61884,
+      "completionMicros" : 345183
+    }, {
+      "submitMicros" : 4602,
+      "waitMicros" : 1068584,
+      "completionMicros" : 1349869
+    }, {
+      "submitMicros" : 4846,
+      "waitMicros" : 2075749,
+      "completionMicros" : 2357155
+    }, {
+      "submitMicros" : 4649,
+      "waitMicros" : 3088901,
+      "completionMicros" : 3381260
+    }, {
+      "submitMicros" : 4361,
+      "waitMicros" : 4101062,
+      "completionMicros" : 4384475
+    }, {
+      "submitMicros" : 4669,
+      "waitMicros" : 5111015,
+      "completionMicros" : 5397576
+    }, {
+      "submitMicros" : 4317,
+      "waitMicros" : 6123177,
+      "completionMicros" : 6412325
+    }, {
+      "submitMicros" : 4647,
+      "waitMicros" : 7135016,
+      "completionMicros" : 7412117
+    }, {
+      "submitMicros" : 4143,
+      "waitMicros" : 8160753,
+      "completionMicros" : 8450559
+    }, {
+      "submitMicros" : 4194,
+      "waitMicros" : 9170962,
+      "completionMicros" : 9447777
+    }, {
+      "submitMicros" : 5648,
+      "waitMicros" : 10186512,
+      "completionMicros" : 10476609
+    }, {
+      "submitMicros" : 4563,
+      "waitMicros" : 11208956,
+      "completionMicros" : 11483846
+    } ]
+  }, {
+    "round" : 2,
+    "transport" : "sqs",
+    "workers" : 4,
+    "peakActive" : 4,
+    "batchMicros" : 2373732,
+    "jobs" : [ {
+      "submitMicros" : 3849,
+      "waitMicros" : 49028,
+      "completionMicros" : 327267
+    }, {
+      "submitMicros" : 3777,
+      "waitMicros" : 45334,
+      "completionMicros" : 323466
+    }, {
+      "submitMicros" : 3355,
+      "waitMicros" : 41739,
+      "completionMicros" : 319672
+    }, {
+      "submitMicros" : 3453,
+      "waitMicros" : 37795,
+      "completionMicros" : 316292
+    }, {
+      "submitMicros" : 3289,
+      "waitMicros" : 1049943,
+      "completionMicros" : 1342213
+    }, {
+      "submitMicros" : 3638,
+      "waitMicros" : 1046664,
+      "completionMicros" : 1338950
+    }, {
+      "submitMicros" : 3669,
+      "waitMicros" : 1043058,
+      "completionMicros" : 1335299
+    }, {
+      "submitMicros" : 3894,
+      "waitMicros" : 1039364,
+      "completionMicros" : 1331592
+    }, {
+      "submitMicros" : 3679,
+      "waitMicros" : 2065024,
+      "completionMicros" : 2344760
+    }, {
+      "submitMicros" : 3311,
+      "waitMicros" : 2061330,
+      "completionMicros" : 2341073
+    }, {
+      "submitMicros" : 3686,
+      "waitMicros" : 2058068,
+      "completionMicros" : 2337770
+    }, {
+      "submitMicros" : 3712,
+      "waitMicros" : 2054352,
+      "completionMicros" : 2334099
+    } ]
+  }, {
+    "round" : 2,
+    "transport" : "direct",
+    "workers" : 1,
+    "peakActive" : 1,
+    "batchMicros" : 3408772,
+    "jobs" : [ {
+      "submitMicros" : 214,
+      "waitMicros" : 976,
+      "completionMicros" : 286948
+    }, {
+      "submitMicros" : 7,
+      "waitMicros" : 286834,
+      "completionMicros" : 573930
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 573985,
+      "completionMicros" : 857220
+    }, {
+      "submitMicros" : 4,
+      "waitMicros" : 857288,
+      "completionMicros" : 1142010
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 1142074,
+      "completionMicros" : 1443176
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 1443235,
+      "completionMicros" : 1723014
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 1723099,
+      "completionMicros" : 2003838
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 2003942,
+      "completionMicros" : 2281368
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 2281433,
+      "completionMicros" : 2553852
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 2553931,
+      "completionMicros" : 2834100
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 2834184,
+      "completionMicros" : 3118363
+    }, {
+      "submitMicros" : 5,
+      "waitMicros" : 3118422,
+      "completionMicros" : 3408530
+    } ]
+  }, {
+    "round" : 2,
+    "transport" : "direct",
+    "workers" : 4,
+    "peakActive" : 4,
+    "batchMicros" : 853051,
+    "jobs" : [ {
+      "submitMicros" : 243,
+      "waitMicros" : 1679,
+      "completionMicros" : 287410
+    }, {
+      "submitMicros" : 104,
+      "waitMicros" : 1621,
+      "completionMicros" : 287145
+    }, {
+      "submitMicros" : 76,
+      "waitMicros" : 874,
+      "completionMicros" : 287021
+    }, {
+      "submitMicros" : 73,
+      "waitMicros" : 988,
+      "completionMicros" : 286994
+    }, {
+      "submitMicros" : 21,
+      "waitMicros" : 286997,
+      "completionMicros" : 576470
+    }, {
+      "submitMicros" : 2,
+      "waitMicros" : 286940,
+      "completionMicros" : 576431
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 286956,
+      "completionMicros" : 576418
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 286986,
+      "completionMicros" : 576437
+    }, {
+      "submitMicros" : 1,
+      "waitMicros" : 576491,
+      "completionMicros" : 852484
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 576518,
+      "completionMicros" : 852464
+    }, {
+      "submitMicros" : 0,
+      "waitMicros" : 576531,
+      "completionMicros" : 852504
+    }, {
+      "submitMicros" : 5,
+      "waitMicros" : 576496,
+      "completionMicros" : 852511
+    } ]
+  } ],
+  "visibilitySeconds" : 1200,
+  "pollDelayMs" : 1000,
+  "cloneDelayMs" : 250,
+  "filesPerJob" : 2,
+  "longPollSeconds" : 20,
+  "warmupJobsPerArm" : 4
+}

@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -29,13 +29,11 @@ public class SyncService {
     @Value("${ingestion.embedding-batch-size:20}")
     private int embeddingBatchSize;
 
-    @Value("${ingestion.max-embed-retries:5}")
-    private int maxEmbedRetries;
-
     private final GitHubApiService gitHubApiService;
     private final FileCloneService fileCloneService;
     private final ChunkingService chunkingService;
     private final EmbeddingService embeddingService;
+    private final EmbeddingRetryPolicy retryPolicy;
     private final RepoJpaRepository repoRepository;
     private final CodeChunkRepository chunkRepository;
     private final CacheService cacheService;
@@ -44,6 +42,7 @@ public class SyncService {
     // rather than a direct in-process call — a crashed instance mid-fallback
     // must not silently lose the retry the way a plain @Async call would.
     private final IngestionQueuePublisher ingestionQueuePublisher;
+    private final IndexSnapshotWriter snapshotWriter;
 
     @Async
     public void syncAsync(UUID repoId, String token) {
@@ -107,44 +106,53 @@ public class SyncService {
                 return;
             }
 
-            int filesTouched = 0;
-            List<PendingChunk> pendingChunks = new ArrayList<>();
-            Map<String, FileSyncState> fileStates = new HashMap<>();
-            repo.setSyncMessage("Incremental sync is running. This should finish shortly.");
-            repoRepository.save(repo);
-            for (GitHubApiService.ChangedFile cf : diff.files()) {
-                switch (cf.status()) {
-                    case "removed" ->
-                            chunkRepository.deleteByRepositoryIdAndFilePath(repoId, cf.filename());
-                    case "renamed" -> {
-                        queueFileChunks(repo, coords, cf.filename(), cf.previousFilename(), cf.blobSha(), token,
-                                pendingChunks, fileStates);
-                    }
-                    default ->
-                            queueFileChunks(repo, coords, cf.filename(), null, cf.blobSha(), token,
-                                    pendingChunks, fileStates);
-                }
-                flushPendingChunks(repo, pendingChunks, fileStates);
-                filesTouched++;
+            Set<String> affected = new LinkedHashSet<>();
+            List<PendingChunk> pending = new ArrayList<>();
+            for (var file : diff.files()) {
+                affected.add(file.filename());
+                if ("renamed".equals(file.status()) && file.previousFilename() != null) affected.add(file.previousFilename());
+                if ("removed".equals(file.status()) || !fileCloneService.isIngestable(file.filename(), 0)) continue;
+                String content = gitHubApiService.getBlobContent(coords, file.blobSha(), token);
+                if (content == null) throw new IllegalStateException("Missing Git blob for " + file.filename());
+                if (content.isBlank() || !fileCloneService.isIngestable(file.filename(), content.getBytes(StandardCharsets.UTF_8).length)) continue;
+                String extension = fileCloneService.extensionOf(file.filename());
+                for (var chunk : chunkingService.chunkFile(file.filename(), content)) pending.add(new PendingChunk(extension,chunk));
             }
-
-            flushPendingChunks(repo, pendingChunks, fileStates);
-
-            repo.setLastCommitSha(latestSha);
-            repo.setLastSyncedAt(LocalDateTime.now());
-            repo.setTotalChunks((int) chunkRepository.countByRepositoryId(repoId));
-            repo.setSyncMessage(null);
+            List<CodeChunk> staged = new ArrayList<>(pending.size());
+            if (embeddingBatchSize < 1) throw new IllegalStateException("Embedding batch size must be positive");
+            for (int start=0; start<pending.size(); start+=embeddingBatchSize) {
+                var batch=pending.subList(start, Math.min(start+embeddingBatchSize,pending.size()));
+                List<float[]> vectors;
+                try {
+                    vectors=embedBatchWithRetry(batch);
+                    if (vectors.size()!=batch.size()) throw new IllegalStateException("Embedding count mismatch");
+                } catch (EmbeddingRetryPolicy.RetryExhaustedException | org.springframework.ai.retry.NonTransientAiException e) {
+                    throw e;   // a limited or misconfigured provider is not helped by one call per chunk
+                } catch (RuntimeException e) {
+                    log.warn("Batch embedding failed, retrying the batch one item at a time", e);
+                    vectors=new ArrayList<>(batch.size());
+                    for (var item:batch) vectors.add(embedSingleWithRetry(item.chunk().content()));
+                }
+                for (int i=0; i<batch.size(); i++) {
+                    var item=batch.get(i);
+                    var chunk=item.chunk();
+                    staged.add(CodeChunk.builder().repository(repo).filePath(chunk.filePath())
+                            .language(IngestionService.toLanguage(item.extension())).content(chunk.content())
+                            .chunkIndex(chunk.chunkIndex()).startLine(chunk.startLine()).endLine(chunk.endLine())
+                            .embedding(vectors.get(i)).build());
+                }
+            }
+            snapshotWriter.publishChanges(repoId,repo.getLastCommitSha(),latestSha,affected,staged);
+            persistInFinally = false;
             cacheService.evictUserReposCache();
-
-            log.info("Sync complete for repo {}: {} files touched ({} -> {})",
-                    repoId, filesTouched, repo.getLastCommitSha(), latestSha);
+            log.info("Published {} changed paths at revision {}", affected.size(), latestSha);
 
         } catch (Exception e) {
             log.error("Sync failed for repo {}: {}", repoId, e.getMessage(), e);
             // If fallback itself failed before it persisted its new state,
             // save the error below rather than leaving the previous READY row
             // marked as syncing.
-            if (repo != null) {
+            if (repo != null && persistInFinally) {
                 repo.setErrorMessage("Sync failed: " + e.getMessage());
                 repo.setSyncMessage("Sync could not complete. Please try again.");
                 persistInFinally = true;
@@ -163,147 +171,13 @@ public class SyncService {
         }
     }
 
-    private void queueFileChunks(RepoEntity repo, GitHubApiService.RepoCoordinates coords,
-                                 String filePath, String previousFilePath, String blobSha, String token,
-                                 List<PendingChunk> pendingChunks, Map<String, FileSyncState> fileStates) {
-        List<UUID> staleChunkIds = new ArrayList<>(chunkRepository.findIdsByRepositoryIdAndFilePath(repo.getId(), filePath));
-        if (previousFilePath != null) {
-            staleChunkIds.addAll(chunkRepository.findIdsByRepositoryIdAndFilePath(repo.getId(), previousFilePath));
-        }
-        try {
-            String content = gitHubApiService.getBlobContent(coords, blobSha, token);
-            if (content == null || content.isBlank()) {
-                deleteStale(staleChunkIds);
-                return;
-            }
-
-            long sizeBytes = content.getBytes(StandardCharsets.UTF_8).length;
-            if (!fileCloneService.isIngestable(filePath, sizeBytes)) {
-                deleteStale(staleChunkIds);
-                return;
-            }
-
-            String ext = fileCloneService.extensionOf(filePath);
-            List<ChunkingService.Chunk> chunks = chunkingService.chunkFile(filePath, content);
-            if (chunks.isEmpty()) {
-                deleteStale(staleChunkIds);
-                return;
-            }
-
-            String stateKey = filePath;
-            fileStates.put(stateKey, new FileSyncState(staleChunkIds, chunks.size()));
-            for (ChunkingService.Chunk chunk : chunks) {
-                pendingChunks.add(new PendingChunk(stateKey, ext, chunk));
-            }
-
-        } catch (Exception e) {
-            log.warn("Could not re-embed {} — keeping previous version: {}", filePath, e.getMessage());
-        }
-    }
-
-    private void flushPendingChunks(RepoEntity repo, List<PendingChunk> pendingChunks, Map<String, FileSyncState> fileStates)
-            throws InterruptedException {
-        while (pendingChunks.size() >= embeddingBatchSize) {
-            List<PendingChunk> batch = new ArrayList<>(pendingChunks.subList(0, embeddingBatchSize));
-            try {
-                List<float[]> embeddings = embedBatchWithRetry(batch);
-                for (int i = 0; i < batch.size(); i++) {
-                    saveChunk(repo, batch.get(i), embeddings.get(i), fileStates);
-                }
-            } catch (Exception batchException) {
-                log.warn("Batch embedding failed for {} chunks. Falling back to per-chunk embeddings: {}",
-                        batch.size(), batchException.getMessage());
-                for (PendingChunk item : batch) {
-                    try {
-                        float[] embedding = embedSingleWithRetry(item.chunk().content());
-                        saveChunk(repo, item, embedding, fileStates);
-                    } catch (Exception chunkException) {
-                        log.warn("Skipping chunk {} in {}: {}",
-                                item.chunk().chunkIndex(), item.chunk().filePath(), chunkException.getMessage());
-                    }
-                }
-            }
-            pendingChunks.subList(0, embeddingBatchSize).clear();
-        }
-    }
-
-    private List<float[]> embedBatchWithRetry(List<PendingChunk> chunks) throws InterruptedException {
+    private List<float[]> embedBatchWithRetry(List<PendingChunk> chunks) {
         List<String> texts = chunks.stream().map(item -> item.chunk().content()).toList();
-        long delay = 1000;
-        for (int i = 0; i < maxEmbedRetries; i++) {
-            try {
-                List<float[]> embeddings = embeddingService.embedBatch(texts);
-                log.debug("Batch embedding done on {} try for {} chunks", i + 1, chunks.size());
-                return embeddings;
-            } catch (NonTransientAiException e) {
-                if (i == maxEmbedRetries - 1) {
-                    throw e;
-                }
-                Thread.sleep(delay);
-                log.warn("Rate limit hit for batch. Retrying in {} ms...", delay);
-                delay *= 2;
-            }
-        }
-        throw new IllegalStateException("Batch embedding retry loop exited unexpectedly");
+        return retryPolicy.execute(() -> embeddingService.embedBatch(texts));
     }
 
-    private float[] embedSingleWithRetry(String text) throws InterruptedException {
-        long delay = 1000;
-        for (int i = 0; i < maxEmbedRetries; i++) {
-            try {
-                float[] embedding = embeddingService.embed(text);
-                log.debug("Embedding done on {} try", i + 1);
-                return embedding;
-            } catch (NonTransientAiException e) {
-                if (i == maxEmbedRetries - 1) {
-                    throw e;
-                }
-                Thread.sleep(delay);
-                log.warn("Rate limit hit. Retrying in {} ms...", delay);
-                delay *= 2;
-            }
-        }
-        throw new IllegalStateException("Embedding retry loop exited unexpectedly");
-    }
-
-    private void saveChunk(RepoEntity repo, PendingChunk pendingChunk, float[] embedding, Map<String, FileSyncState> fileStates) {
-        chunkRepository.save(CodeChunk.builder()
-                .repository(repo)
-                .filePath(pendingChunk.chunk().filePath())
-                .language(IngestionService.toLanguage(pendingChunk.extension()))
-                .content(pendingChunk.chunk().content())
-                .chunkIndex(pendingChunk.chunk().chunkIndex())
-                .startLine(pendingChunk.chunk().startLine())
-                .endLine(pendingChunk.chunk().endLine())
-                .embedding(embedding)
-                .build());
-
-        FileSyncState state = fileStates.get(pendingChunk.filePathKey());
-        if (state != null) {
-            state.savedChunks++;
-            if (state.savedChunks >= state.totalChunks && !state.staleDeleted) {
-                deleteStale(state.staleChunkIds);
-                state.staleDeleted = true;
-            }
-        }
-    }
-
-    private void deleteStale(List<UUID> ids) {
-        if (!ids.isEmpty()) chunkRepository.deleteByIdIn(ids);
-    }
-
-    private record PendingChunk(String filePathKey, String extension, ChunkingService.Chunk chunk) {}
-
-    private static final class FileSyncState {
-        private final List<UUID> staleChunkIds;
-        private final int totalChunks;
-        private int savedChunks;
-        private boolean staleDeleted;
-
-        private FileSyncState(List<UUID> staleChunkIds, int totalChunks) {
-            this.staleChunkIds = staleChunkIds;
-            this.totalChunks = totalChunks;
-        }
+    private float[] embedSingleWithRetry(String text) {
+        return retryPolicy.execute(() -> embeddingService.embed(text));
     }
 
     private void fallbackToFullReingest(RepoEntity repo, String token, String syncMessage) {
@@ -325,4 +199,6 @@ public class SyncService {
             repoRepository.save(repo);
         }
     }
+
+    private record PendingChunk(String extension, ChunkingService.Chunk chunk) {}
 }

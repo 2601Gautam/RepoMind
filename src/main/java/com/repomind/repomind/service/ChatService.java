@@ -69,16 +69,18 @@ public class ChatService {
         log.debug("Loaded {} messages from conversation history", history.size());
         // step4 : Embed question and find relevant code chunks
         String retrievalQuery = buildRetrievalQuery(history, userQuestion);
-        float[] questionVector = embeddingService.embed(retrievalQuery);
+        float[] questionVector = embeddingService.embedForQuery(retrievalQuery);
         String vectorString = embeddingService.toVectorString(questionVector);
 
         List<CodeChunkRepository.CodeChunkProjection> relevantChunks =
-                chunkRepository.findTopSimilarChunks(repoId,vectorString,12);
+                ChatRetrieval.search(chunkRepository,repoId,vectorString,retrievalQuery,12);
 
         if(relevantChunks.isEmpty()){
-            // Return a Flux that emits one event and completes
-            return buildSingleEventFlux("done", "No relevant code found for your question.",
-                    conversation.getId(), List.of());
+            String answer = "No relevant code found for your question.";
+            return Flux.just(StreamJson.chat("start", conversationIdFinal.toString(), conversationIdFinal),
+                    StreamJson.chat("token", answer, conversationIdFinal),
+                    StreamJson.sources(List.of(), conversationIdFinal),
+                    StreamJson.chat("done", "", conversationIdFinal));
         }
 
         String codeContext = relevantChunks.stream()
@@ -115,7 +117,7 @@ public class ChatService {
                 .stream()
                 .content()
                 .doOnNext(token -> fullResponse.get().append(token))
-                .map(token-> formatSseEvent("token",token,conversationIdFinal,null))
+                .map(token-> StreamJson.chat("token",token,conversationIdFinal))
                 .doOnComplete(() -> {
                     // Streaming finished — save complete response to Redis and DB
                     String completeAnswer = fullResponse.get().toString();
@@ -145,58 +147,25 @@ public class ChatService {
 
         // Prepend the conversation ID event and append sources + done events
         Flux<String> startEvent = Flux.just(
-                formatSseEvent("start",conversationIdFinal.toString(),conversationIdFinal,null)
+                StreamJson.chat("start",conversationIdFinal.toString(),conversationIdFinal)
         );
 
         Flux<String> sourcesEvent = Flux.just(
-                formatSseEvent("sources",String.join(",",sourcePaths),conversationIdFinal,null)
+                StreamJson.sources(sourcePaths,conversationIdFinal)
         );
 
         Flux<String> doneEvent = Flux.just(
-                formatSseEvent("done","",conversationIdFinal,null)
+                StreamJson.chat("done","",conversationIdFinal)
         );
 
         // Concatenate: start → tokens → sources → done
         return Flux.concat(startEvent,tokenSteam,sourcesEvent,doneEvent)
                 .onErrorResume(e -> {
                     log.error("Chat stream error: {}",e.getMessage());
-                    return Flux.just(formatSseEvent("error","Failed to get response. Please try again.",conversationIdFinal,null));
+                    return Flux.just(StreamJson.chat("error","Failed to get response. Please try again.",conversationIdFinal));
                 });
     }
 
-    // Format SSE event as JSON string
-    // Frontend parses: {"type":"token","content":"...","conversationId":"..."}
-    private String formatSseEvent(String type, String content, UUID conversationId, List<String> sources) {
-        // Escape content for JSON — handle quotes and newlines
-        String escapedContent = content
-                .replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r");
-
-        if(sources != null){
-            String sourcesJson = sources.stream()
-                    .map(s -> "\"" + s.replace("\"", "\\\"") + "\"")
-                    .collect(Collectors.joining(",", "[", "]"));
-            return "{\"type\":\"" + type + "\",\"sources\":" + sourcesJson
-                    + ",\"conversationId\":\"" + conversationId + "\"}";
-        }
-
-        return "{\"type\":\"" + type + "\",\"content\":\""
-                + escapedContent + "\",\"conversationId\":\"" + conversationId + "\"}";
-    }
-
-    private Flux<String> buildSingleEventFlux(String type, String message, UUID conversationId, List<String> sources) {
-        return Flux.concat(
-                Flux.just(formatSseEvent("start",conversationId.toString(),conversationId,null)),
-                Flux.just(formatSseEvent(type,message,conversationId,sources)),
-                Flux.just(formatSseEvent("done","",conversationId,null))
-        );
-    }
-    // Folds the last exchange (if any) into the current question before embedding it.
-// Cheap, no extra LLM call. For a more accurate fix later, consider an actual
-// "condense question" LLM call (rewrite the follow-up into a standalone question
-// given the history) — this is the pattern used by most RAG chat implementations.
     private String buildRetrievalQuery(List<ConversationMemoryService.MemoryMessage> history, String userQuestion) {
         if (history.isEmpty()) {
             return userQuestion;
@@ -218,7 +187,8 @@ public class ChatService {
         }
         return conversationRepository.findById(conversationId)
                 .filter(c -> c.getUser() != null &&
-                        c.getUser().getId().equals(currentUser.getId()))
+                        c.getUser().getId().equals(currentUser.getId()) && c.getRepository() != null &&
+                        repo.getId().equals(c.getRepository().getId()))
                 .orElseThrow(() ->
                         new RuntimeException("Conversation not found: " + conversationId));
     }
@@ -236,6 +206,7 @@ public class ChatService {
                     .role("assistant")
                     .content(answer)
                     .sources(String.join(",", sources))
+                    .sourcePaths(StreamJson.encode(sources))
                     .build());
         } catch (Exception e) {
            // Non-critical — log but do not propagate
@@ -263,6 +234,7 @@ public class ChatService {
                             .role(m.getRole())
                             .content(m.getContent())
                             .sources(m.getSources())
+                            .sourcePaths(StreamJson.storedPaths(m.getSourcePaths(), m.getSources()))
                             .build())
                     .collect(Collectors.toList());
 

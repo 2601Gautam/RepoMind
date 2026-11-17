@@ -48,7 +48,7 @@ public class DebugService {
         String codeSection = "";
 
         if(request.getRepoId()!= null){
-            float[] errorEmbedding = embeddingService.embed(request.getErrorText());
+            float[] errorEmbedding = embeddingService.embedForQuery(request.getErrorText());
             String vectorString = embeddingService.toVectorString(errorEmbedding);
 
             List<CodeChunkRepository.CodeChunkProjection> chunks = chunkRepository
@@ -84,10 +84,10 @@ public class DebugService {
                 .user(prompt)
                 .stream()
                 .content()
-                .map(token -> formatToken(token));
+                .map(token -> formatEvent("token", token));
         log.info("streaming......");
         Flux<String> startEvent = Flux.just(formatEvent("start", ""));
-        Flux<String> sourcesEvent = Flux.just(formatSources(finalRelevantFiles));
+        Flux<String> sourcesEvent = Flux.just(StreamJson.encode(java.util.Map.of("type","sources","files",finalRelevantFiles)));
         Flux<String> doneEvent = Flux.just(formatEvent("done", ""));
         return Flux.concat(startEvent, tokenStream, sourcesEvent, doneEvent)
                 .onErrorResume(e -> {
@@ -98,22 +98,7 @@ public class DebugService {
 
 
 
-    private String formatToken(String token) {
-        String escaped = token
-                .replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n");
-        return "{\"type\":\"token\",\"content\":\"" + escaped + "\"}";
-    }
-
     private String formatEvent(String type, String content) {
-        return "{\"type\":\"" + type + "\",\"content\":\"" + content + "\"}";
-    }
-
-    private String formatSources(List<String> files) {
-        String filesJson = files.stream()
-                .map(f -> "\"" + f.replace("\"", "\\\"") + "\"")
-                .collect(Collectors.joining(",", "[", "]"));
-        return "{\"type\":\"sources\",\"files\":" + filesJson + "}";
+        return StreamJson.encode(java.util.Map.of("type", type, "content", content));
     }
 }

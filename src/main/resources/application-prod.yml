@@ -92,4 +92,12 @@ logging:
 
 ingestion:
   embedding-batch-size: ${INGESTION_EMBEDDING_BATCH_SIZE:20}
-  max-embed-retries: ${INGESTION_MAX_EMBED_RETRIES:5}
+  # Attempts per embedding call. Rate limits (HTTP 429) and 5xx are retried with jittered exponential backoff, all
+  # workers pause together after a 429, and the budget caps total waiting per call. See eval/REPORT.md.
+  max-embed-retries: ${INGESTION_MAX_EMBED_RETRIES:8}
+  embed-retry:
+    base-delay-ms: ${INGESTION_EMBED_RETRY_BASE_MS:1000}
+    max-delay-ms: ${INGESTION_EMBED_RETRY_MAX_MS:30000}
+    budget-ms: ${INGESTION_EMBED_RETRY_BUDGET_MS:180000}
+    interactive-attempts: 3
+    interactive-budget-ms: 8000

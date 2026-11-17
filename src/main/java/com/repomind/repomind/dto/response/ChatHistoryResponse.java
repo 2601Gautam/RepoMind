@@ -20,5 +20,6 @@ public class ChatHistoryResponse {
         private String role;      // "user" or "assistant"
         private String content;
         private String sources;   // comma-separated file paths, may be null
+        private List<String> sourcePaths;
     }
 }

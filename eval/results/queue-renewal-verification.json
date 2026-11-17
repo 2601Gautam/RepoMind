@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-17",
+  "environment": "Local PostgreSQL and LocalStack; controlled clone, embeddings and S3",
+  "regression": {
+    "tests": 70,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "longRunningScenario": {
+    "leaseSeconds": 2,
+    "visibilitySeconds": 1,
+    "cloneBlockedAtLeastMs": 3600,
+    "cloneStartsBefore": 2,
+    "cloneStartsAfter": 1,
+    "afterOriginalReceiptInvisibleAtMs": 3100,
+    "expectedFinalChunks": 2,
+    "baselineFailed": true,
+    "note": "Final test also adds receipt-invisibility assertion before forced duplicate publication."
+  },
+  "checks": {
+    "QueueLongRunningIT": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "longCloneOutlivesLeaseAndVisibilityWithoutStartingAgain"
+      ]
+    },
+    "QueueRecoveryIT": {
+      "counts": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "lostAcknowledgementRedeliversWithoutRepeatingCommittedWrites",
+        "progressPreservesRenewedLeaseAndCompletionClearsOwnership",
+        "invalidMessageReachesConfiguredDeadLetterQueue",
+        "supersededWorkerCannotAppendOrOverwriteNewOwner",
+        "expiredOwnerCannotRenewItselfEvenBeforeTakeover",
+        "publishFailurePropagatesToTheCaller",
+        "expiredPartialIndexRetriesCleanlyAndTerminalDuplicateDoesNoWork",
+        "unexpiredLeaseKeepsTheOnlyRedeliveryAvailable",
+        "terminalCloneFailureIsPersistedAndAcknowledged"
+      ]
+    },
+    "QueueCrashIT": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "restartAfterPartialWrites"
+      ]
+    }
+  },
+  "sourceSHA256": {
+    "src/main/java/com/repomind/repomind/service/ingestion/FullIngestionStore.java": "688d6a517fed80e2cb2a993e955d02d2b9e4f6210350f7aa0cfa34ee0d1b3eca",
+    "src/main/java/com/repomind/repomind/service/ingestion/IngestionHeartbeat.java": "b6181306b6378294719eb464296e06e2db5dad9b58c9bf27886e4063e0b9644f",
+    "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java": "903c5ed293fe20610840f6c1116aa6d48b4c1e1ea3c1a28faab16a6b4098fd7b",
+    "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java": "5b30ffc91e7bc38c142cd2d2ab52323728c139718831df62c2d12671380e6a03",
+    "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java": "280be3ad4b58a5bfb82aa909693a6530ec40f8269fbee887b5bc4b06c25c10d6",
+    "migrations/20261117_add_ingestion_owner.sql": "5ce9ca052f5731b1b65dbffb7d9cad5b677e8f997604997e8e04ee83496d123e",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueLongRunningIT.java": "361679c51ebb79c2648eca60a09a4f64f41b03a387689366f9ea462cf019b847",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueRecoveryIT.java": "bfd3526c16e8be6b6f74d566d5c4c5634a9f76f743b8373c7617e5280751931a",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueCrashIT.java": "af95eb893427daff8c821c99b851ed6f407bbb92c6159b329d39222ce2451b4c"
+  }
+}

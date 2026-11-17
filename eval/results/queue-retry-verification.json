@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-17",
+  "environment": "Disposable PostgreSQL and LocalStack; controlled clone and embedding provider",
+  "regression": {
+    "tests": 78,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "retainedFailureScenarios": {
+    "before": 0,
+    "after": 2,
+    "total": 2,
+    "scenarios": [
+      "embedding outage after first chunk committed",
+      "PostgreSQL SQLSTATE 40001 on second chunk insert"
+    ],
+    "afterOutcome": "Both original messages redelivered and reached READY with exactly two expected chunk paths"
+  },
+  "checks": {
+    "QueueFailureRetryIT": {
+      "counts": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "persistentEmbeddingFailureReachesDeadLetterQueue",
+        "repositoryWithoutSupportedFilesIsTerminalAndAcknowledged",
+        "databaseWriteFailureRetainsReceiptAndRetriesPartialIndex",
+        "failedRetryStateWriteLeavesMessageAndRecoversAfterLeaseExpiry",
+        "embeddingOutageRetainsReceiptAndRetriesPartialIndex",
+        "providerConfigurationErrorSkipsLocalFanOutButRetainsReceipt"
+      ]
+    },
+    "QueueRecoveryIT": {
+      "counts": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "lostAcknowledgementRedeliversWithoutRepeatingCommittedWrites",
+        "progressPreservesRenewedLeaseAndCompletionClearsOwnership",
+        "invalidMessageReachesConfiguredDeadLetterQueue",
+        "supersededWorkerCannotAppendOrOverwriteNewOwner",
+        "expiredOwnerCannotRenewItselfEvenBeforeTakeover",
+        "publishFailurePropagatesToTheCaller",
+        "expiredPartialIndexRetriesCleanlyAndTerminalDuplicateDoesNoWork",
+        "unexpiredLeaseKeepsTheOnlyRedeliveryAvailable",
+        "cloneFailureIsRetainedForRetryAndThenCompletes"
+      ]
+    },
+    "QueueLongRunningIT": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "longCloneOutlivesLeaseAndVisibilityWithoutStartingAgain"
+      ]
+    },
+    "QueueCrashIT": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "restartAfterPartialWrites"
+      ]
+    },
+    "IngestionRetryTest": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "transientEmbeddingFailureRetriesLocallyWithoutReleasingJob"
+      ]
+    },
+    "IngestionVisibilityTest": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "failedAttemptWaitsForInFlightVisibilityExtensionBeforeReturning"
+      ]
+    }
+  },
+  "sourceSHA256": {
+    "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java": "6388ecb2c6780a200f90dce20dc6ba8663166f51795edcfd1babaa42335f3ac9",
+    "src/main/java/com/repomind/repomind/service/ingestion/FullIngestionStore.java": "a603c44b91d47bd35b479ba149e507bba14a0965ec8514d6835a9939113d6e69",
+    "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java": "81d9587c581b18e9b37da8349a2309cdc78042d71e587e648c0f4aa9ca4137b8",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueFailureRetryIT.java": "64fcf2fb049b4b694c0859dfbab03ce63235c4537de6cae500844ef4677a44b4",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueRecoveryIT.java": "d4aabfbd3dfa94b387ea253c64a9c40ce883a39ab378b472086a8e823d1c2a8a",
+    "src/test/java/com/repomind/repomind/evaluation/queue/IngestionVisibilityTest.java": "7aefe016677a79f601bd755172e34d1aced1515963e88999ed00d03e00603560",
+    "src/test/java/com/repomind/repomind/service/ingestion/IngestionRetryTest.java": "ccabc2c0d6f6f38e443392d3162b0be021e9ed44acf707db8a42548dc16a561d"
+  }
+}

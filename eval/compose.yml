@@ -1,0 +1,43 @@
+name: repomind-quality-eval
+services:
+  sqs:
+    profiles: ["queue"]
+    image: localstack/localstack@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
+    environment:
+      SERVICES: sqs
+      AWS_DEFAULT_REGION: us-east-1
+      SQS_ENDPOINT_STRATEGY: dynamic
+    ports:
+      - "127.0.0.1:54566:4566"
+    healthcheck:
+      test: ["CMD", "awslocal", "sqs", "list-queues"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: eval
+      POSTGRES_PASSWORD: local-eval-only
+      POSTGRES_DB: repomind_eval
+    ports:
+      - "127.0.0.1:55439:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ../init.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eval -d repomind_eval"]
+      interval: 2s
+      timeout: 2s
+      retries: 25
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:56389:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 25
+
