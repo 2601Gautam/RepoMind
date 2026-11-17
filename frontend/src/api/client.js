@@ -71,7 +71,8 @@ async function apiFetch(url, options={}){
         if (res.status === 403 && url.endsWith('/repos/ingest') && message === `Request failed: ${res.status}`) {
             message = 'GitHub could not access this repository. Check the URL and use a personal access token that has permission to access it.'
         }
-        throw new Error(message)
+        // Keep the HTTP status so callers can tell a missing or failing endpoint from a network failure.
+        throw Object.assign(new Error(message), { status: res.status })
     }
 
     // Handle empty responses (like 204 No Content)

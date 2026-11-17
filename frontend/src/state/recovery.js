@@ -52,3 +52,33 @@ export function createRecoveryPoller({ load, onData, onError, delay = () => 5000
     return { refresh, stop() { stopped = true; cancel(timer) } }
 }
 
+
+// A backend that predates GET /api/activity (404), or whose activity table is missing (5xx), must not blank the whole
+// app. Fall back to the older repository endpoints; offline, expired-session and rate-limit errors are reported as they are.
+export async function loadSnapshot({ getActivity, listRepos, getRepoStatus }) {
+    try { return await getActivity() }
+    catch (error) {
+        const status = error?.status
+        if (!(status === 404 || status >= 500)) throw error
+        const list = await listRepos()
+        // The server caches the repository list, so refresh the jobs that are still running to keep progress current.
+        const repositories = await Promise.all(list.map(repo => isRepoActive(repo) ? getRepoStatus(repo.id).catch(() => repo) : repo))
+        return { repositories, tasks: [], degraded: true }
+    }
+}
+
+// Poll quickly while an ingestion is running so its progress bar moves, a little slower for AI requests, rarely otherwise.
+export function pollDelay({ hidden, snapshot, journalLength }) {
+    if (hidden) return 30000
+    if (snapshot.repositories.some(isRepoActive)) return 3000
+    if (snapshot.tasks.some(isTaskActive) || journalLength) return 5000
+    return 30000
+}
+
+// The server's /api/auth/me and login responses name the id "userId". Accept "id" too, so a different response shape
+// can never silently switch off repository status and recovery.
+export function userIdOf(user) {
+    if (typeof user?.userId === 'string' && user.userId) return user.userId
+    if (typeof user?.id === 'string' && user.id) return user.id
+    return null
+}

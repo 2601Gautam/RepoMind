@@ -3,12 +3,13 @@ import { useActivity } from '../../context/ActivityContext'
 import { isRepoActive, taskLink } from '../../state/recovery.js'
 
 export default function ActivityPanel() {
-    const { repositories, tasks, loading, error, refresh, forget } = useActivity()
+    const { repositories, tasks, degraded, loading, error, refresh, forget } = useActivity()
     const working = repositories.filter(isRepoActive)
     const active = tasks.filter(t => t.status === 'RUNNING')
     const labels = { RUNNING:'Running', COMPLETED:'Completed', FAILED:'Failed', INTERRUPTED:'Interrupted', UNKNOWN:'Status unconfirmed' }
     return <div className="border-b border-white/10 bg-[#111118] px-6 py-3 text-sm text-neutral-200" aria-live="polite">
-        {error && <p role="alert" className="text-amber-300">{error} <button onClick={refresh} className="underline ml-2">Check again</button></p>}
+        {degraded && !error && <p role="status" className="text-neutral-400">The server has no activity service yet, so repository status uses the basic list. Interrupted AI requests will not be shown until the backend is updated.</p>}
+                {error && <p role="alert" className="text-amber-300">{error} <button onClick={refresh} className="underline ml-2">Check again</button></p>}
         <details>
             <summary className="cursor-pointer">{loading ? 'Checking your activity…' : working.length + active.length
                 ? `${working.length + active.length} operation(s) in progress` : 'Recent activity and recovery'}</summary>

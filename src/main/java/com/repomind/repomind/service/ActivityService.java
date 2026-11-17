@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,8 +29,16 @@ public class ActivityService {
 
     private UUID begin(UUID requestedId, UUID user, UUID repo, String kind) {
         UUID id = requestedId == null ? UUID.randomUUID() : requestedId;
-        int inserted = db.update("insert into ai_activity(id,user_id,repo_id,kind,status) values(?,?,?,?,'RUNNING') on conflict(id) do nothing",
-                id,user,repo,kind);
+        int inserted;
+        try {
+            inserted = db.update("insert into ai_activity(id,user_id,repo_id,kind,status) values(?,?,?,?,'RUNNING') on conflict(id) do nothing",
+                    id,user,repo,kind);
+        } catch (DataAccessException e) {
+            // Status tracking is a convenience. A missing table (migration not applied yet) or a database hiccup must not
+            // fail the user's chat, debug or interview request, so continue without tracking it.
+            log.warn("Activity tracking unavailable, continuing without it: {}",e.getMessage());
+            return null;
+        }
         if (inserted == 0) throw new ResponseStatusException(HttpStatus.CONFLICT,"This request was already accepted. Check its activity status.");
         return id;
     }
@@ -50,7 +59,7 @@ public class ActivityService {
     public Flux<String> stream(UUID request, UUID user, UUID repo, String kind, Supplier<Flux<String>> work) {
         return Flux.defer(() -> {
             UUID id = begin(request,user,repo,kind);
-            var renewal = renew(id);
+            var renewal = id == null ? null : renew(id);
             var done = new AtomicBoolean();
             var failed = new AtomicBoolean();
             var result = new AtomicReference<UUID>();
@@ -65,7 +74,8 @@ public class ActivityService {
                     })
                     .doOnError(error -> failed.set(true))
                     .doFinally(signal -> {
-                        renewal.cancel(false);
+                        if (renewal != null) renewal.cancel(false);
+                        if (id == null) return;
                         String state = failed.get() ? "FAILED" :
                                 signal == SignalType.CANCEL ? "INTERRUPTED" :
                                 done.get() ? "COMPLETED" : "INTERRUPTED";
@@ -76,15 +86,15 @@ public class ActivityService {
 
     public <T> T call(UUID request, UUID user, UUID repo, String kind, Supplier<T> work, Function<T,UUID> resultId) {
         UUID id = begin(request,user,repo,kind);
-        var renewal = renew(id);
+        var renewal = id == null ? null : renew(id);
         try {
             T result = work.get();
-            finish(id,"COMPLETED",resultId.apply(result));
+            if (id != null) finish(id,"COMPLETED",resultId.apply(result));
             return result;
         } catch (RuntimeException e) {
-            finish(id,"FAILED",null);
+            if (id != null) finish(id,"FAILED",null);
             throw e;
-        } finally { renewal.cancel(false); }
+        } finally { if (renewal != null) renewal.cancel(false); }
     }
 
     public List<Activity> recent(UUID user) {
