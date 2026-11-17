@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react'
 import { useAuth } from './AuthContext'
-import { getActivity } from '../api/client'
-import { createRecoveryPoller, isRepoActive, isTaskActive, readJournal, writeJournal, reconcileTasks } from '../state/recovery.js'
+import { getActivity, listRepos, getRepoStatus } from '../api/client'
+import { createRecoveryPoller, loadSnapshot, pollDelay, readJournal, writeJournal, reconcileTasks, userIdOf } from '../state/recovery.js'
 
-const empty = { repositories: [], tasks: [], loading: false, error: '', refresh() {}, begin() {}, forget() {} }
+const empty = { repositories: [], tasks: [], degraded: false, loading: false, error: '', refresh() {}, begin() {}, forget() {} }
 const ActivityContext = createContext(empty)
 
 function ActivityScope({ userId, children }) {
@@ -18,12 +18,11 @@ function ActivityScope({ userId, children }) {
         const control = createRecoveryPoller({
             load: () => {
                 if (!navigator.onLine) throw new Error('You are offline. Showing the last known status.')
-                return getActivity()
+                return loadSnapshot({ getActivity, listRepos, getRepoStatus })
             },
             onData: data => { stateRef.current = data; setSnapshot(data); setError(''); setLoading(false) },
             onError: () => { setError('Connection lost. Status may be out of date; checking again automatically.'); setLoading(false) },
-            delay: () => document.hidden ? 30000 :
-                stateRef.current.repositories.some(isRepoActive) || stateRef.current.tasks.some(isTaskActive) || journalRef.current.length ? 5000 : 30000
+            delay: () => pollDelay({ hidden: document.hidden, snapshot: stateRef.current, journalLength: journalRef.current.length })
         })
         poller.current = control
         const wake = () => control.refresh()
@@ -64,7 +63,8 @@ function ActivityScope({ userId, children }) {
 }
 export function ActivityProvider({ children }) {
     const { user } = useAuth()
-    return user?.id ? <ActivityScope key={user.id} userId={user.id}>{children}</ActivityScope> :
+    const userId = userIdOf(user)
+    return userId ? <ActivityScope key={userId} userId={userId}>{children}</ActivityScope> :
         <ActivityContext.Provider value={empty}>{children}</ActivityContext.Provider>
 }
 // eslint-disable-next-line react-refresh/only-export-components

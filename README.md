@@ -434,6 +434,8 @@ psql -U postgres -d repomind -f migrations/20261117_add_ai_activity.sql
 
 Two of these need care. `20261117_add_identifiers_index.sql` adds a stored generated column to `code_chunks`, which rewrites that table, so run it in a quiet period. `20261117_add_ingestion_owner.sql` introduces token-based job ownership: stop and drain old ingestion workers before deploying the new version, because older binaries do not take part in ownership or lease renewal. The ingestion consumer's IAM role also needs `sqs:ChangeMessageVisibility` (see [SETUP_AWS.md](SETUP_AWS.md)).
 
+**Deploy order:** apply the migrations and deploy the backend before, or together with, the frontend. A frontend that is ahead of its backend falls back to the basic repository list and says so in the activity panel instead of showing empty pages, but interrupted AI requests are only reported once the backend has the `/api/activity` endpoint and its table.
+
 > Note: `application.yml` sets `ddl-auto: validate` — meaning Hibernate will **validate** the schema against your entities but will **not** auto-create tables. Running `init.sql` (or the migrations) first is required.
 
 ---

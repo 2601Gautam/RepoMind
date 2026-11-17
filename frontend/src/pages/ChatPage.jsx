@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { streamChat, getRepoStatus, getChatHistory, clearChatConversation, RateLimitError } from '../api/client'
 import { useActivity } from '../context/ActivityContext'
 import { useAiOperation } from '../hooks/useAiOperation'
+import { rememberRecentRepo } from '../state/recentRepos.js'
 import RepositoryNotice from '../components/repo/RepositoryNotice'
 import NavBar from '../components/layout/NavBar'
 import MessageList from '../components/chat/MessageList'
@@ -47,7 +48,11 @@ function ChatPageInner({ repoId }) {
 
     useEffect(() => {
         let active = true
-        getRepoStatus(repoId).then(data => { if(active) setRepo(data) })
+        getRepoStatus(repoId).then(data => {
+            if (!active) return
+            setRepo(data)
+            if (data?.status === 'READY') rememberRecentRepo(localStorage, repoId)   // feeds the "Recent Chats" shelf
+        })
             .catch(e => { if(active) setRestoreError(e.message) })
         return () => { active = false }
     }, [repoId,reload])

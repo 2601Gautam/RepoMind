@@ -5,11 +5,12 @@ import com.repomind.repomind.model.entity.User;
 import com.repomind.repomind.repository.UserRepoRepository;
 import com.repomind.repomind.service.ActivityService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RestController @RequestMapping("/api/activity") @RequiredArgsConstructor
+@RestController @RequestMapping("/api/activity") @RequiredArgsConstructor @Slf4j
 public class ActivityController {
     private final ActivityService activity;
     private final UserRepoRepository userRepos;
@@ -23,7 +24,12 @@ public class ActivityController {
                 .totalFiles(r.getTotalFiles()).processedFiles(r.getProcessedFiles()).totalChunks(r.getTotalChunks())
                 .errorMessage(r.getErrorMessage()).createdAt(r.getCreatedAt()).lastSyncedAt(r.getLastSyncedAt())
                 .syncMessage(r.getSyncMessage()).syncing(r.isSyncing()).hasArchive(r.getArchiveKey()!=null).build()).toList();
-        return new Snapshot(repos,activity.recent(user.getId()));
+        // The repository list is what every page needs. If the activity table is missing (migration not applied yet) or the
+        // query fails, still return the repositories instead of failing the whole snapshot.
+        List<ActivityService.Activity> tasks;
+        try { tasks = activity.recent(user.getId()); }
+        catch (RuntimeException e) { log.warn("Recent AI activity unavailable, returning repositories only: {}", e.getMessage()); tasks = List.of(); }
+        return new Snapshot(repos,tasks);
     }
 }
 
