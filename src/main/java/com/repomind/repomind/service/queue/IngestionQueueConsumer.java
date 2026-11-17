@@ -3,6 +3,7 @@ package com.repomind.repomind.service.queue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.repomind.repomind.dto.queue.IngestionJobMessage;
 import com.repomind.repomind.service.ingestion.IngestionService;
+import com.repomind.repomind.service.ingestion.FullIngestionStore;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,6 +50,7 @@ public class IngestionQueueConsumer {
     private final ObjectMapper objectMapper;
     private final ExecutorService workerPool;
     private final Semaphore workerSlots;
+    private final ScheduledExecutorService visibilityRenewals = Executors.newScheduledThreadPool(2);
 
     @Value("${aws.sqs.ingestion-queue-url}")
     private String queueUrl;
@@ -152,10 +155,45 @@ public class IngestionQueueConsumer {
     }
 
     private void processMessage(Message message) {
+        long period = Math.max(100, visibilityTimeoutSeconds * 1000L / 3);
+        Object lifecycle = new Object();
+        boolean[] stopped = {false};
+        var renewal = visibilityRenewals.scheduleAtFixedRate(() -> {
+            synchronized (lifecycle) {
+                if (stopped[0]) return;
+                try {
+                    sqsClient.changeMessageVisibility(b -> b.queueUrl(queueUrl).receiptHandle(message.receiptHandle())
+                            .visibilityTimeout(visibilityTimeoutSeconds));
+                } catch (RuntimeException e) {
+                    log.warn("Could not renew receipt visibility for {}. Database ownership still guards writes.",
+                            message.messageId(), e);
+                }
+            }
+        }, period, period, TimeUnit.MILLISECONDS);
+        try {
+            processWithVisibility(message);
+        } finally {
+            synchronized (lifecycle) {
+                // Finish any in-flight extension before this attempt returns.
+                stopped[0] = true;
+                renewal.cancel(false);
+            }
+        }
+    }
+
+    private void processWithVisibility(Message message) {
         try {
             IngestionJobMessage job = objectMapper.readValue(message.body(), IngestionJobMessage.class);
             log.info("Picked up ingestion job for repo {} from SQS", job.repoId());
             ingestionService.processIngestionJob(job.repoId(), job.githubUrl(), job.token());
+        } catch (FullIngestionStore.LeaseBusy busy) {
+            try {
+                sqsClient.changeMessageVisibility(b -> b.queueUrl(queueUrl).receiptHandle(message.receiptHandle())
+                        .visibilityTimeout(busy.retryAfterSeconds()));
+            } catch (RuntimeException e) {
+                log.warn("Could not defer busy ingestion message {}. Leaving it for redelivery.", message.messageId(), e);
+            }
+            return;
         } catch (Exception e) {
             // Do not delete malformed or unexpectedly failed jobs. The
             // queue's redrive policy (configured on the SQS queue itself,
@@ -190,6 +228,8 @@ public class IngestionQueueConsumer {
         } catch (InterruptedException e) {
             workerPool.shutdownNow();
             Thread.currentThread().interrupt();
+        } finally {
+            visibilityRenewals.shutdownNow();
         }
     }
 }

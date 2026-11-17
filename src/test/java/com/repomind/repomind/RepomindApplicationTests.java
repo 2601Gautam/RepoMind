@@ -2,7 +2,9 @@ package com.repomind.repomind;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("eval")
 @SpringBootTest(properties = {
         "aws.accessKeyId=test-access-key",
         "aws.secretKey=test-secret-key",

@@ -1,0 +1,68 @@
+{
+  "localRegressionRun": {
+    "tests": 68,
+    "failures": 0,
+    "errors": 0
+  },
+  "queueChecks": {
+    "QueueRecoveryIT": {
+      "counts": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "lostAcknowledgementRedeliversWithoutRepeatingCommittedWrites",
+        "invalidMessageReachesConfiguredDeadLetterQueue",
+        "supersededWorkerCannotAppendOrOverwriteNewOwner",
+        "publishFailurePropagatesToTheCaller",
+        "expiredPartialIndexRetriesCleanlyAndTerminalDuplicateDoesNoWork",
+        "unexpiredLeaseKeepsTheOnlyRedeliveryAvailable",
+        "terminalCloneFailureIsPersistedAndAcknowledged"
+      ]
+    },
+    "QueueCrashIT": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "restartAfterPartialWrites"
+      ]
+    },
+    "QueueSpeedIT": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "cases": [
+        "compareTransportsAtEqualConcurrency"
+      ]
+    }
+  },
+  "normalizedSourceSha256": {
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueCrashChild.java": "a231e515354db7b08e9a867d6931e9b40c05b71282b5473cd54b4d79660bf535",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueCrashIT.java": "af95eb893427daff8c821c99b851ed6f407bbb92c6159b329d39222ce2451b4c",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueFixture.java": "8c5adb9277f4399f0c4f89b9ebf55e9ca75cb0cb3785ba164580656ad2eb94a8",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueRecoveryIT.java": "a49c2431668eba8be1efdca8807b636733104c7d2b23abb63cae252c2486e621",
+    "src/test/java/com/repomind/repomind/evaluation/queue/QueueSpeedIT.java": "c7e9a3a4474ac1382f824c87b46b4a80b3abc16c9b2156dfdd0b8cb4a0c9b35b",
+    "src/main/java/com/repomind/repomind/service/ingestion/FullIngestionStore.java": "71b4537af00e6261c5121505c0267d8e1b758892d6a8452b736500ee69ea1f52",
+    "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java": "bd23c7b1a3133cafae1234eab914a675d0c1c1bebf15f69cbbed21eeb87e8f15",
+    "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java": "3b7779a5d3847f437e488c15998455bf6ae7441c251991a3605b706eba5ba351",
+    "src/main/java/com/repomind/repomind/service/queue/IngestionQueuePublisher.java": "cb0c5c4791284050dd46e775cbe9a2d459be28e262a2a1ae0dc591d71a2c3dd1",
+    "eval/compose.yml": "05851941dc73a442681868fde4dfdf3267f0ff50207d1fc53f44cd1890972de5",
+    "eval/score_queue.py": "5b80a34de5619694fabfb1245c9cd5bf55c13b2c25c15e1072a5af64f1dd7c87"
+  },
+  "baselineRecovery": {
+    "tests": 4,
+    "failed": [
+      "unexpiredLeaseKeepsTheOnlyRedeliveryAvailable",
+      "expiredPartialIndexRetriesCleanlyAndTerminalDuplicateDoesNoWork"
+    ]
+  }
+}

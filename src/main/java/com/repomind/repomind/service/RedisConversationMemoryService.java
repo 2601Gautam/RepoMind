@@ -4,14 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -21,13 +22,14 @@ public class RedisConversationMemoryService implements ConversationMemoryService
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
+    private static final Duration CONVERSATION_TTL = Duration.ofDays(5);
+    private static final int MAX_STORED_MESSAGES = 10;
+    private static final DefaultRedisScript<Long> APPEND = new DefaultRedisScript<>("""
+            redis.call('RPUSH', KEYS[1], ARGV[1])
+            redis.call('LTRIM', KEYS[1], -tonumber(ARGV[2]), -1)
+            return redis.call('EXPIRE', KEYS[1], tonumber(ARGV[3]))
+            """, Long.class);
 
-
-    private static final long CONVERSATION_TTL_DAYS = 5;
-    private static final long  MAX_STORED_MESSAGES = 10;
-
-    //Redis key formate: coversation:{conversationId}:messages
-    //namespace prefix prevents key collisions with other data in Redis, and makes it easy to find all keys related to a conversation
     private String redisKey(UUID conversationId) {
         return "conversation:" + conversationId + ":messages";
     }
@@ -35,28 +37,11 @@ public class RedisConversationMemoryService implements ConversationMemoryService
     @Override
     public void addMessage(UUID conversationId, String role, String content) {
         String key = redisKey(conversationId);
-        try{
-            // Serialize message to JSON string for Redis storage
-            String json = objectMapper.writeValueAsString(new MemoryMessage(role,content));
-            // Serialize message to JSON string for Redis storage
-            // Redis Lists maintain insertion order — oldest messages are at index 0
-            redisTemplate.opsForList().rightPush(key,json);
-
-            // Keep only the most recent MAX_STORED_MESSAGES by
-// trimming the list to the last MAX_STORED_MESSAGES elements.
-
-            redisTemplate.opsForList().trim(key,-MAX_STORED_MESSAGES,-1);
-
-            // Reset expiry on every write active converstation stay alive
-//            redisTemplate.expire(key, CONVERSATION_TTL_HOURS, TimeUnit.HOURS);
-            redisTemplate.expire(
-                    key,
-                    CONVERSATION_TTL_DAYS,
-                    TimeUnit.DAYS
-            );
-
-        }catch (JsonProcessingException e)
-        {
+        try {
+            String json = objectMapper.writeValueAsString(new MemoryMessage(role, content));
+            redisTemplate.execute(APPEND, List.of(key), json, Integer.toString(MAX_STORED_MESSAGES),
+                    Long.toString(CONVERSATION_TTL.toSeconds()));
+        } catch (JsonProcessingException | DataAccessException e) {
             log.warn("Failed to save message to Redis for conversation {}: {}", conversationId, e.getMessage());
             // Non-critical — log and continue, chat still works without memory
         }
@@ -65,6 +50,7 @@ public class RedisConversationMemoryService implements ConversationMemoryService
     @Override
     public List<MemoryMessage> getRecentMessages(UUID conversationId, int maxMessages)
     {
+        if (maxMessages <= 0) return Collections.emptyList();
         String key = redisKey(conversationId);
         try{
             // LRANGE with negative indices: -maxMessages means "from the end"

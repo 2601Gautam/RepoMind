@@ -1,0 +1,4656 @@
+{
+  "corpusRevision" : "directory-snapshot:f149bd83e72e59a87253d344ddfb7381539d6e3d3cbe781b406f67f360821a48",
+  "embeddingModel" : "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "replaySha256" : "bcbd763dc434ec080b89a0f06f3a0c82149b467884585884818a95062ad52eef",
+  "labelsSha256" : "5c6251b58e90ad92220ce004f45bc576b63c87b2b9efa7044603024db54da470",
+  "files" : 183,
+  "chunks" : 413,
+  "topK" : 12,
+  "timedPasses" : 5,
+  "postgres" : "16.16 (Debian 16.16-1.pgdg12+1)",
+  "pgvector" : "0.8.7",
+  "variants" : {
+    "vector" : [ {
+      "id" : "ID01",
+      "expected" : {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 31,
+        "end" : 38
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/user/user.controller.js",
+        "start" : 1,
+        "end" : 76
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17635, 18121, 17142, 17112, 17212 ]
+    }, {
+      "id" : "ID02",
+      "expected" : {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 27,
+        "end" : 37
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/getActivityAndSessionByToken.controller.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/controllers/user/activityAndSessionHistory.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "backend/src/db/getActiveSession.js",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/verifyAndRegister.controller.js",
+        "start" : 1,
+        "end" : 64
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 18318, 16703, 16875, 18189, 16728 ]
+    }, {
+      "id" : "ID03",
+      "expected" : {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 3,
+        "end" : 12
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/activityAndSessionHistory.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/db/deleteActiveSession.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/utils/removeOldProfile.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/utils/removeActivityHistoryPdf.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/clearActivityHistory.controller.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 18140, 16923, 16438, 16455, 15835 ]
+    }, {
+      "id" : "ID04",
+      "expected" : {
+        "path" : "backend/src/controllers/user/registerOtpGeneration.controller.js",
+        "start" : 26,
+        "end" : 37
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/registerOtpGeneration.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/verifyAndRegister.controller.js",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "frontend/src/pages/MyProfile.jsx",
+        "start" : 341,
+        "end" : 394
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/LoginForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17178, 17026, 18227, 16678, 17105 ]
+    }, {
+      "id" : "ID05",
+      "expected" : {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 29,
+        "end" : 30
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/utils/requiredMap.js",
+        "start" : 1,
+        "end" : 65
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 16819, 16794, 19761, 17686, 15822 ]
+    }, {
+      "id" : "ID06",
+      "expected" : {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 31,
+        "end" : 37
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/utils/chatBotTools/market_news.js",
+        "start" : 86,
+        "end" : 158
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/getData.js",
+        "start" : 1,
+        "end" : 42
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17282, 16852, 16730, 17828, 15801 ]
+    }, {
+      "id" : "ID07",
+      "expected" : {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 22,
+        "end" : 22
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/components/StockAction.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "backend/src/db/insertActiveSession.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17018, 16332, 16526, 16817, 17301 ]
+    }, {
+      "id" : "ID08",
+      "expected" : {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 73,
+        "end" : 75
+      },
+      "ranked" : [ {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/db/insertActiveSession.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/db/userTransactions.js",
+        "start" : 1,
+        "end" : 12
+      }, {
+        "path" : "backend/src/db/stockSummary.js",
+        "start" : 1,
+        "end" : 21
+      }, {
+        "path" : "frontend/src/components/StockAction.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 16964, 16411, 17779, 16848, 16548 ]
+    }, {
+      "id" : "ID09",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 46,
+        "end" : 49
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 171,
+        "end" : 238
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolio.controller.js",
+        "start" : 1,
+        "end" : 4
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfoliograph.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/components/PortfolioHoldings.jsx",
+        "start" : 1,
+        "end" : 49
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 18583, 18917, 18251, 16727, 17069 ]
+    }, {
+      "id" : "ID10",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 4,
+        "end" : 9
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "frontend/src/components/Footer.jsx",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 1361,
+        "end" : 1460
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17080, 17811, 17295, 17066, 16748 ]
+    }, {
+      "id" : "ID11",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 47,
+        "end" : 52
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/requiredMap.js",
+        "start" : 1,
+        "end" : 65
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 6,
+      "lookupMicros" : [ 16941, 17008, 17013, 16068, 16883 ]
+    }, {
+      "id" : "ID12",
+      "expected" : {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 43,
+        "end" : 57
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/PortfolioHoldings.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 256,
+        "end" : 261
+      }, {
+        "path" : "frontend/src/pages/Preference.css",
+        "start" : 256,
+        "end" : 260
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 171,
+        "end" : 261
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 851,
+        "end" : 950
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 596,
+        "end" : 599
+      }, {
+        "path" : "frontend/src/components/StockChart.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/PortfolioHoldings.css",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 17662, 16224, 17742, 17258, 17120 ]
+    }, {
+      "id" : "ID13",
+      "expected" : {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 73,
+        "end" : 78
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/Portfolio/portfolio.controller.js",
+        "start" : 1,
+        "end" : 4
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileInfo.controller.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileInfo.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/routes/portfolio.routes.js",
+        "start" : 1,
+        "end" : 10
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileInfo.controller.js",
+        "start" : 256,
+        "end" : 317
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 17878, 17048, 18443, 16950, 16870 ]
+    }, {
+      "id" : "ID14",
+      "expected" : {
+        "path" : "frontend/src/context/AppContext.jsx",
+        "start" : 49,
+        "end" : 67
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/HelpSupport.jsx",
+        "start" : 256,
+        "end" : 315
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/verifyAndRegister.controller.js",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 17265, 17277, 16407, 16549, 16421 ]
+    }, {
+      "id" : "ID15",
+      "expected" : {
+        "path" : "frontend/src/utils/validation.js",
+        "start" : 24,
+        "end" : 29
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/utils/validation.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/checkUserSyntax.js",
+        "start" : 1,
+        "end" : 52
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/MyProfile.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/db/updatePassword.js",
+        "start" : 1,
+        "end" : 12
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/PasswordInputField.jsx",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/auth.css",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 16937, 16923, 16960, 16278, 16278 ]
+    }, {
+      "id" : "ID16",
+      "expected" : {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 18,
+        "end" : 22
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 256,
+        "end" : 261
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 851,
+        "end" : 950
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 596,
+        "end" : 599
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 936,
+        "end" : 1035
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 1106,
+        "end" : 1171
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 766,
+        "end" : 865
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 16737, 16700, 17414, 16542, 16172 ]
+    }, {
+      "id" : "ID17",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 27,
+        "end" : 31
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 596,
+        "end" : 669
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17338, 16712, 16787, 16865, 22857 ]
+    }, {
+      "id" : "ID18",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 336,
+        "end" : 339
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 256,
+        "end" : 355
+      } ],
+      "firstSupportingRank" : 12,
+      "lookupMicros" : [ 17152, 16792, 16776, 17153, 17323 ]
+    }, {
+      "id" : "ID19",
+      "expected" : {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 59,
+        "end" : 63
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 171,
+        "end" : 238
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/dashBoard/getPortfolioInsight.controller.js",
+        "start" : 1,
+        "end" : 29
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17887, 17094, 16255, 17053, 18997 ]
+    }, {
+      "id" : "ID20",
+      "expected" : {
+        "path" : "backend/src/utils/removeOldProfile.js",
+        "start" : 5,
+        "end" : 11
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "backend/src/utils/removeOldProfile.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "backend/src/utils/cloudinary.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/utils/removeActivityHistoryPdf.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/db/updateProfileImage.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/utils/removePortfolioExcelSheets.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/middlewares/multer.middleware.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/getProfile.controller.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "frontend/src/components/Navbar.jsx",
+        "start" : 171,
+        "end" : 201
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17534, 17506, 17062, 16806, 16389 ]
+    }, {
+      "id" : "NL01",
+      "expected" : {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 111,
+        "end" : 118
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/user/user.controller.js",
+        "start" : 1,
+        "end" : 76
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 18323, 17094, 16524, 17466, 16491 ]
+    }, {
+      "id" : "NL02",
+      "expected" : {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 48,
+        "end" : 50
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "frontend/src/components/LoginForm.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/main.jsx",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/db/insertUser.js",
+        "start" : 1,
+        "end" : 18
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 18593, 17579, 16682, 16548, 20498 ]
+    }, {
+      "id" : "NL03",
+      "expected" : {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 101,
+        "end" : 109
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 256,
+        "end" : 347
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.css",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      }, {
+        "path" : "frontend/src/components/LoginForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17490, 17047, 25106, 17275, 16487 ]
+    }, {
+      "id" : "NL04",
+      "expected" : {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 19,
+        "end" : 29
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/activityAndSessionHistory.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 18177, 16104, 17117, 16960, 16241 ]
+    }, {
+      "id" : "NL05",
+      "expected" : {
+        "path" : "backend/src/utils/checkUserSyntax.js",
+        "start" : 6,
+        "end" : 13
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/checkUserSyntax.js",
+        "start" : 1,
+        "end" : 52
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "frontend/src/utils/validation.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/registerOtpGeneration.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/auth.css",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17105, 16589, 17329, 17054, 16920 ]
+    }, {
+      "id" : "NL06",
+      "expected" : {
+        "path" : "backend/src/middlewares/multer.middleware.js",
+        "start" : 14,
+        "end" : 19
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/Sidebar.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/middlewares/multer.middleware.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 936,
+        "end" : 1035
+      }, {
+        "path" : "frontend/src/components/Sidebar.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/Navbar.jsx",
+        "start" : 171,
+        "end" : 201
+      }, {
+        "path" : "backend/src/db/updateProfileImage.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/components/PortfolioChart/PortfolioChart.css",
+        "start" : 86,
+        "end" : 133
+      }, {
+        "path" : "frontend/src/pages/Preference.css",
+        "start" : 256,
+        "end" : 260
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 681,
+        "end" : 780
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 1276,
+        "end" : 1375
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 16603, 17394, 17901, 16683, 16965 ]
+    }, {
+      "id" : "NL07",
+      "expected" : {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 9,
+        "end" : 40
+      },
+      "ranked" : [ {
+        "path" : "backend/src/db/removeUser.js",
+        "start" : 1,
+        "end" : 13
+      }, {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "backend/src/db/deleteActiveSession.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/controllers/user/clearActivityHistory.controller.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/activityAndSessionHistory.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 16959, 16860, 18169, 16314, 16353 ]
+    }, {
+      "id" : "NL08",
+      "expected" : {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 14,
+        "end" : 24
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/requiredMap.js",
+        "start" : 1,
+        "end" : 65
+      }, {
+        "path" : "frontend/src/components/StockChart.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfoliograph.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "frontend/src/components/PortfolioChart/PortfolioChart.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/db/updateActiveTime.js",
+        "start" : 1,
+        "end" : 13
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 16449, 16936, 19161, 16946, 16961 ]
+    }, {
+      "id" : "NL09",
+      "expected" : {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 15,
+        "end" : 24
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/db/watchlist.js",
+        "start" : 1,
+        "end" : 72
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/utils/requiredMap.js",
+        "start" : 1,
+        "end" : 65
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 256,
+        "end" : 355
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17482, 17037, 17548, 16219, 16695 ]
+    }, {
+      "id" : "NL10",
+      "expected" : {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 84,
+        "end" : 85
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 596,
+        "end" : 669
+      }, {
+        "path" : "frontend/src/components/StockAction.jsx",
+        "start" : 86,
+        "end" : 160
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioSummary.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.css",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 16593, 17393, 18609, 17237, 17472 ]
+    }, {
+      "id" : "NL11",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 12,
+        "end" : 16
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/routes/portfolio.routes.js",
+        "start" : 1,
+        "end" : 10
+      }, {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/controllers/user/downloadPortfolioData.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/controllers/user/verifyAndRegister.controller.js",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      }, {
+        "path" : "backend/src/db/insertActiveSession.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17101, 18531, 17717, 17270, 16640 ]
+    }, {
+      "id" : "NL12",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 8,
+        "end" : 22
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "frontend/src/components/StockAction.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17058, 17389, 16573, 17277, 18725 ]
+    }, {
+      "id" : "NL13",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 282,
+        "end" : 290
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/market_news.js",
+        "start" : 86,
+        "end" : 158
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileInfo.controller.js",
+        "start" : 256,
+        "end" : 317
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 18007, 17271, 16783, 17033, 18300 ]
+    }, {
+      "id" : "NL14",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 236,
+        "end" : 249
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/auth.css",
+        "start" : 511,
+        "end" : 557
+      }, {
+        "path" : "frontend/src/pages/AiInsight.css",
+        "start" : 1,
+        "end" : 18
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/pages/HelpSupport.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.css",
+        "start" : 86,
+        "end" : 104
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.css",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/components/alert.css",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "frontend/src/components/Navbar.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 596,
+        "end" : 599
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 16348, 17047, 16118, 16589, 17129 ]
+    }, {
+      "id" : "NL15",
+      "expected" : {
+        "path" : "backend/src/controllers/aiInsight/sendMessage.controller.js",
+        "start" : 6,
+        "end" : 26
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/BotSidebar.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/components/ChatWindow.jsx",
+        "start" : 86,
+        "end" : 123
+      }, {
+        "path" : "backend/src/controllers/aiInsight/sendMessage.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/components/BotSidebar.css",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/BotSidebar.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      } ],
+      "firstSupportingRank" : 6,
+      "lookupMicros" : [ 17040, 17581, 16823, 17421, 17171 ]
+    }, {
+      "id" : "NL16",
+      "expected" : {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 78,
+        "end" : 86
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolio.controller.js",
+        "start" : 1,
+        "end" : 4
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "frontend/src/pages/Dashboard.css",
+        "start" : 341,
+        "end" : 420
+      }, {
+        "path" : "frontend/src/components/PortfolioChart/PortfolioChart.css",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 9,
+      "lookupMicros" : [ 18032, 16646, 16937, 17061, 17848 ]
+    }, {
+      "id" : "NL17",
+      "expected" : {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 88,
+        "end" : 92
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.jsx",
+        "start" : 171,
+        "end" : 206
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      }, {
+        "path" : "backend/src/controllers/dashBoard/searchStock.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 171,
+        "end" : 238
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17852, 16989, 17051, 17012, 17634 ]
+    }, {
+      "id" : "NL18",
+      "expected" : {
+        "path" : "backend/src/db/watchlist.js",
+        "start" : 5,
+        "end" : 27
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/dashBoard/watchlist.controller.js",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/db/watchlist.js",
+        "start" : 1,
+        "end" : 72
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 596,
+        "end" : 635
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 10,
+      "lookupMicros" : [ 17420, 16963, 17674, 16602, 17466 ]
+    }, {
+      "id" : "NL19",
+      "expected" : {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 8,
+        "end" : 24
+      },
+      "ranked" : [ {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/routes/portfolio.routes.js",
+        "start" : 1,
+        "end" : 10
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      }, {
+        "path" : "frontend/src/components/Navbar.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/Dashboard.jsx",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "frontend/src/App.jsx",
+        "start" : 1,
+        "end" : 85
+      }, {
+        "path" : "frontend/src/components/Sidebar.jsx",
+        "start" : 1,
+        "end" : 96
+      }, {
+        "path" : "backend/src/controllers/dashBoard/getPortfolioInsight.controller.js",
+        "start" : 1,
+        "end" : 29
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17043, 23479, 17605, 16616, 16608 ]
+    }, {
+      "id" : "NL20",
+      "expected" : {
+        "path" : "frontend/src/App.jsx",
+        "start" : 45,
+        "end" : 48
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 511,
+        "end" : 572
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 681,
+        "end" : 780
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 851,
+        "end" : 950
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 1021,
+        "end" : 1120
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 766,
+        "end" : 865
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 19756, 21794, 17730, 16736, 17114 ]
+    } ],
+    "candidate" : [ {
+      "id" : "ID01",
+      "expected" : {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 31,
+        "end" : 38
+      },
+      "ranked" : [ {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/user/user.controller.js",
+        "start" : 1,
+        "end" : 76
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33752, 36431, 32772, 33011, 34861 ]
+    }, {
+      "id" : "ID02",
+      "expected" : {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 27,
+        "end" : 37
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      }, {
+        "path" : "backend/src/db/getActiveSession.js",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "backend/src/routes/portfolio.routes.js",
+        "start" : 1,
+        "end" : 10
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/getActivityAndSessionByToken.controller.js",
+        "start" : 1,
+        "end" : 26
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 36761, 35528, 33958, 35292, 32747 ]
+    }, {
+      "id" : "ID03",
+      "expected" : {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 3,
+        "end" : 12
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/activityAndSessionHistory.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/db/deleteActiveSession.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/utils/removeOldProfile.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/utils/removeActivityHistoryPdf.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/clearActivityHistory.controller.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33097, 33495, 32877, 32444, 32262 ]
+    }, {
+      "id" : "ID04",
+      "expected" : {
+        "path" : "backend/src/controllers/user/registerOtpGeneration.controller.js",
+        "start" : 26,
+        "end" : 37
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/registerOtpGeneration.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/user.controller.js",
+        "start" : 1,
+        "end" : 76
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/verifyAndRegister.controller.js",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33643, 33645, 32426, 33384, 33070 ]
+    }, {
+      "id" : "ID05",
+      "expected" : {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 29,
+        "end" : 30
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioSummary.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 33186, 32481, 34484, 33467, 31520 ]
+    }, {
+      "id" : "ID06",
+      "expected" : {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 31,
+        "end" : 37
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/market_news.js",
+        "start" : 86,
+        "end" : 158
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/dashBoard/watchlist.controller.js",
+        "start" : 1,
+        "end" : 93
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 34266, 33440, 34323, 31940, 31596 ]
+    }, {
+      "id" : "ID07",
+      "expected" : {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 22,
+        "end" : 22
+      },
+      "ranked" : [ {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/components/StockAction.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "backend/src/db/insertActiveSession.js",
+        "start" : 1,
+        "end" : 16
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 35727, 34825, 33515, 33343, 35228 ]
+    }, {
+      "id" : "ID08",
+      "expected" : {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 73,
+        "end" : 75
+      },
+      "ranked" : [ {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/db/stockSummary.js",
+        "start" : 1,
+        "end" : 21
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioSummary.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/db/stockSector.js",
+        "start" : 1,
+        "end" : 21
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33240, 34313, 33894, 34027, 34489 ]
+    }, {
+      "id" : "ID09",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 46,
+        "end" : 49
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 171,
+        "end" : 238
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolio.controller.js",
+        "start" : 1,
+        "end" : 4
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfoliograph.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/components/PortfolioHoldings.jsx",
+        "start" : 1,
+        "end" : 49
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 36106, 33689, 33716, 32526, 35682 ]
+    }, {
+      "id" : "ID10",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 4,
+        "end" : 9
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "frontend/src/components/Footer.jsx",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 1361,
+        "end" : 1460
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33288, 34253, 32405, 37939, 32772 ]
+    }, {
+      "id" : "ID11",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 47,
+        "end" : 52
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioSummary.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 33423, 33093, 35201, 33936, 32695 ]
+    }, {
+      "id" : "ID12",
+      "expected" : {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 43,
+        "end" : 57
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/PortfolioHoldings.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 256,
+        "end" : 261
+      }, {
+        "path" : "frontend/src/pages/Preference.css",
+        "start" : 256,
+        "end" : 260
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 171,
+        "end" : 261
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 851,
+        "end" : 950
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 596,
+        "end" : 599
+      }, {
+        "path" : "frontend/src/components/StockChart.css",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33242, 32130, 32960, 34443, 31981 ]
+    }, {
+      "id" : "ID13",
+      "expected" : {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 73,
+        "end" : 78
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/Portfolio/portfolio.controller.js",
+        "start" : 1,
+        "end" : 4
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileInfo.controller.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileInfo.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/routes/portfolio.routes.js",
+        "start" : 1,
+        "end" : 10
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 34622, 32848, 32983, 33813, 33900 ]
+    }, {
+      "id" : "ID14",
+      "expected" : {
+        "path" : "frontend/src/context/AppContext.jsx",
+        "start" : 49,
+        "end" : 67
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/HelpSupport.jsx",
+        "start" : 256,
+        "end" : 315
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/auth.jsx",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      }, {
+        "path" : "frontend/src/pages/AiInsight.jsx",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "frontend/src/pages/MyProfile.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/context/AppContext.jsx",
+        "start" : 1,
+        "end" : 82
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "frontend/src/pages/Preference.jsx",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 8,
+      "lookupMicros" : [ 34104, 32590, 33737, 33240, 33286 ]
+    }, {
+      "id" : "ID15",
+      "expected" : {
+        "path" : "frontend/src/utils/validation.js",
+        "start" : 24,
+        "end" : 29
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/utils/validation.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/MyProfile.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/MyProfile.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/LoginForm.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/LoginForm.jsx",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/checkUserSyntax.js",
+        "start" : 1,
+        "end" : 52
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33274, 32872, 35554, 34605, 31731 ]
+    }, {
+      "id" : "ID16",
+      "expected" : {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 18,
+        "end" : 22
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/utils/dataCleaningFuncs.jsx",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.css",
+        "start" : 256,
+        "end" : 261
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 851,
+        "end" : 950
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 596,
+        "end" : 599
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 936,
+        "end" : 1035
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 33381, 34491, 32839, 32507, 31254 ]
+    }, {
+      "id" : "ID17",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 27,
+        "end" : 31
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 596,
+        "end" : 669
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 33435, 33665, 32394, 32201, 34366 ]
+    }, {
+      "id" : "ID18",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 336,
+        "end" : 339
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 32667, 32008, 32320, 33449, 33707 ]
+    }, {
+      "id" : "ID19",
+      "expected" : {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 59,
+        "end" : 63
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 171,
+        "end" : 238
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/dashBoard/getPortfolioInsight.controller.js",
+        "start" : 1,
+        "end" : 29
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 33560, 33646, 34077, 33646, 33765 ]
+    }, {
+      "id" : "ID20",
+      "expected" : {
+        "path" : "backend/src/utils/removeOldProfile.js",
+        "start" : 5,
+        "end" : 11
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "backend/src/utils/removeOldProfile.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/utils/cloudinary.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/utils/removeActivityHistoryPdf.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/db/updateProfileImage.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/utils/removePortfolioExcelSheets.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "backend/src/middlewares/multer.middleware.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/getProfile.controller.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "frontend/src/components/Navbar.jsx",
+        "start" : 171,
+        "end" : 201
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 32952, 35694, 32157, 33180, 37882 ]
+    }, {
+      "id" : "NL01",
+      "expected" : {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 111,
+        "end" : 118
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "backend/src/middlewares/auth.middleware.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/controllers/user/user.controller.js",
+        "start" : 1,
+        "end" : 76
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 19541, 16803, 16180, 17508, 17015 ]
+    }, {
+      "id" : "NL02",
+      "expected" : {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 48,
+        "end" : 50
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "frontend/src/components/LoginForm.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/main.jsx",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/db/insertUser.js",
+        "start" : 1,
+        "end" : 18
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 18692, 16870, 16185, 17631, 18124 ]
+    }, {
+      "id" : "NL03",
+      "expected" : {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 101,
+        "end" : 109
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 256,
+        "end" : 347
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.css",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      }, {
+        "path" : "frontend/src/components/LoginForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 18235, 16624, 28519, 17448, 16892 ]
+    }, {
+      "id" : "NL04",
+      "expected" : {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 19,
+        "end" : 29
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/login.controller.js",
+        "start" : 86,
+        "end" : 126
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/loginWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "backend/src/controllers/user/activityAndSessionHistory.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginGoogle.middleware.js",
+        "start" : 1,
+        "end" : 67
+      }, {
+        "path" : "backend/src/controllers/user/registerWithGoogle.controller.js",
+        "start" : 86,
+        "end" : 107
+      }, {
+        "path" : "backend/src/controllers/user/checkToken.controller.js",
+        "start" : 1,
+        "end" : 62
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17140, 16332, 17552, 16340, 16320 ]
+    }, {
+      "id" : "NL05",
+      "expected" : {
+        "path" : "backend/src/utils/checkUserSyntax.js",
+        "start" : 6,
+        "end" : 13
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/checkUserSyntax.js",
+        "start" : 1,
+        "end" : 52
+      }, {
+        "path" : "frontend/src/components/TermsCondition.jsx",
+        "start" : 1,
+        "end" : 45
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 171,
+        "end" : 209
+      }, {
+        "path" : "frontend/src/utils/validation.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/controllers/user/forgotPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/registerOtpGeneration.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "frontend/src/components/SignupForm.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/auth.css",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 171,
+        "end" : 210
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 16937, 16856, 16936, 16423, 17658 ]
+    }, {
+      "id" : "NL06",
+      "expected" : {
+        "path" : "backend/src/middlewares/multer.middleware.js",
+        "start" : 14,
+        "end" : 19
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/Sidebar.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/middlewares/multer.middleware.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 936,
+        "end" : 1035
+      }, {
+        "path" : "frontend/src/components/Sidebar.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/Navbar.jsx",
+        "start" : 171,
+        "end" : 201
+      }, {
+        "path" : "backend/src/db/updateProfileImage.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/components/PortfolioChart/PortfolioChart.css",
+        "start" : 86,
+        "end" : 133
+      }, {
+        "path" : "frontend/src/pages/Preference.css",
+        "start" : 256,
+        "end" : 260
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 681,
+        "end" : 780
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "frontend/src/pages/MyProfile.css",
+        "start" : 1276,
+        "end" : 1375
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 16788, 17435, 18843, 16334, 16140 ]
+    }, {
+      "id" : "NL07",
+      "expected" : {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 9,
+        "end" : 40
+      },
+      "ranked" : [ {
+        "path" : "backend/src/db/removeUser.js",
+        "start" : 1,
+        "end" : 13
+      }, {
+        "path" : "backend/src/controllers/user/deleteAccount.controller.js",
+        "start" : 1,
+        "end" : 55
+      }, {
+        "path" : "backend/src/db/deleteActiveSession.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/controllers/user/clearActivityHistory.controller.js",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "backend/src/controllers/user/logout.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/controllers/user/activityAndSessionHistory.controller.js",
+        "start" : 1,
+        "end" : 69
+      }, {
+        "path" : "backend/src/utils/registrationOtpStore.js",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/middlewares/verifyUserLoginStatus.middleware.js",
+        "start" : 1,
+        "end" : 59
+      }, {
+        "path" : "backend/src/controllers/user/resetPassword.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileImage.controller.js",
+        "start" : 1,
+        "end" : 83
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17659, 16736, 18042, 16640, 17008 ]
+    }, {
+      "id" : "NL08",
+      "expected" : {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 14,
+        "end" : 24
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/requiredMap.js",
+        "start" : 1,
+        "end" : 65
+      }, {
+        "path" : "frontend/src/components/StockChart.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfoliograph.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "frontend/src/components/PortfolioChart/PortfolioChart.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/db/updateActiveTime.js",
+        "start" : 1,
+        "end" : 13
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17019, 17215, 19280, 16980, 16984 ]
+    }, {
+      "id" : "NL09",
+      "expected" : {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 15,
+        "end" : 24
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/getQuotes.js",
+        "start" : 1,
+        "end" : 39
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/db/watchlist.js",
+        "start" : 1,
+        "end" : 72
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "backend/src/utils/stores/priceRates.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "backend/src/utils/requiredMap.js",
+        "start" : 1,
+        "end" : 65
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 256,
+        "end" : 355
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17716, 16583, 17040, 16478, 16302 ]
+    }, {
+      "id" : "NL10",
+      "expected" : {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 84,
+        "end" : 85
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioFundamentals.controller.js",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 596,
+        "end" : 669
+      }, {
+        "path" : "frontend/src/components/StockAction.jsx",
+        "start" : 86,
+        "end" : 160
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/portfolioCalculation.controller.js",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioSummary.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.css",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17663, 17435, 17294, 16645, 16622 ]
+    }, {
+      "id" : "NL11",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 12,
+        "end" : 16
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/routes/portfolio.routes.js",
+        "start" : 1,
+        "end" : 10
+      }, {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/controllers/user/downloadPortfolioData.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolioHolding.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "backend/src/controllers/user/verifyAndRegister.controller.js",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      }, {
+        "path" : "backend/src/db/insertActiveSession.js",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "backend/src/controllers/dashBoard/userStockSummary.controller.js",
+        "start" : 1,
+        "end" : 32
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17926, 18341, 17725, 16338, 25503 ]
+    }, {
+      "id" : "NL12",
+      "expected" : {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 8,
+        "end" : 22
+      },
+      "ranked" : [ {
+        "path" : "backend/src/controllers/dashBoard/addTransaction.controller.js",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "frontend/src/components/StockAction.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/addPortfolioValuation.js",
+        "start" : 1,
+        "end" : 71
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 171,
+        "end" : 259
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "backend/src/utils/stockPriceStore.js",
+        "start" : 1,
+        "end" : 23
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockAllocation.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17282, 18079, 17486, 17633, 18961 ]
+    }, {
+      "id" : "NL13",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 282,
+        "end" : 290
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/utils/chatBotTools/market_news.js",
+        "start" : 86,
+        "end" : 158
+      }, {
+        "path" : "backend/src/controllers/dashBoard/starterStocks.controller.js",
+        "start" : 1,
+        "end" : 37
+      }, {
+        "path" : "backend/src/db/insertTransaction.js",
+        "start" : 1,
+        "end" : 97
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/controllers/user/updateProfileInfo.controller.js",
+        "start" : 256,
+        "end" : 317
+      }, {
+        "path" : "backend/src/controllers/dashBoard/stockDetails.controller.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 16899, 18077, 17141, 16404, 18655 ]
+    }, {
+      "id" : "NL14",
+      "expected" : {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 236,
+        "end" : 249
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/auth.css",
+        "start" : 511,
+        "end" : 557
+      }, {
+        "path" : "frontend/src/pages/AiInsight.css",
+        "start" : 1,
+        "end" : 18
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/pages/HelpSupport.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.css",
+        "start" : 86,
+        "end" : 104
+      }, {
+        "path" : "frontend/src/pages/ActivitySessionHistory.css",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/components/alert.css",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "frontend/src/components/StockAction.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "frontend/src/components/Navbar.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 596,
+        "end" : 599
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 16684, 16580, 16454, 16241, 16691 ]
+    }, {
+      "id" : "NL15",
+      "expected" : {
+        "path" : "backend/src/controllers/aiInsight/sendMessage.controller.js",
+        "start" : 6,
+        "end" : 26
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/BotSidebar.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/components/ChatWindow.jsx",
+        "start" : 86,
+        "end" : 123
+      }, {
+        "path" : "backend/src/controllers/aiInsight/sendMessage.controller.js",
+        "start" : 1,
+        "end" : 35
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "frontend/src/components/BotSidebar.css",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/components/ChatWindow.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/BotSidebar.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/utils/agent.js",
+        "start" : 341,
+        "end" : 385
+      } ],
+      "firstSupportingRank" : 6,
+      "lookupMicros" : [ 17091, 17505, 16397, 17119, 17057 ]
+    }, {
+      "id" : "NL16",
+      "expected" : {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 78,
+        "end" : 86
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/controllers/Portfolio/portfolio.controller.js",
+        "start" : 1,
+        "end" : 4
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/PortfolioSummary.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "frontend/src/pages/Dashboard.css",
+        "start" : 341,
+        "end" : 420
+      }, {
+        "path" : "frontend/src/components/PortfolioChart/PortfolioChart.css",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 9,
+      "lookupMicros" : [ 17190, 16576, 16353, 17837, 17790 ]
+    }, {
+      "id" : "NL17",
+      "expected" : {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 88,
+        "end" : 92
+      },
+      "ranked" : [ {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 86,
+        "end" : 132
+      }, {
+        "path" : "frontend/src/components/PrivacyPolicy.jsx",
+        "start" : 1,
+        "end" : 64
+      }, {
+        "path" : "backend/src/utils/chatBotTools/portfolio_analysis.js",
+        "start" : 171,
+        "end" : 244
+      }, {
+        "path" : "backend/src/utils/chatBotTools/riskAnalysis.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/MarketMovers/MarketMovers.jsx",
+        "start" : 171,
+        "end" : 206
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 341,
+        "end" : 384
+      }, {
+        "path" : "backend/src/controllers/dashBoard/searchStock.controller.js",
+        "start" : 1,
+        "end" : 92
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/AiInsights/AiInsights.jsx",
+        "start" : 86,
+        "end" : 129
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/Portfolio.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/Portfolio.jsx",
+        "start" : 171,
+        "end" : 238
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17189, 17216, 16202, 17702, 17217 ]
+    }, {
+      "id" : "NL18",
+      "expected" : {
+        "path" : "backend/src/db/watchlist.js",
+        "start" : 5,
+        "end" : 27
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/Home.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "backend/src/controllers/dashBoard/watchlist.controller.js",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/WatchList.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/db/watchlist.js",
+        "start" : 1,
+        "end" : 72
+      }, {
+        "path" : "frontend/src/pages/WatchList.jsx",
+        "start" : 596,
+        "end" : 635
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 10,
+      "lookupMicros" : [ 17901, 17463, 16645, 17362, 17860 ]
+    }, {
+      "id" : "NL19",
+      "expected" : {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 8,
+        "end" : 24
+      },
+      "ranked" : [ {
+        "path" : "backend/src/routes/dashBoard.routes.js",
+        "start" : 1,
+        "end" : 25
+      }, {
+        "path" : "backend/src/routes/portfolio.routes.js",
+        "start" : 1,
+        "end" : 10
+      }, {
+        "path" : "backend/src/routes/aiInsight.routes.js",
+        "start" : 1,
+        "end" : 9
+      }, {
+        "path" : "frontend/src/components/Navbar.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "backend/src/routes/user.routes.js",
+        "start" : 86,
+        "end" : 102
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/Dashboard.jsx",
+        "start" : 1,
+        "end" : 78
+      }, {
+        "path" : "frontend/src/App.jsx",
+        "start" : 1,
+        "end" : 85
+      }, {
+        "path" : "frontend/src/components/Sidebar.jsx",
+        "start" : 1,
+        "end" : 96
+      }, {
+        "path" : "backend/src/controllers/dashBoard/getPortfolioInsight.controller.js",
+        "start" : 1,
+        "end" : 29
+      }, {
+        "path" : "backend/src/controllers/dashBoard/dashBoard.controller.js",
+        "start" : 1,
+        "end" : 14
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 16951, 17254, 17602, 17425, 16352 ]
+    }, {
+      "id" : "NL20",
+      "expected" : {
+        "path" : "frontend/src/App.jsx",
+        "start" : 45,
+        "end" : 48
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/WelcomeInvestor/WelcomeInvestor.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/StockDetails.jsx",
+        "start" : 511,
+        "end" : 572
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 681,
+        "end" : 780
+      }, {
+        "path" : "frontend/src/components/Dashboard-Header.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 851,
+        "end" : 950
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 511,
+        "end" : 610
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 596,
+        "end" : 695
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 1021,
+        "end" : 1120
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 426,
+        "end" : 525
+      }, {
+        "path" : "backend/src/controllers/dashBoard/marketMovers.controller.js",
+        "start" : 1,
+        "end" : 98
+      }, {
+        "path" : "frontend/src/pages/StockDetails.css",
+        "start" : 766,
+        "end" : 865
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 17856, 17711, 16588, 17455, 16224 ]
+    } ]
+  }
+}

@@ -1,0 +1,2 @@
+ALTER TABLE conversations ADD COLUMN IF NOT EXISTS summary TEXT;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS source_paths TEXT;

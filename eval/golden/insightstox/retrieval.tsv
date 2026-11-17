@@ -1,0 +1,45 @@
+id	question	file	start	end	reference_fact
+DEV1	Where does getMarketactiveStocks attach related news to the most active stocks?	backend/src/controllers/dashBoard/marketMovers.controller.js	86	93	Fetches news for the active symbols with getData and returns it beside the stocks.
+DEV2	Where does uploadOnCloudinary delete the local temporary file after a successful upload?	backend/src/utils/cloudinary.js	14	18	unlinkSync of the local path right after the upload.
+DEV3	Which function groups a number using Indian-style commas?	frontend/src/utils/dataCleaningFuncs.jsx	82	87	Uses toLocaleString with en-IN and two decimals.
+DEV4	What file age makes removeActivityHistoryPdf delete a generated activity history PDF?	backend/src/utils/removeActivityHistoryPdf.js	13	17	PDFs at least 60 seconds old are unlinked.
+ID01	In verifyUserLoginStatus, how many active sessions can a user hold before a new login is refused?	backend/src/middlewares/verifyUserLoginStatus.middleware.js	31	38	Five or more active sessions without a token returns 409.
+ID02	What does verifyToken respond with when getActiveSessionByToken finds no matching session?	backend/src/middlewares/auth.middleware.js	27	37	Clears the token cookie and returns 401 unauthorized.
+ID03	How often does cleanupExpiredRegistrations run and when is a pending registration removed?	backend/src/utils/registrationOtpStore.js	3	12	Every 60 seconds; removed two minutes after expiry or when attempts are exhausted.
+ID04	How many wrong guesses and how many minutes does registerOtpGeneration allow for the one-time code?	backend/src/controllers/user/registerOtpGeneration.controller.js	26	37	Six-digit OTP valid five minutes with three attempts.
+ID05	What expiry time does getPrice attach to a quote when it stores it in stockPriceStore?	backend/src/utils/getQuotes.js	29	30	expiresAt is set to 60 seconds after the fetch.
+ID06	How many times does getPrice retry a failed quote lookup before giving up?	backend/src/utils/getQuotes.js	31	37	Three attempts, then logs the error and returns null.
+ID07	In insertTransaction, how is new_avg_price computed when more shares are bought of an existing holding?	backend/src/db/insertTransaction.js	22	22	Weighted average of old holding at avg_price and new quantity at current price.
+ID08	What does insertTransaction return for a SELL when current_holding is smaller than the quantity?	backend/src/db/insertTransaction.js	73	75	success false with the message Insufficient holdings to sell.
+ID09	How does calculatePortfolio compute todayProfit for each holding?	backend/src/controllers/dashBoard/portfolioCalculation.controller.js	46	49	Current value minus yesterday value, using the previous close.
+ID10	What does safeDivision return when the denominator is zero?	backend/src/controllers/dashBoard/portfolioCalculation.controller.js	4	9	The string 0.00; otherwise a percentage with two decimals.
+ID11	What expiry time does getMarketGainers attach when it stores day_gainers in stockPriceStore?	backend/src/controllers/dashBoard/marketMovers.controller.js	47	52	expiresAt is set to 60 seconds after the fetch of five gainers.
+ID12	How does getCapCategory decide between large, mid and small cap?	frontend/src/utils/dataCleaningFuncs.jsx	43	57	At least 20,000 crore is large, at least 5,000 crore is mid, otherwise small; invalid is unknown.
+ID13	What risk score does getPortfolioRiskFromCaps need to return Aggressive?	frontend/src/utils/dataCleaningFuncs.jsx	73	78	Score of small*3 + mid*2 + large*1; 15 or more is Aggressive, 9 or more Moderate.
+ID14	What does ensureAuth do when checkToken fails on a protected page?	frontend/src/context/AppContext.jsx	49	67	Shows a Session Expired alert and navigates to the home page.
+ID15	How does checkPasswordStrength build its message about missing requirements?	frontend/src/utils/validation.js	24	29	Joins the missing items into Password must contain ...; empty string when satisfied.
+ID16	At what sizes does formatLargeNumber switch to K, M, B and T?	frontend/src/utils/dataCleaningFuncs.jsx	18	22	Thresholds of 1e3, 1e6, 1e9 and 1e12.
+ID17	Which model and temperature does smallLLm use in the agent?	backend/src/utils/agent.js	27	31	ChatGroq llama-3.1-8b-instant at temperature 0.
+ID18	What does isRelevant return when the classifier labels a message as finance?	backend/src/utils/agent.js	336	339	Returns agent so the main model handles it.
+ID19	How does risk_analysis_tool annualize volatility?	backend/src/utils/chatBotTools/riskAnalysis.js	59	63	Standard deviation of daily returns multiplied by the square root of 252.
+ID20	How does removeOldProfileImagesFromCloudionary retry deleting old profile images?	backend/src/utils/removeOldProfile.js	5	11	Keeps public ids in a Set and retries every 24 hours, dropping each id once deletion succeeds.
+NL01	How long does a login session cookie last, and is it hidden from page scripts?	backend/src/controllers/user/login.controller.js	111	118	httpOnly, secure, sameSite none, seven day maxAge.
+NL02	What happens when someone who registered with Google tries to sign in with a password?	backend/src/controllers/user/login.controller.js	48	50	401 telling them to log in using Google.
+NL03	What security notice is recorded when a new device signs in?	backend/src/controllers/user/login.controller.js	101	109	A Login alert saying new device logged in with browser, OS and token.
+NL04	How are expired sign-in sessions cleaned up before counting how many a person has?	backend/src/middlewares/verifyUserLoginStatus.middleware.js	19	29	Each stored token is verified; ones that fail are deleted and removed from the list.
+NL05	What password rules does the server enforce when someone registers?	backend/src/utils/checkUserSyntax.js	6	13	8 to 20 characters with uppercase, lowercase, digit and special character.
+NL06	How are uploaded profile pictures restricted in size and type?	backend/src/middlewares/multer.middleware.js	14	19	jpg, jpeg, png or webp and at most 500 KB.
+NL07	What gets cleaned up when a user deletes their account?	backend/src/controllers/user/deleteAccount.controller.js	9	40	The user row, activity history, security alerts, the Cloudinary profile image (failed deletions queued for retry) and the login cookie.
+NL08	How often are currency exchange rates refreshed?	backend/src/utils/stores/priceRates.js	14	24	Cached for an hour, then refetched when the hourly check finds them expired.
+NL09	How are the price, previous close and change in a fetched stock quote converted into the home currency?	backend/src/utils/getQuotes.js	15	24	Each is divided by the exchange rate looked up for the quote currency.
+NL10	How is the average purchase price updated after part of a holding is sold?	backend/src/db/insertTransaction.js	84	85	Removes the sale proceeds from the cost basis and divides by remaining shares; zero when fully sold.
+NL11	How does the add-trade request handler normalize the transaction type, and when does it answer 400 because of it?	backend/src/controllers/dashBoard/addTransaction.controller.js	12	16	Upper-cases the type and returns 400 Invalid transaction type.
+NL12	What checks are applied to the quantity in a new trade?	backend/src/controllers/dashBoard/addTransaction.controller.js	8	22	Required, must be a number, and greater than zero.
+NL13	What does the assistant say when asked about something unrelated to finance?	backend/src/utils/agent.js	282	290	A fixed reply that it specializes in finance, markets and investing.
+NL14	What instructions does the main model get when the user screen is under 600 pixels wide?	backend/src/utils/agent.js	236	249	Below 600 pixels it avoids tables and uses stacked lines or bullets.
+NL15	How does the chat endpoint tell the AI which user is asking?	backend/src/controllers/aiInsight/sendMessage.controller.js	6	26	Builds user details from req.user, passes them with the message and uses the email as the conversation thread id.
+NL16	How does the risk analysis measure concentration in a portfolio?	backend/src/utils/chatBotTools/riskAnalysis.js	78	86	Each holding share of total value; concentration risk is the largest weight.
+NL17	How is diversification scored in the risk analysis?	backend/src/utils/chatBotTools/riskAnalysis.js	88	92	Twenty points per distinct sector up to 100; risk is 100 minus that.
+NL18	How does adding to a watchlist avoid duplicates and handle stocks the system has not seen?	backend/src/db/watchlist.js	5	27	Inserts the stock record if missing, then inserts with ON CONFLICT DO NOTHING.
+NL19	Which middleware does the dashboard router attach to every route?	backend/src/routes/dashBoard.routes.js	8	24	Every route is wrapped in the verifyToken middleware.
+NL20	Which URL pattern shows the page for a single stock?	frontend/src/App.jsx	45	48	/stockdetails/:symbol renders StockDetails.

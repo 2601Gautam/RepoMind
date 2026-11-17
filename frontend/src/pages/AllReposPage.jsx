@@ -1,114 +1,32 @@
-import { useState, useEffect, useRef } from 'react'
-import { listRepos, getRepoStatus, deleteRepo, syncRepo, getRepoArchive } from '../api/client'
+import { useState } from 'react'
+import { useActivity } from '../context/ActivityContext'
+import { deleteRepo, syncRepo, getRepoArchive } from '../api/client'
 import RepoCard from '../components/repo/RepoCard'
 import NavBar from '../components/layout/NavBar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 
 export default function AllReposPage() {
-    const [repos, setRepos] = useState([])
+    const { repositories, loading: loadingRepos, error: loadError, refresh } = useActivity()
     const [page, setPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
-    const [loadingRepos, setLoadingRepos] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
     const [downloadingId, setDownloadingId] = useState(null)
     const [downloadError, setDownloadError] = useState(null)
-    const pollsRef = useRef({})
-
-    useEffect(() => {
-        loadRepos()
-        return () => Object.values(pollsRef.current).forEach(clearInterval)
-    }, [page])
-
-    async function loadRepos() {
-        setLoadingRepos(true)
-        try {
-            const data = await listRepos(page, 5)
-            const repoList = Array.isArray(data) ? data : (data.content || [])
-            // Filter out FAILED repos — never show them in the UI
-            const visible = repoList.filter(r => r.status !== 'FAILED')
-            setRepos(visible)
-            setTotalPages(data.totalPages || (Array.isArray(data) ? 1 : 0))
-            visible.forEach(repo => {
-                if (repo.status === 'PROCESSING' || repo.status === 'PENDING') startPollingIngest(repo.id)
-                if (repo.syncing) startPollingSync(repo.id)
-            })
-        } catch (e) {
-            console.error('Failed to load repos:', e)
-        } finally {
-            setLoadingRepos(false)
-        }
-    }
-
-    // Polls until a full ingest finishes (status leaves PROCESSING/PENDING)
-    function startPollingIngest(repoId) {
-        if (pollsRef.current[repoId]) return
-        pollsRef.current[repoId] = setInterval(async () => {
-            try {
-                const updated = await getRepoStatus(repoId)
-                if (updated.status === 'FAILED') {
-                    // Remove failed repos from the list silently
-                    clearInterval(pollsRef.current[repoId])
-                    delete pollsRef.current[repoId]
-                    setRepos(prev => prev.filter(r => r.id !== repoId))
-                    return
-                }
-                setRepos(prev => prev.map(r => r.id === repoId ? updated : r))
-                if (updated.status === 'READY') {
-                    clearInterval(pollsRef.current[repoId])
-                    delete pollsRef.current[repoId]
-                }
-            } catch { /* silent retry */ }
-        }, 3000)
-    }
-
-    // Polls until a sync finishes (syncing flips back to false).
-    // status stays READY the whole time, so it's not the thing to watch here.
-    function startPollingSync(repoId) {
-        if (pollsRef.current[repoId]) return
-        pollsRef.current[repoId] = setInterval(async () => {
-            try {
-                const updated = await getRepoStatus(repoId)
-                setRepos(prev => prev.map(r => r.id === repoId ? updated : r))
-                if (updated.status === 'PENDING' || updated.status === 'PROCESSING') {
-                    clearInterval(pollsRef.current[repoId])
-                    delete pollsRef.current[repoId]
-                    startPollingIngest(repoId)
-                    return
-                }
-                if (!updated.syncing) {
-                    clearInterval(pollsRef.current[repoId])
-                    delete pollsRef.current[repoId]
-                }
-            } catch { /* silent retry */ }
-        }, 3000)
-    }
+    const [operationError, setOperationError] = useState('')
+    const matches = repositories.filter(r => ((r.repoName || '') + ' ' + (r.githubUrl || '')).toLowerCase().includes(searchQuery.trim().toLowerCase()))
+    const totalPages = Math.ceil(matches.length / 5)
+    const currentPage = Math.min(page,Math.max(0,totalPages-1))
+    const repos = matches.slice(currentPage*5,currentPage*5+5)
 
     async function handleSync(repoId) {
-        // Optimistic — spinner starts immediately instead of waiting for the
-        // next poll tick to catch up with the backend
-        setRepos(prev => prev.map(r => r.id === repoId
-            ? { ...r, syncing: true, syncMessage: 'Checking repository changes. Incremental sync should finish shortly.' }
-            : r))
-        try {
-            const updated = await syncRepo(repoId)
-            setRepos(prev => prev.map(r => r.id === repoId ? updated : r))
-            startPollingSync(repoId)
-        } catch (e) {
-            // Sync never actually started — revert the optimistic state
-            setRepos(prev => prev.map(r => r.id === repoId
-                ? { ...r, syncing: false, syncMessage: e.message || 'Sync could not start right now.' }
-                : r))
-            console.error('Failed to start sync:', e)
-        }
+        setOperationError('')
+        try { await syncRepo(repoId) }
+        catch (e) { setOperationError(e.message + ' Check the current status before retrying.') }
+        finally { refresh() }
     }
-
     async function handleRemove(repoId) {
-        setRepos(prev => prev.filter(r => r.id !== repoId))
-        if (pollsRef.current[repoId]) {
-            clearInterval(pollsRef.current[repoId])
-            delete pollsRef.current[repoId]
-        }
-        try { await deleteRepo(repoId) } catch { /* silent */ }
+        setOperationError('')
+        try { await deleteRepo(repoId); await refresh() }
+        catch (e) { setOperationError(e.message || 'Could not remove this repository.') }
     }
 
     // Fetches a fresh presigned URL right before navigating to it, rather
@@ -144,6 +62,7 @@ export default function AllReposPage() {
                     </p>
                 </div>
 
+                {(operationError || loadError) && <p role="alert" className="mb-4 text-amber-300">{operationError || loadError}</p>}
                 {loadingRepos ? (
                     <div className="flex items-center justify-center h-64">
                         <LoadingSpinner size="lg" />
@@ -199,7 +118,7 @@ export default function AllReposPage() {
                                         <input
                                             type="text"
                                             value={searchQuery}
-                                            onChange={e => setSearchQuery(e.target.value)}
+                                            onChange={e => { setSearchQuery(e.target.value); setPage(0) }}
                                             placeholder="Search list..."
                                             className="w-full sm:w-44 bg-[#0d0d0f] border border-white/[0.06] rounded-lg pl-9 pr-3 py-1.5 text-[12px] text-white placeholder-neutral-600 focus:outline-none focus:border-white/[0.12] transition-all"
                                         />
@@ -235,7 +154,7 @@ export default function AllReposPage() {
                     <div className="flex items-center justify-center gap-5 pt-10">
                         <button
                             onClick={() => setPage(p => Math.max(0, p - 1))}
-                            disabled={page === 0}
+                            disabled={currentPage === 0}
                             className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                         >v
 
@@ -244,7 +163,7 @@ export default function AllReposPage() {
                         <span className="text-[12px] text-neutral-600">{page + 1} / {totalPages}</span>
                         <button
                             onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                            disabled={page >= totalPages - 1}
+                            disabled={currentPage >= totalPages - 1}
                             className="cursor-pointer text-[12px] text-neutral-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                         >
                             Next →

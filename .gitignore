@@ -1,10 +1,31 @@
+### Build output ###
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+/dist/
+/META-INF/
+/package-lock.json
+frontend/dist/
+frontend/dist-ssr/
+frontend/node_modules/
+frontend/coverage/
 
-### STS ###
+### Secrets and local configuration (never commit) ###
+.env
+*.env
+.env.*
+application-local.yml
+*.pem
+*.key
+*.p12
+*.jks
+
+### Editors and IDEs ###
 .apt_generated
 .classpath
 .factorypath
@@ -12,28 +33,46 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
-.env
-*.env
-.env.*
-.env
-application-local.yml
-
-### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
-
-### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
 .vscode/
+
+### Operating system ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### Python (evaluation scripts) ###
+__pycache__/
+*.pyc
+.venv/
+
+### Logs and local run output ###
+*.log
+logs/
+bench/tmp/
+
+### Tool state ###
+.claude/
+.codex/
+
+### Large model files (downloaded locally for the generation check, see eval/README.md) ###
+*.gguf
+*.onnx
+
+### One-off scripts that rewrote source files during development ###
+eval/update_ai_recovery.py
+eval/update_frontend_recovery.py
+
+### Private corpus ###
+# These two files contain text copied from the InsightStox project used as the second search benchmark.
+# Remove these lines only if that code is yours to publish. The labels, scorecard and review history stay tracked.
+# Rebuild the replay with: python eval/freeze_embeddings.py MODEL_DIR --set insightstox --source-dir SNAPSHOT_DIR
+eval/golden/insightstox/minilm-replay.json.gz
+eval/golden/insightstox/HUMAN_REVIEW.md

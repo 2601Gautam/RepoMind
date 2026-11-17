@@ -14,6 +14,10 @@ public interface CodeChunkRepository extends JpaRepository<CodeChunk, UUID> {
 
     long countByRepositoryId(UUID repoId);
 
+    @Modifying
+    @Query("DELETE FROM CodeChunk c WHERE c.repository.id = :repo AND c.filePath IN :paths")
+    void deleteChangedPaths(@Param("repo") UUID repo, @Param("paths") java.util.Set<String> paths);
+
     // NOTE: these are bulk JPQL deletes (@Modifying), not derived delete
     // methods. A derived `deleteByX(...)` first SELECTs the matching
     // entities into memory before removing them, and that SELECT hydrates
@@ -70,5 +74,29 @@ public interface CodeChunkRepository extends JpaRepository<CodeChunk, UUID> {
             @Param("embedding") String embedding,
             @Param("limit") int limit
     );
+
+    @Query(value = """
+        WITH closest AS (
+            SELECT id, embedding <=> CAST(:embedding AS vector) AS distance FROM code_chunks
+            WHERE repo_id = :repoId
+            ORDER BY embedding <=> CAST(:embedding AS vector) LIMIT :pool
+        ), lexical AS (
+            SELECT id, ts_rank_cd(identifier_terms, to_tsquery('simple', :terms)) AS relevance
+            FROM code_chunks WHERE repo_id = :repoId
+            AND identifier_terms @@ to_tsquery('simple', :terms)
+            ORDER BY relevance DESC, id LIMIT :pool
+        ), votes AS (
+            SELECT id, 1.0 / (60 + row_number() OVER (ORDER BY distance, id)) AS vote FROM closest
+            UNION ALL
+            SELECT id, 1.0 / (60 + row_number() OVER (ORDER BY relevance DESC, id)) FROM lexical
+        ), winners AS (
+            SELECT id, sum(vote) AS score FROM votes GROUP BY id ORDER BY score DESC, id LIMIT :limit
+        )
+        SELECT c.id, c.file_path AS filePath, c.content, c.language, c.start_line AS startLine, c.end_line AS endLine
+        FROM winners w JOIN code_chunks c ON c.id = w.id ORDER BY w.score DESC, c.id
+        """, nativeQuery = true)
+    List<CodeChunkProjection> findHybridChunks(@Param("repoId") UUID repoId, @Param("embedding") String embedding,
+            @Param("terms") String terms, @Param("limit") int limit, @Param("pool") int pool);
+
 
 }

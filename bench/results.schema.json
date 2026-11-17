@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["name", "commit", "date", "machine", "config", "runs", "summary"],
+  "properties": {
+    "name": {"type": "string"},
+    "commit": {"type": "string"},
+    "date": {"type": "string"},
+    "machine": {"type": "object"},
+    "config": {"type": "object"},
+    "runs": {"type": "array", "minItems": 1},
+    "summary": {
+      "type": "object",
+      "required": ["median", "p95", "min", "max"],
+      "properties": {
+        "median": {"type": "number"},
+        "p95": {"type": "number"},
+        "min": {"type": "number"},
+        "max": {"type": "number"}
+      }
+    }
+  }
+}

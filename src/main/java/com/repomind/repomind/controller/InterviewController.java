@@ -23,15 +23,20 @@ import java.util.UUID;
 @Slf4j
 public class InterviewController {
     private final InterviewService interviewService;
+    private final com.repomind.repomind.service.ActivityService activity;
     private final UserRepoRepository userRepoRepository;
     // Generate new interview questions for a repo
     @RateLimit(requests = 5, windowSeconds = 1800)
     @PostMapping("/generate")
     public ResponseEntity<?> generate(
             @Valid @RequestBody InterviewRequest request,
-            @AuthenticationPrincipal User currentUser) {
+            @AuthenticationPrincipal User currentUser,
+            @RequestHeader(value="X-Request-ID",required=false) UUID requestId) {
         try {
-            InterviewSessionDto session = interviewService.generateQuestions(request, currentUser);
+            userRepoRepository.findByUserIdAndRepoId(currentUser.getId(),request.getRepoId())
+                    .orElseThrow(() -> new RuntimeException("Access denied"));
+            InterviewSessionDto session = activity.call(requestId,currentUser.getId(),request.getRepoId(),"INTERVIEW",
+                    () -> interviewService.generateQuestions(request,currentUser), InterviewSessionDto::getId);
             return ResponseEntity.ok(session);
         } catch (RuntimeException e) {
             log.error("Interview generation failed: {}", e.getMessage());

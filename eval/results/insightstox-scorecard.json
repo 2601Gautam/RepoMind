@@ -1,0 +1,49 @@
+{
+  "retrieval": {
+    "vector": {
+      "hits": 33,
+      "questions": 40,
+      "identifierHits": 17,
+      "proseHits": 16,
+      "mrrAt12": 0.4594,
+      "lookupSamples": 200,
+      "lookupMs": {
+        "50": 17.048,
+        "95": 18.725
+      },
+      "misses": [
+        "ID12",
+        "ID13",
+        "ID14",
+        "NL02",
+        "NL13",
+        "NL14",
+        "NL20"
+      ]
+    },
+    "candidate": {
+      "hits": 36,
+      "questions": 40,
+      "identifierHits": 20,
+      "proseHits": 16,
+      "mrrAt12": 0.598,
+      "lookupSamples": 200,
+      "lookupMs": {
+        "50": 28.519,
+        "95": 35.292
+      },
+      "misses": [
+        "NL02",
+        "NL13",
+        "NL14",
+        "NL20"
+      ]
+    },
+    "gains": [
+      "ID12",
+      "ID13",
+      "ID14"
+    ],
+    "losses": []
+  }
+}

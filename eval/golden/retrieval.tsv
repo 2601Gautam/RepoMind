@@ -1,0 +1,46 @@
+id	question	file	start	end	reference_fact
+DEV1	Where is the default model selected for chatClient?	AiConfig.java	49	58	Builds options with chatModel.
+DEV2	What is the name of the key created in redisKey?	RedisConversationMemoryService.java	29	33	A conversation id between the conversation prefix and messages suffix.
+DEV3	Which database operation grants membership without duplicating an existing mapping?	UserRepoRepository.java	32	39	An insert ignores conflicts.
+DEV4	What does a model see when it is asked to generate interview questions?	PromptBuilder.java	162	170	Generate five project-specific questions in a JSON array.
+ID01	Where does claimIncrementalSync require the repository to be idle before acquiring it?	RepoJpaRepository.java	70	75	Update requires matching repo, READY status and syncing false.
+ID02	How does isIngestable reject oversized files and ignored directories during sync?	FileCloneService.java	188	197	Checks byte ceiling and skipped path segments before accepting supported files.
+ID03	How does getBlobContent handle a missing blob SHA?	GitHubApiService.java	215	216	Returns null before making a request.
+ID04	How long is the link returned by generatePresignedDownloadUrl valid?	S3StorageService.java	85	94	The signature lasts 15 minutes.
+ID05	Which part of processMessage acknowledges successful processing?	IngestionQueueConsumer.java	155	174	The consumer deletes the message after the ingestion service returns.
+ID06	What limits how many jobs pollQueue may fetch at once?	IngestionQueueConsumer.java	84	93	Available worker permits capped at ten.
+ID07	How does buildRetrievalQuery choose history for a follow-up?	ChatService.java	199	210	Uses up to the last two messages for rewriting.
+ID08	What does buildRepoSummary append from each of the selected chunks?	InterviewService.java	172	178	Up to 100 characters from each of up to 25 chunks at this revision.
+ID09	How does parsedQuestionsFromResponse find the JSON array boundaries?	InterviewService.java	209	222	Uses the first opening bracket and the final closing bracket.
+ID10	What does deleteStale do when the list of old IDs is empty?	SyncService.java	291	292	Skips the bulk deletion when there are no stale ids.
+ID11	Where does uploadRepoArchive construct the storage key for the source ZIP?	S3StorageService.java	58	60	Uses repos/<repoId>/source.zip.
+ID12	How does tryConsume determine the wait returned to a throttled caller?	RateLimitService.java	64	69	Estimates refill duration and converts it to seconds with a minimum of one.
+ID13	How does RepoUrlInput normalize a blank optional token before submission?	RepoUrlInput.jsx	24	25	Trims input and passes null for a blank token.
+ID14	How does SourceBadges shorten the displayed path?	SourceBadges.jsx	10	13	Displays the last slash-separated segment.
+ID15	What does getChatHistory do with a conversation that has no saved messages?	ChatService.java	249	260	Filters a conversation without messages from the result.
+ID16	Which code in DebugService chooses the maximum number of error-related snippets?	DebugService.java	50	56	Uses up to five repository chunks.
+ID17	What is the effect of MAX_DIFFABLE_FILES at exactly the configured boundary?	GitHubApiService.java	201	203	A count at or above the cap marks the comparison too large.
+ID18	How does saveMessageToDB label a user question versus a generated response?	ChatService.java	229	240	Saves user and assistant roles separately.
+ID19	How does clearConversation remove stored messages from the short-term cache?	RedisConversationMemoryService.java	101	104	Deletes the Redis conversation key.
+ID20	What does buildChunk add before the original source text?	ChunkingService.java	68	76	A path and one-based inclusive start/end header.
+NL01	Where is the depth of the repository download restricted to one revision?	FileCloneService.java	76	81	Shallow clone depth equals one.
+NL02	How long does short-term chat history last, and how many entries can it hold?	RedisConversationMemoryService.java	26	27	Five days and ten stored messages.
+NL03	Which function converts stored credential hashes into a yes or no decision at sign in?	AuthService.java	80	84	The password encoder compares input to the stored hash.
+NL04	Where is the password hashing work factor set?	SecurityConfig.java	99	103	The bcrypt work factor is ten.
+NL05	What response header tells a client when its request quota will refill?	GlobalExceptionHandler.java	41	46	The throttling handler sends Retry-After.
+NL06	When the remote revision has not changed, what indexing work is avoided?	SyncService.java	78	83	Updates the sync time and returns before computing a diff.
+NL07	Where are removed files purged from the search index during an incremental update?	SyncService.java	116	119	Bulk deletion uses repository and file path.
+NL08	How are folder names preserved inside a downloadable source archive?	S3StorageService.java	128	135	ZIP entries use each file's relative path.
+NL09	What happens if the same repository is submitted concurrently by two users?	IngestionController.java	85	98	Re-read the winner after a uniqueness conflict and reuse it.
+NL10	Which code rejects syncing an index that is still being constructed?	IngestionController.java	189	195	A non-ready repo returns conflict.
+NL11	Where does the application prevent a slow queue consumer from taking unbounded jobs?	IngestionQueueConsumer.java	76	86	A bounded pool and semaphore limit concurrent workers.
+NL12	How does the browser handle a JSON event split across two network reads?	client.js	244	252	Buffers decoded bytes and keeps the trailing partial line.
+NL13	When does the browser stop reading a response stream voluntarily?	client.js	265	272	Cancels on a done or error event.
+NL14	How does the repository listing hide failed jobs from its initial display?	AllReposPage.jsx	25	30	Filters entries whose status is FAILED.
+NL15	How does the error screen divide a streamed analysis into four sections?	DebugPage.jsx	16	32	Matches Markdown section headers and accumulates text by section.
+NL16	Which database index supports cosine-based approximate search?	init.sql	138	140	IVFFlat with vector_cosine_ops.
+NL17	Where does the database enforce uniqueness of a user’s repository membership?	init.sql	97	105	The user and repo pair has a unique constraint.
+NL18	How many source lines are reused across adjacent search windows?	ChunkingService.java	26	26	Fifteen lines of overlap.
+NL19	Which code submits a welcome message to the mail provider?	EmailService.java	55	59	The SES client submits the send request.
+NL20	What code handles the absence of any searchable files after a clone?	IngestionService.java	92	96	An empty list triggers an exception instead of continuing indexing.
+

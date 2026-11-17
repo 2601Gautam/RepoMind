@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { streamDebug, getRepoStatus, RateLimitError } from '../api/client'
+import { useAiOperation } from '../hooks/useAiOperation'
 import NavBar from '../components/layout/NavBar'
 import RateLimitBanner from '../components/common/RateLimitBanner'
 import LoadingSpinner from '../components/common/LoadingSpinner'
@@ -47,12 +48,14 @@ export default function DebugPage() {
     const [error, setError] = useState('')
     const [done, setDone] = useState(false)
     const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
+    const operation = useAiOperation('DEBUG',repoId)
     const streamedRef = useRef('')  // Ref to accumulate without re-renders
 
     // Fetch repository metadata on mount / repoId change
     useEffect(() => {
         if (!repoId) return
-        getRepoStatus(repoId).then(setRepo).catch(console.error)
+        let active = true
+        getRepoStatus(repoId).then(data=>{ if(active) setRepo(data) }).catch(e=>{ if(active) setError(e.message) })
         
         // Reset state on repo change
         setErrorText('')
@@ -62,13 +65,16 @@ export default function DebugPage() {
         setError('')
         setDone(false)
         setRateLimitSeconds(null)
-        streamedRef.current = ''
+        streamedRef.current = ''; setLoading(false)
+        return () => { active = false }
     }, [repoId])
 
 
 
     async function handleAnalyze() {
-        if (!errorText.trim()) return
+        if (!errorText.trim() || loading || operation.runningElsewhere) return
+        const attempt = operation.start()
+        if (!attempt) return
                 setLoading(true)
                 setError('')
                 setStreamedText('')
@@ -83,6 +89,7 @@ export default function DebugPage() {
 
             // onEvent — called for each SSE event from DebugService
             (event) => {
+                if (!attempt.live()) return
                 switch (event.type) {
                     case 'token':
                         // Accumulate in ref to avoid closure issues
@@ -109,14 +116,18 @@ export default function DebugPage() {
             },
              // onError — network-level failure
             (err) => {
+                if (!attempt.live()) return
                 if (err instanceof RateLimitError) {
                     setRateLimitSeconds(err.retryAfterSeconds)
                 } else {
                     setError(err.message)
                 }
                 setLoading(false)
-            }
+            },
+            attempt.options
         )
+        if (attempt.live()) setLoading(false)
+        attempt.finish()
     }
     const sections = parseSections(streamedText)
     const hasContent = streamedText.length > 0
@@ -150,6 +161,7 @@ export default function DebugPage() {
 
             <main className="max-w-3xl mx-auto px-6 py-8 space-y-6 relative z-10">
 
+                {operation.runningElsewhere && !loading && <p role="status" className="text-violet-200">Debug analysis is running. Results are only available in the original open page; check activity before starting another request.</p>}
                 {/* ─── TOOL HEADER ─── */}
                 <div className="flex items-center gap-3.5">
                     <div className="w-10 h-10 rounded-xl border border-rose-500/20 bg-rose-500/10 flex items-center justify-center text-rose-400 shrink-0">
@@ -204,7 +216,7 @@ export default function DebugPage() {
 
                     <button
                         onClick={handleAnalyze}
-                        disabled={loading || !errorText.trim() || !!rateLimitSeconds}
+                        disabled={loading || operation.runningElsewhere || !errorText.trim() || !!rateLimitSeconds}
                         className="relative z-10 w-full bg-white/[0.06] border border-white/[0.1] text-white/80 hover:bg-white/[0.1] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-semibold py-2.5 rounded-xl transition-all cursor-pointer text-[13px] flex items-center justify-center gap-2"
                     >
                         {loading && <LoadingSpinner size="sm" />}

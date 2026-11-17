@@ -1,0 +1,187 @@
+{
+  "config": {
+    "users": 10,
+    "repositoriesPerUser": 20,
+    "durableMessagesPerConversation": 500,
+    "window": 4,
+    "rounds": 3,
+    "readsPerPathPerRound": 200,
+    "warmupReadsPerPath": 100,
+    "observedRepoListTtlSeconds": 299,
+    "postgresVersion": "16.16 (Debian 16.16-1.pgdg12+1)",
+    "redisVersion": "7.4.12",
+    "sqlWindowPlan": [
+      "Limit",
+      "  ->  Index Scan using redis_eval_window_38b59bbe0f734efa8771b01debbe7e1b on messages",
+      "        Index Cond: (conversation_id = '21b3ee72-9db2-4c9d-9f82-f657b5ce8dbe'::uuid)"
+    ]
+  },
+  "results": {
+    "uncachedList": {
+      "reads": 600,
+      "p50Ms": 1.321,
+      "p95Ms": 2.141,
+      "listSqlStatements": 600
+    },
+    "cachedListMixed": {
+      "reads": 600,
+      "p50Ms": 0.947,
+      "p95Ms": 2.169,
+      "listSqlStatements": 30
+    },
+    "cachedListHits": {
+      "reads": 570,
+      "p50Ms": 0.927,
+      "p95Ms": 1.448,
+      "listSqlStatements": 0
+    },
+    "cachedListMisses": {
+      "reads": 30,
+      "p50Ms": 3.472,
+      "p95Ms": 5.136,
+      "listSqlStatements": 30
+    },
+    "indexedSqlWindow": {
+      "reads": 600,
+      "p50Ms": 0.598,
+      "p95Ms": 0.779
+    },
+    "redisWindow": {
+      "reads": 600,
+      "p50Ms": 0.667,
+      "p95Ms": 0.892
+    }
+  },
+  "reductions": {
+    "listReductionPct_p50Ms": 28.31,
+    "windowReductionPct_p50Ms": -11.54,
+    "listReductionPct_p95Ms": -1.31,
+    "windowReductionPct_p95Ms": -14.51
+  },
+  "perRound": [
+    {
+      "uncachedList": {
+        "reads": 200,
+        "p50Ms": 1.572,
+        "p95Ms": 2.451
+      },
+      "cachedListMixed": {
+        "reads": 200,
+        "p50Ms": 1.053,
+        "p95Ms": 2.169
+      },
+      "cachedListHits": {
+        "reads": 190,
+        "p50Ms": 1.042,
+        "p95Ms": 1.624
+      },
+      "cachedListMisses": {
+        "reads": 10,
+        "p50Ms": 4.73,
+        "p95Ms": 6.197
+      },
+      "indexedSqlWindow": {
+        "reads": 200,
+        "p50Ms": 0.606,
+        "p95Ms": 0.759
+      },
+      "redisWindow": {
+        "reads": 200,
+        "p50Ms": 0.677,
+        "p95Ms": 0.882
+      }
+    },
+    {
+      "uncachedList": {
+        "reads": 200,
+        "p50Ms": 1.379,
+        "p95Ms": 2.061
+      },
+      "cachedListMixed": {
+        "reads": 200,
+        "p50Ms": 0.993,
+        "p95Ms": 1.784
+      },
+      "cachedListHits": {
+        "reads": 190,
+        "p50Ms": 0.981,
+        "p95Ms": 1.502
+      },
+      "cachedListMisses": {
+        "reads": 10,
+        "p50Ms": 3.435,
+        "p95Ms": 4.248
+      },
+      "indexedSqlWindow": {
+        "reads": 200,
+        "p50Ms": 0.594,
+        "p95Ms": 0.762
+      },
+      "redisWindow": {
+        "reads": 200,
+        "p50Ms": 0.659,
+        "p95Ms": 0.843
+      }
+    },
+    {
+      "uncachedList": {
+        "reads": 200,
+        "p50Ms": 1.094,
+        "p95Ms": 1.522
+      },
+      "cachedListMixed": {
+        "reads": 200,
+        "p50Ms": 0.832,
+        "p95Ms": 2.136
+      },
+      "cachedListHits": {
+        "reads": 190,
+        "p50Ms": 0.826,
+        "p95Ms": 1.125
+      },
+      "cachedListMisses": {
+        "reads": 10,
+        "p50Ms": 2.871,
+        "p95Ms": 3.502
+      },
+      "indexedSqlWindow": {
+        "reads": 200,
+        "p50Ms": 0.598,
+        "p95Ms": 0.806
+      },
+      "redisWindow": {
+        "reads": 200,
+        "p50Ms": 0.663,
+        "p95Ms": 0.922
+      }
+    }
+  ],
+  "append": {
+    "variants": {
+      "threeCalls": {
+        "p50Ms": 1.948,
+        "p95Ms": 2.395,
+        "writes": 600,
+        "perRoundP95Ms": [
+          2.627,
+          2.13,
+          2.342
+        ]
+      },
+      "script": {
+        "p50Ms": 0.729,
+        "p95Ms": 0.957,
+        "writes": 600,
+        "perRoundP95Ms": [
+          1.075,
+          0.806,
+          0.905
+        ]
+      }
+    },
+    "warmupPerPath": 100,
+    "warmEvalshaCalls": 600,
+    "warmEvalFallbacks": 0,
+    "p95ReductionPct": 60.04
+  }
+}

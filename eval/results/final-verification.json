@@ -1,0 +1,239 @@
+{
+  "date": "2026-11-17",
+  "environment": "Disposable PostgreSQL 16 / pgvector, Redis 7, LocalStack SQS; controlled clone, embeddings and model calls",
+  "java": {
+    "tests": 120,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "excluded": "LocalGenerationIT (needs the 0.5B model server; its prompts are covered by PromptDriftTest)",
+    "newSuites": {
+      "ActivityRecoveryIT": 12,
+      "PromptDriftTest": 1,
+      "EmbeddingRetryPolicyTest": 13,
+      "EmbeddingProviderIT": 8,
+      "EmbeddingRateLimitBenchIT": 1,
+      "RedisAvailabilityIT (now 4 cases)": 4,
+      "GlobalExceptionHandlerTest": 3
+    }
+  },
+  "frontend": {
+    "tests": 20,
+    "pass": 20,
+    "newSuite": "recovery.test.js (14 cases)",
+    "buildPassed": true,
+    "lintErrors": 37,
+    "lintWarnings": 6,
+    "lintBaselineErrors": 41,
+    "lintBaselineWarnings": 9
+  },
+  "rebenchmark": {
+    "retrieval": {
+      "vector": "27/40",
+      "candidate": "34/40",
+      "mrr": [
+        0.2328,
+        0.44
+      ],
+      "candidateP95Ms": 19.714,
+      "savedP95Ms": 18.61
+    },
+    "redis": {
+      "listSqlStatements": "600 vs 30",
+      "evalshaCalls": 600,
+      "evalFallbacks": 0,
+      "appendP95ReductionPct": 55.92,
+      "savedAppendP95ReductionPct": [
+        60.2,
+        60.0
+      ]
+    },
+    "queue": {
+      "jobsPerSecond": {
+        "direct1": 3.5814,
+        "direct4": 14.0381,
+        "sqs1": 1.047,
+        "sqs4": 5.0523
+      },
+      "saved": {
+        "direct1": 3.5671,
+        "direct4": 14.0399,
+        "sqs1": 1.0405,
+        "sqs4": 5.057
+      },
+      "crashRecovery": "12/12, 24 distinct chunks (QueueCrashIT passed)"
+    },
+    "generation": "re-run 17 Nov: prompts identical, answers identical for 14/24, strict pass 5/24; see generationRepeat"
+  },
+  "sourceSha256": {
+    "src/main/java/com/repomind/repomind/service/ActivityService.java": "dc3df22d5ef1c03c23d7a4a411d29ee5c2a0190145863a72063cdef309d70441",
+    "src/main/java/com/repomind/repomind/controller/ActivityController.java": "1e39e17706133a8d4d39f637e1065ee1432f3a24ff4308d6800766747a92adc7",
+    "src/main/java/com/repomind/repomind/controller/ChatController.java": "b6836bd693721c3dfab6b534a8378ac9f8c44985f9b07749b823bb177779459e",
+    "src/main/java/com/repomind/repomind/controller/DebugController.java": "fe0ae2c73fd200a799416c641930a19a9aed70aa206c4d3f580c45fb540b655b",
+    "src/main/java/com/repomind/repomind/controller/InterviewController.java": "f7161dcac5ac238ab18c4c1e8810f69210730ab1b0c1faa1ae88a394e6c5b54c",
+    "src/main/java/com/repomind/repomind/service/PromptBuilder.java": "b5ff77b6ba3e5a2e05348bb410385a6c49aa32a4d45d19e31dbc8acbca82afde",
+    "src/main/java/com/repomind/repomind/service/ChatRetrieval.java": "882d43376f10a3ca65ab7d852b515490b4d1a60ab2682a8966eff2b965aab541",
+    "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java": "93a972cfdc1303ed0f3382fb22cfa6488eaea5580354017873e5aa08cb281c54",
+    "src/main/java/com/repomind/repomind/service/ingestion/FullIngestionStore.java": "a603c44b91d47bd35b479ba149e507bba14a0965ec8514d6835a9939113d6e69",
+    "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java": "81d9587c581b18e9b37da8349a2309cdc78042d71e587e648c0f4aa9ca4137b8",
+    "src/test/java/com/repomind/repomind/evaluation/ActivityRecoveryIT.java": "02d4b86b455ff3d42d68992062de24e3b579e670edfcf220e8fd0fe93e5e0271",
+    "src/test/java/com/repomind/repomind/evaluation/PromptDriftTest.java": "2045a71159871faded826b827cce3f847dda69447adcb0ff99720f27318975cb",
+    "migrations/20261117_add_ai_activity.sql": "7403ed5240f03ac081f12c20bdb88f9f811432a20fe405b29eb64c7fd848f652",
+    "init.sql": "012664b623330871a4d84a441211e5de66a0c56b67888907d32c7868a1a384ba",
+    "frontend/src/state/recovery.js": "420039dc556de7ba29af06148a310e35c377cc41a0520720655e8616817fed78",
+    "frontend/src/context/ActivityContext.jsx": "829c2d432e7213edd980f3a83290d4e63f7aa6efee0f9c8e7c93d55e1b585bc4",
+    "frontend/src/components/common/ActivityPanel.jsx": "c36d4e646563d096f3200ac0fa35b9878cd3a635d3ae3d09bfdfad61d2b81cf4",
+    "frontend/src/components/repo/RepositoryNotice.jsx": "b9345c9ea80360b5afc7f5bebc98453153ed437a6278d2aee3fbfdf5d2e7052f",
+    "frontend/src/pages/DashboardPage.jsx": "689ec0d359af7eb403cf7e94dd24d2d8fa721ed82bd101bd5d4adb2b5dad6da6",
+    "frontend/src/pages/AllReposPage.jsx": "3da947fcdfa496cc63dd1c0a0d782e49b575208e48bb5bf615fd5c735121135a",
+    "frontend/src/pages/IngestPage.jsx": "9940d74d15ceee38e48c4057c0fdc2743c5b58c68d6e31dc48664001a8f365c0",
+    "frontend/test/recovery.test.js": "3109f469fec27d16f45007b83b80d4ebb66d54273d835de0c333be6779a16b18",
+    "src/test/java/com/repomind/repomind/evaluation/LocalGenerationIT.java": "d85b8f9d449d0b14b56617ccd72866177f5736ec3cf42a07f94b3f0ee2e13d74",
+    "src/test/java/com/repomind/repomind/evaluation/RetrievalReplayIT.java": "7af259bbb84d0d05fdd7bf9f1b7e4c77ff4033b790497dc8eabb1285708e0816",
+    "eval/freeze_embeddings.py": "00f40334e6fd44adfd7e7c7049b20decdc640642edd97d86e24318b01585fe0a",
+    "eval/score.py": "f00791b17f4d41b7162806308327344b288a08313787a02ddbd3890ba74113cc",
+    "eval/golden/insightstox/retrieval.tsv": "5c6251b58e90ad92220ce004f45bc576b63c87b2b9efa7044603024db54da470",
+    "eval/golden/insightstox/minilm-replay.json.gz": "c50da2a24c77a67b0ba2e5bae0a96fb414d3a7b6185096d477f9303a4697977d",
+    "eval/golden/insightstox/sources.sha256.json": "d06a9ede3b35d5ee38b8d563c26820fb6318fc72433edaf9b0277b93872b8086",
+    "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java": "0ebebf74debbcba9637fd4132aab9090a7c761ece05599c92e68217d9d2bed14",
+    "src/main/java/com/repomind/repomind/service/ingestion/EmbeddingRetryPolicy.java": "c2f56c043ea4a93db9ab8453a32a58f24315e71533544f3e66ab87be6220b40f",
+    "src/main/java/com/repomind/repomind/service/ingestion/EmbeddingService.java": "0b4164df11758cb64324c1876cca5e669dcd3a691c76a34a83fd12df97f72ee8",
+    "src/main/java/com/repomind/repomind/config/RepositoryCacheConfig.java": "45d2f1d07408f431df9a62557168f7b0bc593da48d07153960d5422750b66309",
+    "src/main/resources/application.yml": "e88e408feafc5c71d8efd212a82bd59b5eefdd7c5199f2e8a1ccc1bc11d19c4b",
+    "src/main/resources/application-prod.yml": "67a467bab17d7b2432580b3867bedb0df20ec114d1659b96a0c84130b39ae3d0",
+    "src/test/java/com/repomind/repomind/service/ingestion/EmbeddingRetryPolicyTest.java": "6d1038523f77cc716282b8321e6cd39a0c5d48bd2d8a9b99ccc3797fe5a8f38f",
+    "src/test/java/com/repomind/repomind/evaluation/EmbeddingProviderIT.java": "7d56199c68ef0d3df071145caa1ca9f565fc9a5814bb1b23c472e548b9917feb",
+    "src/test/java/com/repomind/repomind/evaluation/EmbeddingRateLimitBenchIT.java": "b54cc6c6648c3443877c0225fe49ce0afffc7ac917f332935fb7b61c341e8d74",
+    "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java": "f37e66d9fb7bfbfa9bc46953137095721a345fbdde3272641bb4437a9da08eca",
+    "src/test/java/com/repomind/repomind/exception/GlobalExceptionHandlerTest.java": "55fcb798a8d43f625b72da1506cc5894582e7c8d647570149f07f3ca3b5636d7"
+  },
+  "secondRepository": {
+    "corpus": "InsightStox (Node/Express + React), 183 files, 413 chunks, no Git history; snapshot identified by sources.sha256.json",
+    "labels": "44 (40 scored: 20 identifier, 20 prose; 4 development). Frozen 2026-11-17 19:02 +0530, revised only before any search run (REVISIONS.md)",
+    "review": {
+      "blindAgent": {
+        "sameFile": "44/44",
+        "meanLineOverlap": 0.87
+      },
+      "human": "10 sampled: 4 OK, 4 LOOSE, 2 WRONG; all fixed before search"
+    },
+    "vector": {
+      "hits": 33,
+      "identifier": 17,
+      "prose": 16,
+      "mrr": 0.4594,
+      "lookupMs": {
+        "50": 17.048,
+        "95": 18.725
+      }
+    },
+    "candidate": {
+      "hits": 36,
+      "identifier": 20,
+      "prose": 16,
+      "mrr": 0.598,
+      "lookupMs": {
+        "50": 28.519,
+        "95": 35.292
+      }
+    },
+    "gains": [
+      "ID12",
+      "ID13",
+      "ID14"
+    ],
+    "losses": [],
+    "misses": [
+      "NL02",
+      "NL13",
+      "NL14",
+      "NL20"
+    ],
+    "searchCodeUnchangedSinceSet1": true,
+    "runs": 1,
+    "tuned": false,
+    "set1AfterHarnessChange": "27/40 and 34/40 reproduced"
+  },
+  "promptDriftTest": "Fixed JSON key order (LinkedHashMap). Earlier Map.of ordering varied per JVM, so the test could fail spuriously; the saved hashes match the role-then-content order. 3 of 3 runs pass.",
+  "embeddingRetry": {
+    "realClientFindings": {
+      "rateLimitClass": "NonTransientAiException with message 'HTTP 429 - ...'",
+      "serverErrorClass": "TransientAiException",
+      "layers": "Apache HttpClient 5 retries 429 and 503 once after at least 1 s (honors Retry-After); Spring AI RetryTemplate max-attempts counts retries; app policy",
+      "requestsPerFailingCall": {
+        "429": 2,
+        "5xx with spring.ai.retry.max-attempts=3": 8
+      }
+    },
+    "benchmark": {
+      "scale": "1/50",
+      "jobs": "4 x (10 batches of 10 chunks), up to 3 receives",
+      "repeats": 3,
+      "file": "eval/results/embedding-retry-bench.json"
+    },
+    "sustainedRateLimit": {
+      "original": {
+        "completed": "4/4",
+        "rejectedCalls": 55,
+        "equivalentSeconds": 44.7
+      },
+      "beforeThisChange": {
+        "completed": "0/4"
+      },
+      "new": {
+        "completed": "4/4",
+        "rejectedCalls": 39,
+        "equivalentSeconds": 50.3
+      }
+    },
+    "outage": {
+      "original": {
+        "chunksSilentlyLost": "400/400"
+      },
+      "new": {
+        "chunksSilentlyLost": 0,
+        "completed": "4/4"
+      }
+    },
+    "badKey": {
+      "original": {
+        "calls": 2200
+      },
+      "beforeThisChange": {
+        "calls": 12
+      },
+      "new": {
+        "calls": 12
+      }
+    }
+  },
+  "otherFixesThisRound": [
+    "CacheErrorHandler: repository list falls back to PostgreSQL and eviction errors no longer fail the caller when Redis is down",
+    "Dashboard shows failed jobs only for 7 days",
+    "spring.ai.retry bounded to 3 retries in application.yml",
+    "QueueRecoveryIT.cloneFailureIsRetainedForRetryAndThenCompletes used a single short SQS poll that flaked (2 of 4 reruns) on LocalStack; now a bounded long poll, 6 of 6 reruns pass",
+    "GlobalExceptionHandler: exhausted embedding retries return HTTP 503 AI_SERVICE_UNAVAILABLE without provider text (was a 400 carrying the provider message)"
+  ],
+  "generationRepeat": {
+    "model": "Qwen2.5-0.5B-Instruct Q4_K_M, SHA-256 74a4da8c...a9db verified",
+    "image": "pinned llama.cpp digest 7751a6c0...f280",
+    "promptsIdentical": "24/24",
+    "answersIdentical": "14/24",
+    "strictPass": "5/24 (saved review 6/24)",
+    "byFeature": {
+      "chat": "5/12",
+      "debug": "0/6",
+      "interview": "0/6"
+    },
+    "structural": {
+      "finishedBeforeCap": "19/24",
+      "debugFourHeadings": "6/6",
+      "interviewValidDistinct": "6/6"
+    },
+    "files": [
+      "eval/results/generation-rerun.json",
+      "eval/results/generation-rerun-review.tsv"
+    ],
+    "conclusion": "The 5/24 to 6/24 quality gain does not reproduce (one debug case); structural gains reproduce exactly."
+  }
+}

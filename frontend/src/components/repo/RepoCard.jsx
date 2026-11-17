@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import RepositoryNotice from './RepositoryNotice'
 
 // ─── tiny SVG icons (consistent stroke weight: 1.5 - 2) ─────────────────────────
 
@@ -98,8 +99,6 @@ export default function RepoCard({ repo, onRemove, onSync, onDownload, downloadi
         ? { label: 'Syncing', dot: 'bg-violet-500 animate-pulse' }
         : (STATUS[repo.status] ?? { label: repo.status, dot: 'bg-neutral-600' })
 
-    // Never render failed repos in any view
-    if (repo.status === 'FAILED') return null
 
     // Parse owner and repo separately for a cleaner UI
     const slugRaw = repo.githubUrl?.replace('https://github.com/', '').replace(/\/$/, '') ?? ''
@@ -128,7 +127,8 @@ export default function RepoCard({ repo, onRemove, onSync, onDownload, downloadi
                             </div>
                         </div>
 
-                        <SyncNote message={repo.syncMessage} />
+                        <RepositoryNotice repo={repo} />
+                        {!repo.syncing && repo.status === 'READY' && <SyncNote message={repo.syncMessage} />}
                     </div>
 
                     {/* Right Area */}
@@ -306,7 +306,8 @@ export default function RepoCard({ repo, onRemove, onSync, onDownload, downloadi
                 </div>
             )}
 
-            <SyncNote message={repo.syncMessage} />
+            <RepositoryNotice repo={repo} />
+            {!repo.syncing && repo.status === 'READY' && <SyncNote message={repo.syncMessage} />}
 
             {/* ── PENDING / FAILED ─────────────────────────────────────────── */}
             {repo.status === 'FAILED' && (

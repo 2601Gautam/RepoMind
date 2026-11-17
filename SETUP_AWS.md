@@ -12,7 +12,11 @@ Open the SQS console in your chosen region and create a **Standard** queue named
 - Create a dead-letter queue named `repomind-prod-ingestion-dlq` and configure the main queue to move messages there after 3 failed receives.
 - Copy the queue URL. It becomes `AWS_SQS_INGESTION_QUEUE_URL`.
 
-The visibility timeout must exceed the longest expected ingestion. Otherwise SQS can hand the same still-running job to a second worker.
+The consumer renews message visibility and the database ownership lease every one-third of their respective durations. They do not need to expire at the same instant: a delivery that encounters an active database lease is deferred without deletion. Allow margin for scheduler pauses and network latency; a crashed worker stops renewing and becomes reclaimable after expiry.
+
+Database, embedding, clone and unexpected processing errors retain the SQS message for retry. When possible, the worker releases ownership and records PENDING plus the last error; if that database update fails, the PROCESSING lease expires naturally. An explicitly recognized permanent input outcome (currently no supported files) is recorded as FAILED and acknowledged. READY duplicates are also acknowledged without reprocessing.
+
+Repeated failures move to the configured DLQ; configure an alarm and redrive after correcting the cause. The application does not consume the DLQ or automatically change the repository status when SQS moves a message there, so the row may remain PENDING (or PROCESSING after an outage). Receive counts include busy deliveries, not only processing failures. See [AWS DLQ guidance](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
 
 ## 2. Create the S3 archive bucket
 
@@ -46,7 +50,7 @@ Create an IAM user such as `repomind-prod-app` without Console access. Attach th
     {
       "Sid": "RepositoryArchives",
       "Effect": "Allow",
-      "Action": ["s3:PutObject", "s3:GetObject"],
+      "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
       "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/repos/*"
     },
     {
@@ -55,7 +59,8 @@ Create an IAM user such as `repomind-prod-app` without Console access. Attach th
       "Action": [
         "sqs:SendMessage",
         "sqs:ReceiveMessage",
-        "sqs:DeleteMessage"
+        "sqs:DeleteMessage",
+        "sqs:ChangeMessageVisibility"
       ],
       "Resource": "arn:aws:sqs:YOUR_REGION:YOUR_ACCOUNT_ID:YOUR_QUEUE_NAME"
     },

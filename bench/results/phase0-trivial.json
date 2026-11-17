@@ -1,0 +1,46 @@
+{
+  "name": "phase0-trivial-synthetic-repository",
+  "commit": "57d77892912582e7d953566846f4ac84736ad5d1",
+  "date": "2026-11-13T07:22:33.735286+00:00",
+  "machine": {
+    "os": "Windows-10-10.0.26300-SP0",
+    "python": "3.10.11",
+    "java": "openjdk version \"21.0.11\" 2026-04-21 LTS",
+    "docker": "Docker version 29.8.1, build 4a63305",
+    "docker_compose": "Docker Compose version v5.5.1"
+  },
+  "config": {
+    "files": 10,
+    "seed": 20261113,
+    "warmup_runs_discarded": 0,
+    "measured_runs": 5
+  },
+  "runs": [
+    {
+      "run": 1,
+      "duration_ms": 422.30840000047465
+    },
+    {
+      "run": 2,
+      "duration_ms": 463.9728999991348
+    },
+    {
+      "run": 3,
+      "duration_ms": 466.6108000001259
+    },
+    {
+      "run": 4,
+      "duration_ms": 529.272800000399
+    },
+    {
+      "run": 5,
+      "duration_ms": 522.1465999984503
+    }
+  ],
+  "summary": {
+    "median": 466.6108000001259,
+    "p95": 522.1465999984503,
+    "min": 422.30840000047465,
+    "max": 529.272800000399
+  }
+}

@@ -35,6 +35,8 @@ public class Message {
     // Comma-separated file paths used as sources for this response
     // Example: "src/AuthService.java,src/SecurityConfig.java"
     private String sources;
+    @Column(name = "source_paths", columnDefinition = "TEXT")
+    private String sourcePaths;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

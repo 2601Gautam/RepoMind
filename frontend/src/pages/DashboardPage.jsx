@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
-import { ingestRepo, getRepoStatus, RateLimitError } from '../api/client'
+import { useState, useEffect } from 'react'
+import { ingestRepo, RateLimitError } from '../api/client'
 import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useActivity } from '../context/ActivityContext'
 import NavBar from '../components/layout/NavBar'
 import RepoUrlInput from '../components/repo/RepoUrlInput'
 import IngestionProgress from '../components/repo/IngestionProgress'
@@ -10,62 +10,23 @@ import RateLimitBanner from '../components/common/RateLimitBanner'
 export default function DashboardPage() {
     const { user } = useAuth()
 
-    // Session-only state — nothing persisted to localStorage
+    const { repositories, refresh, loading: recovering, error: connectionError } = useActivity()
     const [busy, setBusy] = useState(false)
-    const [current, setCurrent] = useState(null)   // repo being ingested (PROCESSING/PENDING)
-    const [readyRepo, setReadyRepo] = useState(null) // repo that just finished → show success msg
+    const [submitted, setSubmitted] = useState(null)
     const [submitError, setSubmitError] = useState('')
     const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
-    const pollRef = useRef(null)
-
-    function stopPolling() {
-        if (pollRef.current) {
-            clearInterval(pollRef.current)
-            pollRef.current = null
-        }
-    }
-
-    function startPolling(repoId) {
-        stopPolling()
-        pollRef.current = setInterval(async () => {
-            try {
-                const updated = await getRepoStatus(repoId)
-                if (updated.status === 'FAILED') {
-                    // Failed — silently clear everything, no UI trace
-                    stopPolling()
-                    setCurrent(null)
-                    return
-                }
-                setCurrent(updated)
-                if (updated.status === 'READY') {
-                    stopPolling()
-                    setCurrent(null)
-                    setReadyRepo(updated)
-                }
-            } catch { /* silently retry */ }
-        }, 3000)
-    }
-
+    // Failed jobs stay visible for a week so the reason is not missed; older ones remain on the Repositories page.
+    const [openedAt] = useState(() => Date.now())
+    const recent = r => !r.createdAt || openedAt - Date.parse(r.createdAt) < 7 * 24 * 3600 * 1000
+    const current = repositories.filter(r => ['PENDING','PROCESSING'].includes(r.status) || (r.status === 'FAILED' && recent(r)))
+    const readyRepo = submitted && (repositories.find(r=>r.id===submitted.id) || submitted)
     async function handleSubmit(url, token) {
-        setSubmitError('')
-        setReadyRepo(null)
-        setBusy(true)
-        setCurrent(null)
-        stopPolling()
-
-        try {
-            const repo = await ingestRepo(url, token)
-            setCurrent(repo)
-            startPolling(repo.id)
-        } catch (e) {
-            if (e instanceof RateLimitError) {
-                setRateLimitSeconds(e.retryAfterSeconds)
-            } else {
-                setSubmitError(e.message)
-            }
-        } finally {
-            setBusy(false)
-        }
+        setSubmitError(''); setSubmitted(null); setBusy(true)
+        try { setSubmitted(await ingestRepo(url,token)); await refresh() }
+        catch (e) {
+            if (e instanceof RateLimitError) setRateLimitSeconds(e.retryAfterSeconds)
+            else setSubmitError(e.message + ' Check your repository list before submitting again if the connection was interrupted.')
+        } finally { setBusy(false); refresh() }
     }
 
     return (
@@ -134,13 +95,15 @@ export default function DashboardPage() {
                     )}
 
                     <div className="relative z-10">
-                        <IngestionProgress repo={current} />
+                        <p className="text-sm text-neutral-400 mb-3">{recovering ? 'Restoring repository status…' : connectionError || 'Your current and failed ingestion jobs'}</p>
+                        {current.map(repo => <IngestionProgress key={repo.id} repo={repo} />)}
+                        {submitted && !current.some(r=>r.id===submitted.id) && submitted.status !== 'READY' && !repositories.some(r=>r.id===submitted.id) && <IngestionProgress repo={submitted} />}
                     </div>
                 </div>
 
                 {/* Success message — shown only when processing completes in this session */}
-                {readyRepo && (
-                    <SuccessCard repo={readyRepo} onDismiss={() => setReadyRepo(null)} />
+                {readyRepo?.status === 'READY' && (
+                    <SuccessCard repo={readyRepo} onDismiss={() => setSubmitted(null)} />
                 )}
             </main>
         </div>

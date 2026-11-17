@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { BASE, getMe } from '../api/client'
 
 const AuthContext = createContext(null)
@@ -7,19 +7,21 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [authError, setAuthError] = useState('')
 
 
-    async function checkAuthStatus() {
+    const checkAuthStatus = useCallback(async () => {
         try {
             const data = await getMe()
             setUser(data)
+            setAuthError('')
         } catch (err) {
-            setUser(null)
-            throw err;
+            if (err.status === 401) { setUser(null); setAuthError('') }
+            else setAuthError('Cannot verify your session while the server is unreachable. Reconnect and try again.')
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
 
     // On app load, check if user is already logged in
     // The /api/auth/me endpoint reads the httpOnly cookie and returns user info
@@ -32,12 +34,13 @@ export function AuthProvider({ children }) {
                 const user = await getMe()
                 if (active) {
                     setUser(user)
+                    setAuthError('')
                 }
             } catch (err) {
                 if (active) {
-                    setUser(null)
+                    if (err.status === 401) setUser(null)
+                    else setAuthError('Cannot verify your session while the server is unreachable. Reconnect and try again.')
                 }
-            throw err;
             } finally {
                 if (active) {
                     setLoading(false)
@@ -46,11 +49,14 @@ export function AuthProvider({ children }) {
         }
 
         loadUser()
+        const reconnect = () => checkAuthStatus()
+        window.addEventListener('online', reconnect)
 
         return () => {
             active = false
+            window.removeEventListener('online', reconnect)
         }
-    }, [])
+    }, [checkAuthStatus])
 
     async function login(email, password) {
         const res = await fetch(`${BASE}/auth/login`, {
@@ -65,6 +71,7 @@ export function AuthProvider({ children }) {
         }
         const data = await res.json()
         setUser(data)
+        setAuthError('')
         return data
     }
 
@@ -104,7 +111,7 @@ export function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider value={{
-            user, loading,
+            user, loading, authError,
             login, register, logout,
             loginWithGoogle, loginWithGitHub,
             checkAuthStatus

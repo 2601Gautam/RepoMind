@@ -1,0 +1,25 @@
+id	verdict	reason	answer_sha256	source	versus_reviewed_run
+G01	pass	Correct retry count.	3de6125f961b52b4e9e1c5f092c8b0f095a81a94105f6e6fdbf3e4171c52ea21	carried over: answer identical to the reviewed one	identical
+G02	pass	Correct expiry and units.	7979f92cae8f01f193a32c4e89a4b0119ab642e03183d31c2e674c9126d8a484	carried over: answer identical to the reviewed one	identical
+G03	fail	Introduces unsupported queue names and ends mid-return.	ac097ea13af404cb894c8f56a926aa590cb5c7a9623d506567f24f884d6416d1	carried over: answer identical to the reviewed one	identical
+G04	pass	Correct settlement currency.	1d5806ac7f866a6b41922c81e678c4ddb4cfad112060b48840495739849e9bb7	carried over: answer identical to the reviewed one	identical
+G05	fail	States the right precision but invents a conversation and ends mid-sentence.	03d6f2019b41b1ebb781ff2e75a72f1292f8cce41b08b338de6fdfdfef578e41	carried over: answer identical to the reviewed one	identical
+G06	pass	Both readiness conditions appear.	99a30df759e4743459d2c88120066c096cd7fba74e91162a110a41d0305deb2b	carried over: answer identical to the reviewed one	identical
+G07	fail	Mixes the archive and login conversation and ends mid-sentence.	0dafe7fd431d11f60ccf53fdf52d41ddf4a89699ac06873a1c41569a03171e67	carried over: answer identical to the reviewed one	identical
+G08	fail	Refuses despite the supplied order and limits.	a0d812f64d97cf3678d4264387a4a2bd1346228088230fa753138717fa35f4d2	carried over: answer identical to the reviewed one	identical
+G09	fail	Identifies AlertBus but omits the Parser handoff in the reference rubric.	b2ad4d4cedc45311e1ef1c2f7c72a64bac2cb126e7529c60573c469089528cb0	carried over: answer identical to the reviewed one	identical
+G10	fail	Keeps the revision and marks retry but invents version-control behavior and cuts off.	d1b64ff262a3de9660726f5489b3a29fa218dcbcff1424638c26df8e66bf3003	carried over: answer identical to the reviewed one	identical
+G11	pass	Abstains from an unsupported savings rate.	475a4b0a29e16f8863e1d2240d5669b6374a91e405a7cf93cdeae4712662bf89	carried over: answer identical to the reviewed one	identical
+G12	fail	Invents approval code in place of identifying the missing evidence.	290b5bff5926be4c79cd2f66f6d99975f7c492d16c63b9974090633f13c74cae	carried over: answer identical to the reviewed one	identical
+G13	fail	Says the code length is 4 although the input is two characters, and never says to supply a three-letter code.	37cbff59b6c14f25fe2384c11bb26b11e4ce4e97f6ac829d7859a17ff95d90be	newly graded on this run	differs
+G14	fail	Fix and prevention restate the symptom as advice and never say the cause is unknown or ask for more evidence. Borderline: it invents no service.	8cba74c9065196eaa36591c3b97053a182499a180cde8a2d18989ecfaef993a3	newly graded on this run	differs
+G15	fail	Tells the user to provide the key in the trace, which is not a fix, and repeats it under prevention.	e085f301d7617d0ab45af221f70dc7e3af1c35d0137ca6aa8948bfbf91b8e84a	newly graded on this run	differs
+G16	fail	Says index 4 exceeds size 4 and misses the loop's inclusive bound.	d30a98a6de82f81e406a2b8e6eddacf46f50abf4f5763e6ca90e36e6d6fef1c3	carried over: answer identical to the reviewed one	identical
+G17	fail	The prevention section says it is not provided.	ca075a2fdac9642f9f72e45133f3e489c85f2dd3aa30e18f37b8876a88b4d36d	newly graded on this run	differs
+G18	fail	Says the supplied submission timestamp is missing and does not request worker timings.	f8cd48808712088534c5e647c31fc55a770167bd3145c6c0c40894af4be9ed58	carried over: answer identical to the reviewed one	identical
+G19	fail	Claims done() stops the timer and invents continuous measurement.	42a19b067a42df664fa6eb607f396c088b2df27acfd57558a762fa8ae76d5200	newly graded on this run	differs
+G20	fail	Invents an accounting system for a small business.	0f1f8b95173d2073544d96771babbfe30bfdd29eea366423867ae1a6eb12378a	newly graded on this run	differs
+G21	fail	Invents a condition on tick and says done() returns the remaining value.	4176c91e9f59e35f8856cccaadca599ba14e6a4b77082c3818442a30ae663996	newly graded on this run	differs
+G22	fail	Invents ordering by iteration and says adding an entry does not change the total.	b3a78d3a53591f4c50b03004c171ad1283b5aeb328cd5671bb6b0b977273e563	newly graded on this run	differs
+G23	fail	Invents a linked list and claims reading the counter decrements it.	10e8c30ea9240e8dabd12a2e72b08225153cd50988feac1467b14b40232bd85f	newly graded on this run	differs
+G24	fail	Asserts ArrayList as the implementation without supporting code.	69b7d03661de4878f8280e03b00bcd50c620f33580838896414e2a3cb307bb55	newly graded on this run	differs

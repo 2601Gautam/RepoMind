@@ -1,0 +1,24 @@
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   QueueLongRunningIT.longCloneOutlivesLeaseAndVisibilityWithoutStartingAgain:47 Only the live lease owner may enter clone ==> expected: <1> but was: <2>
+[INFO] 
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  33.876 s
+[INFO] Finished at: 2026-11-17T17:39:03+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.5:test (default-test) on project repomind: There are test failures.
+[ERROR] 
+[ERROR] See C:\Users\mg932\Desktop\RepoMind FInal\RepoMind-main\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

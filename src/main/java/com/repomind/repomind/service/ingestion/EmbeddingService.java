@@ -16,6 +16,7 @@ public class EmbeddingService {
     // and auto-creates a GoogleGenAiTextEmbeddingModel bean, injected here automatically
     // No custom HTTP code needed — this is what Nomic could never give us
     private final EmbeddingModel embeddingModel;
+    private final EmbeddingRetryPolicy retryPolicy;
 
 
 
@@ -29,6 +30,11 @@ public class EmbeddingService {
         // never assume the config worked, always check this log line
         log.debug("Generated embedding with {} dimensions", result.length);
         return result;
+    }
+
+    /** Embeds a question while a person waits: a few quick, jittered attempts for rate limits and outages, then fail. */
+    public float[] embedForQuery(String text) {
+        return retryPolicy.executeInteractive(() -> embed(text));
     }
 
     public List<float[]> embedBatch(List<String> texts) {

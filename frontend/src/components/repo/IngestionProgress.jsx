@@ -1,7 +1,9 @@
-// Renders nothing if repo is null, READY, or FAILED
+import RepositoryNotice from './RepositoryNotice'
+// Displays terminal failures and queued retries as well as live progress.
 // IngestPage just renders <IngestionProgress repo={current} /> — no conditions needed there
 export default function IngestionProgress({ repo }) {
-    if (!repo || repo.status === 'READY' || repo.status === 'FAILED') return null
+    if (!repo || repo.status === 'READY') return null
+    if (repo.status === 'FAILED') return <RepositoryNotice repo={repo} showName />
 
     const pct = repo.totalFiles > 0
         ? Math.round((repo.processedFiles / repo.totalFiles) * 100)
@@ -26,7 +28,7 @@ export default function IngestionProgress({ repo }) {
                         </div>
                         <div>
                             <p className="text-[12.5px] font-semibold text-white/90 leading-none">
-                                {isPending ? 'Queued for processing' : 'Indexing in progress'}
+                                {isPending ? (repo.errorMessage ? 'Awaiting retry' : 'Queued for processing') : 'Indexing in progress'}
                             </p>
                             <p className="text-[11px] text-neutral-500 mt-0.5 truncate max-w-[240px]">
                                 {repo.repoName || 'Repository'}
@@ -53,9 +55,10 @@ export default function IngestionProgress({ repo }) {
                 {/* File counts */}
                 {repo.totalFiles > 0 && (
                     <p className="text-[11px] text-neutral-500">
-                        {repo.processedFiles.toLocaleString()} of {repo.totalFiles.toLocaleString()} files processed
+                        {(repo.processedFiles || 0).toLocaleString()} of {repo.totalFiles.toLocaleString()} files processed
                     </p>
                 )}
+                <RepositoryNotice repo={repo} />
             </div>
         </div>
     )

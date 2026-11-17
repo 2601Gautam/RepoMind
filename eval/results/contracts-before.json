@@ -1,0 +1,122 @@
+[
+  {
+    "id": "C01",
+    "status": "failure",
+    "detail": "expected: <1> but was: <2>"
+  },
+  {
+    "id": "C02",
+    "status": "failure",
+    "detail": "source paths must round-trip as a JSON array ==> expected: <true> but was: <false>"
+  },
+  {
+    "id": "C03",
+    "status": "error",
+    "detail": "Illegal unquoted character ((CTRL-CHAR, code 9)): has to be escaped using backslash to be included in string value\n at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line"
+  },
+  {
+    "id": "C04",
+    "status": "failure",
+    "detail": "source paths must round-trip as a JSON array ==> expected: <true> but was: <false>"
+  },
+  {
+    "id": "C05",
+    "status": "failure",
+    "detail": "source paths must round-trip as a JSON array ==> expected: <true> but was: <false>"
+  },
+  {
+    "id": "C06",
+    "status": "failure",
+    "detail": "source paths must round-trip as a JSON array ==> expected: <true> but was: <false>"
+  },
+  {
+    "id": "C07",
+    "status": "failure",
+    "detail": "source paths must round-trip as a JSON array ==> expected: <true> but was: <false>"
+  },
+  {
+    "id": "C08",
+    "status": "failure",
+    "detail": "source paths must round-trip as a JSON array ==> expected: <true> but was: <false>"
+  },
+  {
+    "id": "C09",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "C10",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "C11",
+    "status": "failure",
+    "detail": "Expected java.lang.RuntimeException to be thrown, but nothing was thrown."
+  },
+  {
+    "id": "C12",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "D01",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "D02",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "D03",
+    "status": "error",
+    "detail": "Illegal unquoted character ((CTRL-CHAR, code 9)): has to be escaped using backslash to be included in string value\n at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line"
+  },
+  {
+    "id": "D04",
+    "status": "failure",
+    "detail": "expected: <[src/a\\b.java, src/q\"r.java]> but was: <[src/a&#8;.java, src/q\"r.java]>"
+  },
+  {
+    "id": "D05",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "D06",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "I01",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "I02",
+    "status": "passed",
+    "detail": null
+  },
+  {
+    "id": "I03",
+    "status": "failure",
+    "detail": "Expected java.lang.RuntimeException to be thrown, but nothing was thrown."
+  },
+  {
+    "id": "I04",
+    "status": "failure",
+    "detail": "Expected java.lang.RuntimeException to be thrown, but nothing was thrown."
+  },
+  {
+    "id": "I05",
+    "status": "failure",
+    "detail": "Expected java.lang.RuntimeException to be thrown, but nothing was thrown."
+  },
+  {
+    "id": "I06",
+    "status": "passed",
+    "detail": null
+  }
+]

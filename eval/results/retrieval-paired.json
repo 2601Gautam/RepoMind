@@ -1,0 +1,4656 @@
+{
+  "corpusRevision" : "7988a6d76bc4e82169645eabc8e15bf05f37defb",
+  "embeddingModel" : "sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "replaySha256" : "3b2d636baeaccc5f4c0b1bfd8b2ca6e62189d4ed399e34e860cf521cdaa1e541",
+  "labelsSha256" : "27921f1e95b9dc2d9c725304dac83e1105f24d73fcce22ba564ace8f04eab0c9",
+  "files" : 116,
+  "chunks" : 206,
+  "topK" : 12,
+  "timedPasses" : 5,
+  "postgres" : "16.16 (Debian 16.16-1.pgdg12+1)",
+  "pgvector" : "0.8.7",
+  "variants" : {
+    "vector" : [ {
+      "id" : "ID01",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 70,
+        "end" : 75
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/CacheService.java",
+        "start" : 1,
+        "end" : 18
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      } ],
+      "firstSupportingRank" : 12,
+      "lookupMicros" : [ 11125, 9252, 10583, 9041, 8970 ]
+    }, {
+      "id" : "ID02",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 188,
+        "end" : 197
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 86,
+        "end" : 108
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 14687, 9333, 9895, 9164, 9479 ]
+    }, {
+      "id" : "ID03",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 215,
+        "end" : 216
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 86,
+        "end" : 141
+      } ],
+      "firstSupportingRank" : 9,
+      "lookupMicros" : [ 15779, 9398, 11167, 9013, 9332 ]
+    }, {
+      "id" : "ID04",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 85,
+        "end" : 94
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 341,
+        "end" : 356
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 10088, 9462, 9792, 8547, 9759 ]
+    }, {
+      "id" : "ID05",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 155,
+        "end" : 174
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueuePublisher.java",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 10114, 9093, 9980, 8890, 9137 ]
+    }, {
+      "id" : "ID06",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 84,
+        "end" : 93
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/annotation/RateLimit.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/RateLimitException.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/InterviewController.java",
+        "start" : 1,
+        "end" : 61
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueuePublisher.java",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      } ],
+      "firstSupportingRank" : 10,
+      "lookupMicros" : [ 9794, 9042, 10530, 8467, 8726 ]
+    }, {
+      "id" : "ID07",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 199,
+        "end" : 210
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/InterviewSession.java",
+        "start" : 1,
+        "end" : 52
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9815, 9862, 10026, 9684, 8698 ]
+    }, {
+      "id" : "ID08",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 172,
+        "end" : 178
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/CodeChunk.java",
+        "start" : 1,
+        "end" : 60
+      }, {
+        "path" : "frontend/src/components/repo/IngestionProgress.jsx",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/GenerateSummary.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/IngestPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 9614, 9249, 10023, 8833, 9167 ]
+    }, {
+      "id" : "ID09",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 209,
+        "end" : 222
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 256,
+        "end" : 264
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/JacksonConfig.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/InterviewQuestionDto.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatResponse.java",
+        "start" : 1,
+        "end" : 15
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9554, 9269, 9437, 9211, 8945 ]
+    }, {
+      "id" : "ID10",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 291,
+        "end" : 292
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/Conversation.java",
+        "start" : 1,
+        "end" : 44
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/InterviewSession.java",
+        "start" : 1,
+        "end" : 52
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9306, 8997, 9639, 8642, 9826 ]
+    }, {
+      "id" : "ID11",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 58,
+        "end" : 60
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 12,
+      "lookupMicros" : [ 9809, 8688, 9626, 9026, 9116 ]
+    }, {
+      "id" : "ID12",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 64,
+        "end" : 69
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/RateLimitException.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/HealthController.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      } ],
+      "firstSupportingRank" : 12,
+      "lookupMicros" : [ 9413, 8469, 9507, 8972, 9609 ]
+    }, {
+      "id" : "ID13",
+      "expected" : {
+        "path" : "frontend/src/components/repo/RepoUrlInput.jsx",
+        "start" : 24,
+        "end" : 25
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/IngestRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "frontend/src/components/repo/RepoUrlInput.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/JwtUtil.java",
+        "start" : 1,
+        "end" : 89
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/InterviewRequest.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/SyncRequest.java",
+        "start" : 1,
+        "end" : 9
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 8960, 9479, 9055, 9334, 9514 ]
+    }, {
+      "id" : "ID14",
+      "expected" : {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 10,
+        "end" : 13
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/common/ToolNavLinks.jsx",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/components/layout/NavBar.jsx",
+        "start" : 86,
+        "end" : 158
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/utility/FileCloneUtil.java",
+        "start" : 1,
+        "end" : 12
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/IngestPage.jsx",
+        "start" : 86,
+        "end" : 110
+      }, {
+        "path" : "frontend/src/main.jsx",
+        "start" : 1,
+        "end" : 11
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 341,
+        "end" : 356
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 9561, 9166, 8707, 9075, 10041 ]
+    }, {
+      "id" : "ID15",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 249,
+        "end" : 260
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/Message.java",
+        "start" : 1,
+        "end" : 48
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8828, 10890, 8286, 8808, 8849 ]
+    }, {
+      "id" : "ID16",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/DebugService.java",
+        "start" : 50,
+        "end" : 56
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/DebugService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/DebugResponse.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 256,
+        "end" : 308
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 256,
+        "end" : 351
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 9977, 10164, 8819, 8637, 9050 ]
+    }, {
+      "id" : "ID17",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 201,
+        "end" : 203
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/ProfilePage.jsx",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 341,
+        "end" : 351
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "frontend/src/App.css",
+        "start" : 171,
+        "end" : 184
+      } ],
+      "firstSupportingRank" : 5,
+      "lookupMicros" : [ 9225, 9412, 8719, 8728, 8742 ]
+    }, {
+      "id" : "ID18",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 229,
+        "end" : 240
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/GenerateSummary.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/GenerateEmbeddingQuery.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/InterviewQuestion.java",
+        "start" : 1,
+        "end" : 53
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/Message.java",
+        "start" : 1,
+        "end" : 48
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/InterviewQuestionDto.java",
+        "start" : 1,
+        "end" : 16
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9661, 9230, 9404, 8635, 8947 ]
+    }, {
+      "id" : "ID19",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 101,
+        "end" : 104
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/CacheService.java",
+        "start" : 1,
+        "end" : 18
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 9568, 9817, 8890, 9489, 8574 ]
+    }, {
+      "id" : "ID20",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 68,
+        "end" : 76
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/components/chat/SuggestedQuestions.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "frontend/src/components/common/ToolNavLinks.jsx",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "frontend/src/pages/InterviewPage.jsx",
+        "start" : 596,
+        "end" : 665
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/CodeChunk.java",
+        "start" : 1,
+        "end" : 60
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/debug/DebugSection.jsx",
+        "start" : 1,
+        "end" : 96
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9508, 8956, 8956, 8615, 8832 ]
+    }, {
+      "id" : "NL01",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 76,
+        "end" : 81
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9306, 9587, 9359, 8681, 8771 ]
+    }, {
+      "id" : "NL02",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 26,
+        "end" : 27
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/ConversationRepository.java",
+        "start" : 1,
+        "end" : 34
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/ChatController.java",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/AiConfig.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8752, 9102, 9105, 9115, 8831 ]
+    }, {
+      "id" : "NL03",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/AuthService.java",
+        "start" : 80,
+        "end" : 84
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 86,
+        "end" : 141
+      }, {
+        "path" : "frontend/src/components/common/ProtectedRoute.jsx",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/context/AuthContext.jsx",
+        "start" : 86,
+        "end" : 124
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/LoginRequest.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/User.java",
+        "start" : 1,
+        "end" : 56
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/OAuth2SuccessHandler.java",
+        "start" : 86,
+        "end" : 159
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 86,
+        "end" : 149
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/JwtFilter.java",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/AuthService.java",
+        "start" : 1,
+        "end" : 90
+      }, {
+        "path" : "frontend/src/context/AuthContext.jsx",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 11,
+      "lookupMicros" : [ 8846, 9344, 8464, 9088, 8272 ]
+    }, {
+      "id" : "NL04",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 99,
+        "end" : 103
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 86,
+        "end" : 141
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/User.java",
+        "start" : 1,
+        "end" : 56
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/AwsConfig.java",
+        "start" : 1,
+        "end" : 73
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/AuthService.java",
+        "start" : 1,
+        "end" : 90
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/LoginRequest.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "frontend/src/pages/LandingPage.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "frontend/src/components/common/LoadingSpinner.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/OAuth2SuccessHandler.java",
+        "start" : 86,
+        "end" : 159
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepoRepository.java",
+        "start" : 1,
+        "end" : 44
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 11872, 9945, 10006, 9480, 9160 ]
+    }, {
+      "id" : "NL05",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 41,
+        "end" : 46
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/JwtFilter.java",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/InterviewController.java",
+        "start" : 1,
+        "end" : 61
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 86,
+        "end" : 149
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9381, 8885, 10591, 8968, 9207 ]
+    }, {
+      "id" : "NL06",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 78,
+        "end" : 83
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8935, 9159, 10339, 8860, 8727 ]
+    }, {
+      "id" : "NL07",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 116,
+        "end" : 119
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 8694, 9075, 9729, 10184, 8828 ]
+    }, {
+      "id" : "NL08",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 128,
+        "end" : 135
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/utility/FileCloneUtil.java",
+        "start" : 1,
+        "end" : 12
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 256,
+        "end" : 355
+      } ],
+      "firstSupportingRank" : 6,
+      "lookupMicros" : [ 9155, 9382, 10177, 9475, 9802 ]
+    }, {
+      "id" : "NL09",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 85,
+        "end" : 98
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepoRepository.java",
+        "start" : 1,
+        "end" : 44
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/ConversationRepository.java",
+        "start" : 1,
+        "end" : 34
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9107, 9289, 9715, 8765, 9018 ]
+    }, {
+      "id" : "NL10",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 189,
+        "end" : 195
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 86,
+        "end" : 108
+      }, {
+        "path" : "migrations/20260905_add_repository_sync_message.sql",
+        "start" : 1,
+        "end" : 2
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 9193, 8673, 8792, 8500, 9741 ]
+    }, {
+      "id" : "NL11",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 76,
+        "end" : 86
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueuePublisher.java",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 256,
+        "end" : 308
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/annotation/RateLimit.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/CacheService.java",
+        "start" : 1,
+        "end" : 18
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 9547, 8984, 8650, 9420, 9849 ]
+    }, {
+      "id" : "NL12",
+      "expected" : {
+        "path" : "frontend/src/api/client.js",
+        "start" : 244,
+        "end" : 252
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 256,
+        "end" : 264
+      }, {
+        "path" : "frontend/src/pages/InterviewPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/context/AuthContext.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 9416, 9371, 10047, 10537, 9921 ]
+    }, {
+      "id" : "NL13",
+      "expected" : {
+        "path" : "frontend/src/api/client.js",
+        "start" : 265,
+        "end" : 272
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/HealthController.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 86,
+        "end" : 149
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 9860, 10626, 9561, 9307, 9867 ]
+    }, {
+      "id" : "NL14",
+      "expected" : {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 25,
+        "end" : 30
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewQuestionRepository.java",
+        "start" : 1,
+        "end" : 11
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "migrations/20260905_add_repository_sync_message.sql",
+        "start" : 1,
+        "end" : 2
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/DebugResponse.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8685, 9675, 8633, 9576, 10057 ]
+    }, {
+      "id" : "NL15",
+      "expected" : {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 16,
+        "end" : 32
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 256,
+        "end" : 351
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/DebugService.java",
+        "start" : 86,
+        "end" : 119
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 10,
+      "lookupMicros" : [ 9337, 8964, 8850, 9054, 10111 ]
+    }, {
+      "id" : "NL16",
+      "expected" : {
+        "path" : "init.sql",
+        "start" : 138,
+        "end" : 140
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/CodeChunk.java",
+        "start" : 1,
+        "end" : 60
+      }, {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/index.css",
+        "start" : 86,
+        "end" : 114
+      } ],
+      "firstSupportingRank" : 8,
+      "lookupMicros" : [ 10492, 8998, 9068, 9616, 9166 ]
+    }, {
+      "id" : "NL17",
+      "expected" : {
+        "path" : "init.sql",
+        "start" : 97,
+        "end" : 105
+      },
+      "ranked" : [ {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepoRepository.java",
+        "start" : 1,
+        "end" : 44
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepository.java",
+        "start" : 1,
+        "end" : 13
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/User.java",
+        "start" : 1,
+        "end" : 56
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 9656, 9598, 9207, 8382, 8486 ]
+    }, {
+      "id" : "NL18",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 26,
+        "end" : 26
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "frontend/src/components/common/ToolNavLinks.jsx",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/index.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/debug/DebugSection.jsx",
+        "start" : 1,
+        "end" : 96
+      }, {
+        "path" : "frontend/src/pages/InterviewPage.jsx",
+        "start" : 596,
+        "end" : 665
+      }, {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 9076, 10420, 8331, 8586, 8339 ]
+    }, {
+      "id" : "NL19",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/EmailService.java",
+        "start" : 55,
+        "end" : 59
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/RegisterRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/OAuth2SuccessHandler.java",
+        "start" : 86,
+        "end" : 159
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/EmailService.java",
+        "start" : 1,
+        "end" : 68
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatResponse.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepository.java",
+        "start" : 1,
+        "end" : 13
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/LoginRequest.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/ChatRequest.java",
+        "start" : 1,
+        "end" : 12
+      } ],
+      "firstSupportingRank" : 6,
+      "lookupMicros" : [ 10088, 10104, 9518, 8896, 8948 ]
+    }, {
+      "id" : "NL20",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 92,
+        "end" : 96
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 9712, 9783, 9669, 8847, 8858 ]
+    } ],
+    "candidate" : [ {
+      "id" : "ID01",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 70,
+        "end" : 75
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/CacheService.java",
+        "start" : 1,
+        "end" : 18
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 18428, 17989, 18008, 16660, 17583 ]
+    }, {
+      "id" : "ID02",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 188,
+        "end" : 197
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 86,
+        "end" : 108
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 18955, 17835, 17873, 16846, 17383 ]
+    }, {
+      "id" : "ID03",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 215,
+        "end" : 216
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 86,
+        "end" : 141
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 18934, 17658, 18038, 16543, 17433 ]
+    }, {
+      "id" : "ID04",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 85,
+        "end" : 94
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 341,
+        "end" : 356
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 18610, 17650, 18110, 17228, 19415 ]
+    }, {
+      "id" : "ID05",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 155,
+        "end" : 174
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueuePublisher.java",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 16834, 16953, 18804, 17251, 17468 ]
+    }, {
+      "id" : "ID06",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 84,
+        "end" : 93
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/annotation/RateLimit.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/RateLimitException.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/InterviewController.java",
+        "start" : 1,
+        "end" : 61
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueuePublisher.java",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17706, 16997, 21988, 16395, 17021 ]
+    }, {
+      "id" : "ID07",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 199,
+        "end" : 210
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17672, 17177, 17733, 18173, 16483 ]
+    }, {
+      "id" : "ID08",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 172,
+        "end" : 178
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/CodeChunk.java",
+        "start" : 1,
+        "end" : 60
+      }, {
+        "path" : "frontend/src/components/repo/IngestionProgress.jsx",
+        "start" : 1,
+        "end" : 62
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/GenerateSummary.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 17601, 16883, 17208, 16444, 17500 ]
+    }, {
+      "id" : "ID09",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 209,
+        "end" : 222
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 256,
+        "end" : 264
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/JacksonConfig.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 17957, 16860, 17332, 17637, 17198 ]
+    }, {
+      "id" : "ID10",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 291,
+        "end" : 292
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/Conversation.java",
+        "start" : 1,
+        "end" : 44
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/InterviewSession.java",
+        "start" : 1,
+        "end" : 52
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      } ],
+      "firstSupportingRank" : 5,
+      "lookupMicros" : [ 18260, 17072, 18835, 16349, 18110 ]
+    }, {
+      "id" : "ID11",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 58,
+        "end" : 60
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17959, 17691, 17670, 16373, 17086 ]
+    }, {
+      "id" : "ID12",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 64,
+        "end" : 69
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/RateLimitException.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/HealthController.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17353, 16421, 17177, 16803, 17326 ]
+    }, {
+      "id" : "ID13",
+      "expected" : {
+        "path" : "frontend/src/components/repo/RepoUrlInput.jsx",
+        "start" : 24,
+        "end" : 25
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/repo/RepoUrlInput.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/repo/RepoUrlInput.jsx",
+        "start" : 86,
+        "end" : 136
+      }, {
+        "path" : "frontend/src/pages/IngestPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/IngestRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "frontend/src/pages/DashboardPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/DashboardPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/JwtUtil.java",
+        "start" : 1,
+        "end" : 89
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17382, 17211, 17715, 17400, 17534 ]
+    }, {
+      "id" : "ID14",
+      "expected" : {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 10,
+        "end" : 13
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/common/ToolNavLinks.jsx",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "frontend/src/components/layout/NavBar.jsx",
+        "start" : 86,
+        "end" : 158
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/utility/FileCloneUtil.java",
+        "start" : 1,
+        "end" : 12
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 18128, 17443, 17800, 17284, 18640 ]
+    }, {
+      "id" : "ID15",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 249,
+        "end" : 260
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/ChatController.java",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17957, 20011, 16573, 16894, 17556 ]
+    }, {
+      "id" : "ID16",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/DebugService.java",
+        "start" : 50,
+        "end" : 56
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/DebugService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/DebugController.java",
+        "start" : 1,
+        "end" : 41
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/DebugService.java",
+        "start" : 86,
+        "end" : 119
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/DebugResponse.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 256,
+        "end" : 308
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 18573, 18403, 16688, 16269, 17409 ]
+    }, {
+      "id" : "ID17",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 201,
+        "end" : 203
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/ProfilePage.jsx",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 341,
+        "end" : 351
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 17770, 18788, 16773, 17325, 16678 ]
+    }, {
+      "id" : "ID18",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 229,
+        "end" : 240
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/GenerateSummary.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/GenerateEmbeddingQuery.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/InterviewQuestion.java",
+        "start" : 1,
+        "end" : 53
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/Message.java",
+        "start" : 1,
+        "end" : 48
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 17577, 17034, 16999, 16581, 16623 ]
+    }, {
+      "id" : "ID19",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 101,
+        "end" : 104
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/ChatController.java",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/CacheService.java",
+        "start" : 1,
+        "end" : 18
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 16838, 18139, 16662, 17257, 16467 ]
+    }, {
+      "id" : "ID20",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 68,
+        "end" : 76
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/components/chat/SuggestedQuestions.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "frontend/src/components/common/ToolNavLinks.jsx",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "frontend/src/pages/InterviewPage.jsx",
+        "start" : 596,
+        "end" : 665
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/CodeChunk.java",
+        "start" : 1,
+        "end" : 60
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/debug/DebugSection.jsx",
+        "start" : 1,
+        "end" : 96
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 18338, 18614, 17252, 16829, 15876 ]
+    }, {
+      "id" : "NL01",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 76,
+        "end" : 81
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8940, 9791, 9458, 9224, 8522 ]
+    }, {
+      "id" : "NL02",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 26,
+        "end" : 27
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RedisConversationMemoryService.java",
+        "start" : 86,
+        "end" : 106
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/ConversationRepository.java",
+        "start" : 1,
+        "end" : 34
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/ChatController.java",
+        "start" : 1,
+        "end" : 88
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/AiConfig.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8851, 9346, 8946, 8793, 9490 ]
+    }, {
+      "id" : "NL03",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/AuthService.java",
+        "start" : 80,
+        "end" : 84
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 86,
+        "end" : 141
+      }, {
+        "path" : "frontend/src/components/common/ProtectedRoute.jsx",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "frontend/src/context/AuthContext.jsx",
+        "start" : 86,
+        "end" : 124
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/LoginRequest.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/User.java",
+        "start" : 1,
+        "end" : 56
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/OAuth2SuccessHandler.java",
+        "start" : 86,
+        "end" : 159
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 86,
+        "end" : 149
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/JwtFilter.java",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/AuthService.java",
+        "start" : 1,
+        "end" : 90
+      }, {
+        "path" : "frontend/src/context/AuthContext.jsx",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 11,
+      "lookupMicros" : [ 9840, 9043, 8699, 8859, 8674 ]
+    }, {
+      "id" : "NL04",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 99,
+        "end" : 103
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 86,
+        "end" : 141
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/User.java",
+        "start" : 1,
+        "end" : 56
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/AwsConfig.java",
+        "start" : 1,
+        "end" : 73
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/AuthService.java",
+        "start" : 1,
+        "end" : 90
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/LoginRequest.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/config/SecurityConfig.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "frontend/src/pages/LandingPage.jsx",
+        "start" : 341,
+        "end" : 440
+      }, {
+        "path" : "frontend/src/components/common/LoadingSpinner.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/OAuth2SuccessHandler.java",
+        "start" : 86,
+        "end" : 159
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepoRepository.java",
+        "start" : 1,
+        "end" : 44
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 9038, 9462, 8786, 8902, 8904 ]
+    }, {
+      "id" : "NL05",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 41,
+        "end" : 46
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/JwtFilter.java",
+        "start" : 86,
+        "end" : 113
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/InterviewController.java",
+        "start" : 1,
+        "end" : 61
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 86,
+        "end" : 149
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9404, 9015, 9700, 8746, 8977 ]
+    }, {
+      "id" : "NL06",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 78,
+        "end" : 83
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 9033, 9224, 9832, 9682, 8538 ]
+    }, {
+      "id" : "NL07",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 116,
+        "end" : 119
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/CodeChunkRepository.java",
+        "start" : 1,
+        "end" : 74
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 9016, 9532, 9991, 10190, 8979 ]
+    }, {
+      "id" : "NL08",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 128,
+        "end" : 135
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/utility/FileCloneUtil.java",
+        "start" : 1,
+        "end" : 12
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 256,
+        "end" : 355
+      } ],
+      "firstSupportingRank" : 6,
+      "lookupMicros" : [ 8837, 9417, 9988, 9695, 9429 ]
+    }, {
+      "id" : "NL09",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 85,
+        "end" : 98
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepoRepository.java",
+        "start" : 1,
+        "end" : 44
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/ConversationRepository.java",
+        "start" : 1,
+        "end" : 34
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/RepoJpaRepository.java",
+        "start" : 1,
+        "end" : 95
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8945, 8388, 9475, 9250, 10241 ]
+    }, {
+      "id" : "NL10",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 189,
+        "end" : 195
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 86,
+        "end" : 108
+      }, {
+        "path" : "migrations/20260905_add_repository_sync_message.sql",
+        "start" : 1,
+        "end" : 2
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 3,
+      "lookupMicros" : [ 10755, 9025, 9275, 8571, 10501 ]
+    }, {
+      "id" : "NL11",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 76,
+        "end" : 86
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueuePublisher.java",
+        "start" : 1,
+        "end" : 46
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 256,
+        "end" : 308
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/annotation/RateLimit.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/CacheService.java",
+        "start" : 1,
+        "end" : 18
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 10198, 8752, 8707, 8626, 9858 ]
+    }, {
+      "id" : "NL12",
+      "expected" : {
+        "path" : "frontend/src/api/client.js",
+        "start" : 244,
+        "end" : 252
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 256,
+        "end" : 264
+      }, {
+        "path" : "frontend/src/pages/InterviewPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/RateLimitService.java",
+        "start" : 1,
+        "end" : 86
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/context/AuthContext.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 10400, 9477, 9879, 10472, 9931 ]
+    }, {
+      "id" : "NL13",
+      "expected" : {
+        "path" : "frontend/src/api/client.js",
+        "start" : 265,
+        "end" : 272
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 256,
+        "end" : 293
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/aspect/RateLimitAspect.java",
+        "start" : 86,
+        "end" : 112
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/HealthController.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/ChatPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/AuthController.java",
+        "start" : 86,
+        "end" : 149
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 256,
+        "end" : 328
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 9310, 9480, 9262, 10479, 9924 ]
+    }, {
+      "id" : "NL14",
+      "expected" : {
+        "path" : "frontend/src/pages/AllReposPage.jsx",
+        "start" : 25,
+        "end" : 30
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewQuestionRepository.java",
+        "start" : 1,
+        "end" : 11
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/queue/IngestionJobMessage.java",
+        "start" : 1,
+        "end" : 17
+      }, {
+        "path" : "migrations/20260905_add_repository_sync_message.sql",
+        "start" : 1,
+        "end" : 2
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java",
+        "start" : 171,
+        "end" : 195
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/DebugResponse.java",
+        "start" : 1,
+        "end" : 27
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/RepoEntity.java",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : null,
+      "lookupMicros" : [ 8809, 10077, 8453, 9203, 9402 ]
+    }, {
+      "id" : "NL15",
+      "expected" : {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 16,
+        "end" : 32
+      },
+      "ranked" : [ {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 256,
+        "end" : 351
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/DebugService.java",
+        "start" : 86,
+        "end" : 119
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java",
+        "start" : 86,
+        "end" : 101
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/pages/DebugPage.jsx",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ChatService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/api/client.js",
+        "start" : 171,
+        "end" : 270
+      } ],
+      "firstSupportingRank" : 10,
+      "lookupMicros" : [ 9258, 9490, 10647, 9003, 10529 ]
+    }, {
+      "id" : "NL16",
+      "expected" : {
+        "path" : "init.sql",
+        "start" : 138,
+        "end" : 140
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/DebugRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/CodeChunk.java",
+        "start" : 1,
+        "end" : 60
+      }, {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ConversationMemoryService.java",
+        "start" : 1,
+        "end" : 26
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/index.css",
+        "start" : 86,
+        "end" : 114
+      } ],
+      "firstSupportingRank" : 8,
+      "lookupMicros" : [ 11337, 9393, 9060, 9088, 9666 ]
+    }, {
+      "id" : "NL17",
+      "expected" : {
+        "path" : "init.sql",
+        "start" : 97,
+        "end" : 105
+      },
+      "ranked" : [ {
+        "path" : "init.sql",
+        "start" : 86,
+        "end" : 164
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/UserRepo.java",
+        "start" : 1,
+        "end" : 47
+      }, {
+        "path" : "migrations/20260902_add_repository_is_private.sql",
+        "start" : 1,
+        "end" : 6
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepoRepository.java",
+        "start" : 1,
+        "end" : 44
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepository.java",
+        "start" : 1,
+        "end" : 13
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "init.sql",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/InterviewSessionRepository.java",
+        "start" : 1,
+        "end" : 19
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/model/entity/User.java",
+        "start" : 1,
+        "end" : 56
+      } ],
+      "firstSupportingRank" : 1,
+      "lookupMicros" : [ 8955, 9246, 9224, 8540, 8267 ]
+    }, {
+      "id" : "NL18",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 26,
+        "end" : 26
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/InterviewService.java",
+        "start" : 171,
+        "end" : 264
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/ChunkingService.java",
+        "start" : 1,
+        "end" : 93
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 171,
+        "end" : 232
+      }, {
+        "path" : "frontend/src/components/common/ToolNavLinks.jsx",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "frontend/src/components/repo/RepoSelector.jsx",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "frontend/src/index.css",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "frontend/src/components/debug/DebugSection.jsx",
+        "start" : 1,
+        "end" : 96
+      }, {
+        "path" : "frontend/src/pages/InterviewPage.jsx",
+        "start" : 596,
+        "end" : 665
+      }, {
+        "path" : "frontend/src/components/chat/SourceBadges.jsx",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "frontend/src/components/repo/RepoCard.jsx",
+        "start" : 1,
+        "end" : 100
+      } ],
+      "firstSupportingRank" : 2,
+      "lookupMicros" : [ 9276, 10178, 9233, 9098, 8944 ]
+    }, {
+      "id" : "NL19",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/EmailService.java",
+        "start" : 55,
+        "end" : 59
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/RegisterRequest.java",
+        "start" : 1,
+        "end" : 22
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/security/OAuth2SuccessHandler.java",
+        "start" : 86,
+        "end" : 159
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/AuthResponse.java",
+        "start" : 1,
+        "end" : 20
+      }, {
+        "path" : "frontend/src/components/chat/MessageBubble.jsx",
+        "start" : 256,
+        "end" : 274
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatHistoryResponse.java",
+        "start" : 1,
+        "end" : 24
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/EmailService.java",
+        "start" : 1,
+        "end" : 68
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/PromptBuilder.java",
+        "start" : 1,
+        "end" : 100
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/ChatResponse.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/UserRepository.java",
+        "start" : 1,
+        "end" : 13
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/LoginRequest.java",
+        "start" : 1,
+        "end" : 15
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/repository/MessageRepository.java",
+        "start" : 1,
+        "end" : 16
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/request/ChatRequest.java",
+        "start" : 1,
+        "end" : 12
+      } ],
+      "firstSupportingRank" : 6,
+      "lookupMicros" : [ 9484, 9422, 8988, 9025, 9538 ]
+    }, {
+      "id" : "NL20",
+      "expected" : {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 92,
+        "end" : 96
+      },
+      "ranked" : [ {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/FileCloneService.java",
+        "start" : 171,
+        "end" : 220
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 86,
+        "end" : 185
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/controller/IngestionController.java",
+        "start" : 256,
+        "end" : 355
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/SyncService.java",
+        "start" : 171,
+        "end" : 270
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/ingestion/GitHubApiService.java",
+        "start" : 171,
+        "end" : 222
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/service/S3StorageService.java",
+        "start" : 86,
+        "end" : 139
+      }, {
+        "path" : "src/main/java/com/repomind/repomind/dto/response/RepoStatusResponse.java",
+        "start" : 1,
+        "end" : 31
+      }, {
+        "path" : "migrations/20260902_enforce_unique_repository_urls.sql",
+        "start" : 1,
+        "end" : 20
+      } ],
+      "firstSupportingRank" : 4,
+      "lookupMicros" : [ 10012, 9980, 9966, 8786, 9560 ]
+    } ]
+  }
+}

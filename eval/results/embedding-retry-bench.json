@@ -1,0 +1,962 @@
+{
+  "scale" : "1/50 (one scaled second of waiting lasts 20 ms); wall time reported in equivalent seconds",
+  "job" : "10 batches of 10 chunks, released and restarted up to 3 times",
+  "repeats" : 3,
+  "scenarios" : [ {
+    "scenario" : "rate-limit-4-workers",
+    "description" : "4 jobs share a provider that allows about 1.2 requests per second (60 per scaled second, burst 2)",
+    "workers" : 4,
+    "arms" : [ {
+      "arm" : "original",
+      "jobsCompleted" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "jobsGivenUp" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "receivesUsed" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 107.0,
+        "median" : 104.0,
+        "min" : 95.0
+      },
+      "rejectedCalls" : {
+        "max" : 58.0,
+        "median" : 55.0,
+        "min" : 46.0
+      },
+      "acceptedCalls" : {
+        "max" : 49.0,
+        "median" : 49.0,
+        "min" : 49.0
+      },
+      "equivalentSeconds" : {
+        "max" : 47.1,
+        "median" : 44.7,
+        "min" : 41.2
+      },
+      "runs" : [ {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 107,
+        "rejectedCalls" : 58,
+        "acceptedCalls" : 49,
+        "equivalentSeconds" : 44.7
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 95,
+        "rejectedCalls" : 46,
+        "acceptedCalls" : 49,
+        "equivalentSeconds" : 47.1
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 104,
+        "rejectedCalls" : 55,
+        "acceptedCalls" : 49,
+        "equivalentSeconds" : 41.2
+      } ]
+    }, {
+      "arm" : "current",
+      "jobsCompleted" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "jobsGivenUp" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "receivesUsed" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 2.0,
+        "median" : 2.0,
+        "min" : 2.0
+      },
+      "providerCalls" : {
+        "max" : 14.0,
+        "median" : 14.0,
+        "min" : 14.0
+      },
+      "rejectedCalls" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "acceptedCalls" : {
+        "max" : 2.0,
+        "median" : 2.0,
+        "min" : 2.0
+      },
+      "equivalentSeconds" : {
+        "max" : 0.3,
+        "median" : 0.3,
+        "min" : 0.2
+      },
+      "runs" : [ {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 14,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 0.2
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 14,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 0.3
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 14,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 0.3
+      } ]
+    }, {
+      "arm" : "new",
+      "jobsCompleted" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "jobsGivenUp" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "receivesUsed" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 79.0,
+        "median" : 79.0,
+        "min" : 78.0
+      },
+      "rejectedCalls" : {
+        "max" : 39.0,
+        "median" : 39.0,
+        "min" : 38.0
+      },
+      "acceptedCalls" : {
+        "max" : 40.0,
+        "median" : 40.0,
+        "min" : 40.0
+      },
+      "equivalentSeconds" : {
+        "max" : 96.4,
+        "median" : 50.3,
+        "min" : 50.0
+      },
+      "runs" : [ {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 79,
+        "rejectedCalls" : 39,
+        "acceptedCalls" : 40,
+        "equivalentSeconds" : 50.0
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 79,
+        "rejectedCalls" : 39,
+        "acceptedCalls" : 40,
+        "equivalentSeconds" : 96.4
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 78,
+        "rejectedCalls" : 38,
+        "acceptedCalls" : 40,
+        "equivalentSeconds" : 50.3
+      } ]
+    } ]
+  }, {
+    "scenario" : "rate-limit-1-worker",
+    "description" : "one job against the same limit",
+    "workers" : 1,
+    "arms" : [ {
+      "arm" : "original",
+      "jobsCompleted" : {
+        "max" : 1.0,
+        "median" : 1.0,
+        "min" : 1.0
+      },
+      "jobsGivenUp" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "receivesUsed" : {
+        "max" : 1.0,
+        "median" : 1.0,
+        "min" : 1.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 14.0,
+        "median" : 14.0,
+        "min" : 14.0
+      },
+      "rejectedCalls" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "acceptedCalls" : {
+        "max" : 10.0,
+        "median" : 10.0,
+        "min" : 10.0
+      },
+      "equivalentSeconds" : {
+        "max" : 7.2,
+        "median" : 7.1,
+        "min" : 7.1
+      },
+      "runs" : [ {
+        "jobsCompleted" : 1,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 1,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 14,
+        "rejectedCalls" : 4,
+        "acceptedCalls" : 10,
+        "equivalentSeconds" : 7.1
+      }, {
+        "jobsCompleted" : 1,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 1,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 14,
+        "rejectedCalls" : 4,
+        "acceptedCalls" : 10,
+        "equivalentSeconds" : 7.1
+      }, {
+        "jobsCompleted" : 1,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 1,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 14,
+        "rejectedCalls" : 4,
+        "acceptedCalls" : 10,
+        "equivalentSeconds" : 7.2
+      } ]
+    }, {
+      "arm" : "current",
+      "jobsCompleted" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "jobsGivenUp" : {
+        "max" : 1.0,
+        "median" : 1.0,
+        "min" : 1.0
+      },
+      "receivesUsed" : {
+        "max" : 3.0,
+        "median" : 3.0,
+        "min" : 3.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 2.0,
+        "median" : 2.0,
+        "min" : 2.0
+      },
+      "providerCalls" : {
+        "max" : 5.0,
+        "median" : 5.0,
+        "min" : 5.0
+      },
+      "rejectedCalls" : {
+        "max" : 3.0,
+        "median" : 3.0,
+        "min" : 3.0
+      },
+      "acceptedCalls" : {
+        "max" : 2.0,
+        "median" : 2.0,
+        "min" : 2.0
+      },
+      "equivalentSeconds" : {
+        "max" : 0.5,
+        "median" : 0.5,
+        "min" : 0.5
+      },
+      "runs" : [ {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 1,
+        "receivesUsed" : 3,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 5,
+        "rejectedCalls" : 3,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 0.5
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 1,
+        "receivesUsed" : 3,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 5,
+        "rejectedCalls" : 3,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 0.5
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 1,
+        "receivesUsed" : 3,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 5,
+        "rejectedCalls" : 3,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 0.5
+      } ]
+    }, {
+      "arm" : "new",
+      "jobsCompleted" : {
+        "max" : 1.0,
+        "median" : 1.0,
+        "min" : 1.0
+      },
+      "jobsGivenUp" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "receivesUsed" : {
+        "max" : 1.0,
+        "median" : 1.0,
+        "min" : 1.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 17.0,
+        "median" : 17.0,
+        "min" : 16.0
+      },
+      "rejectedCalls" : {
+        "max" : 7.0,
+        "median" : 7.0,
+        "min" : 6.0
+      },
+      "acceptedCalls" : {
+        "max" : 10.0,
+        "median" : 10.0,
+        "min" : 10.0
+      },
+      "equivalentSeconds" : {
+        "max" : 8.0,
+        "median" : 7.5,
+        "min" : 7.3
+      },
+      "runs" : [ {
+        "jobsCompleted" : 1,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 1,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 16,
+        "rejectedCalls" : 6,
+        "acceptedCalls" : 10,
+        "equivalentSeconds" : 7.3
+      }, {
+        "jobsCompleted" : 1,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 1,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 17,
+        "rejectedCalls" : 7,
+        "acceptedCalls" : 10,
+        "equivalentSeconds" : 7.5
+      }, {
+        "jobsCompleted" : 1,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 1,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 17,
+        "rejectedCalls" : 7,
+        "acceptedCalls" : 10,
+        "equivalentSeconds" : 8.0
+      } ]
+    } ]
+  }, {
+    "scenario" : "outage-then-limit",
+    "description" : "4 jobs, provider answers 503 for 15 s then applies the same rate limit",
+    "workers" : 4,
+    "arms" : [ {
+      "arm" : "original",
+      "jobsCompleted" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "jobsGivenUp" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "receivesUsed" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 400.0,
+        "median" : 400.0,
+        "min" : 400.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 440.0,
+        "median" : 440.0,
+        "min" : 440.0
+      },
+      "rejectedCalls" : {
+        "max" : 440.0,
+        "median" : 440.0,
+        "min" : 440.0
+      },
+      "acceptedCalls" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "equivalentSeconds" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "runs" : [ {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 400,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 440,
+        "rejectedCalls" : 440,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 400,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 440,
+        "rejectedCalls" : 440,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 400,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 440,
+        "rejectedCalls" : 440,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      } ]
+    }, {
+      "arm" : "current",
+      "jobsCompleted" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "jobsGivenUp" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "receivesUsed" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 2.0,
+        "median" : 2.0,
+        "min" : 2.0
+      },
+      "providerCalls" : {
+        "max" : 30.0,
+        "median" : 30.0,
+        "min" : 30.0
+      },
+      "rejectedCalls" : {
+        "max" : 28.0,
+        "median" : 28.0,
+        "min" : 28.0
+      },
+      "acceptedCalls" : {
+        "max" : 2.0,
+        "median" : 2.0,
+        "min" : 2.0
+      },
+      "equivalentSeconds" : {
+        "max" : 16.6,
+        "median" : 16.4,
+        "min" : 16.2
+      },
+      "runs" : [ {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 30,
+        "rejectedCalls" : 28,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 16.2
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 30,
+        "rejectedCalls" : 28,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 16.4
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 2,
+        "providerCalls" : 30,
+        "rejectedCalls" : 28,
+        "acceptedCalls" : 2,
+        "equivalentSeconds" : 16.6
+      } ]
+    }, {
+      "arm" : "new",
+      "jobsCompleted" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "jobsGivenUp" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "receivesUsed" : {
+        "max" : 5.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 98.0,
+        "median" : 97.0,
+        "min" : 96.0
+      },
+      "rejectedCalls" : {
+        "max" : 58.0,
+        "median" : 57.0,
+        "min" : 56.0
+      },
+      "acceptedCalls" : {
+        "max" : 40.0,
+        "median" : 40.0,
+        "min" : 40.0
+      },
+      "equivalentSeconds" : {
+        "max" : 131.5,
+        "median" : 102.2,
+        "min" : 71.3
+      },
+      "runs" : [ {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 98,
+        "rejectedCalls" : 58,
+        "acceptedCalls" : 40,
+        "equivalentSeconds" : 102.2
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 97,
+        "rejectedCalls" : 57,
+        "acceptedCalls" : 40,
+        "equivalentSeconds" : 71.3
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 5,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 96,
+        "rejectedCalls" : 56,
+        "acceptedCalls" : 40,
+        "equivalentSeconds" : 131.5
+      } ]
+    } ]
+  }, {
+    "scenario" : "bad-api-key",
+    "description" : "4 jobs, every call is rejected with 401",
+    "workers" : 4,
+    "arms" : [ {
+      "arm" : "original",
+      "jobsCompleted" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "jobsGivenUp" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "receivesUsed" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 400.0,
+        "median" : 400.0,
+        "min" : 400.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 2200.0,
+        "median" : 2200.0,
+        "min" : 2200.0
+      },
+      "rejectedCalls" : {
+        "max" : 2200.0,
+        "median" : 2200.0,
+        "min" : 2200.0
+      },
+      "acceptedCalls" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "equivalentSeconds" : {
+        "max" : 1861.9,
+        "median" : 1780.2,
+        "min" : 1778.1
+      },
+      "runs" : [ {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 400,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 2200,
+        "rejectedCalls" : 2200,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 1778.1
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 400,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 2200,
+        "rejectedCalls" : 2200,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 1780.2
+      }, {
+        "jobsCompleted" : 4,
+        "jobsGivenUp" : 0,
+        "receivesUsed" : 4,
+        "chunksSilentlyLost" : 400,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 2200,
+        "rejectedCalls" : 2200,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 1861.9
+      } ]
+    }, {
+      "arm" : "current",
+      "jobsCompleted" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "jobsGivenUp" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "receivesUsed" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "rejectedCalls" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "acceptedCalls" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "equivalentSeconds" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "runs" : [ {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 12,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 12,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 12,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      } ]
+    }, {
+      "arm" : "new",
+      "jobsCompleted" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "jobsGivenUp" : {
+        "max" : 4.0,
+        "median" : 4.0,
+        "min" : 4.0
+      },
+      "receivesUsed" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "chunksSilentlyLost" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "batchesThrownAway" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "providerCalls" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "rejectedCalls" : {
+        "max" : 12.0,
+        "median" : 12.0,
+        "min" : 12.0
+      },
+      "acceptedCalls" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "equivalentSeconds" : {
+        "max" : 0.0,
+        "median" : 0.0,
+        "min" : 0.0
+      },
+      "runs" : [ {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 12,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 12,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      }, {
+        "jobsCompleted" : 0,
+        "jobsGivenUp" : 4,
+        "receivesUsed" : 12,
+        "chunksSilentlyLost" : 0,
+        "batchesThrownAway" : 0,
+        "providerCalls" : 12,
+        "rejectedCalls" : 12,
+        "acceptedCalls" : 0,
+        "equivalentSeconds" : 0.0
+      } ]
+    } ]
+  } ]
+}

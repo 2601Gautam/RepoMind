@@ -26,16 +26,18 @@ import java.util.Map;
 @Slf4j
 public class DebugController {
     private final DebugService debugService;
+    private final com.repomind.repomind.service.ActivityService activity;
     private final UserRepoRepository userRepoRepository;
     @RateLimit(requests = 5, windowSeconds = 1800)
     @PostMapping(value = "/analyze", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> analyze(@Valid @RequestBody DebugRequest request,
-                                @AuthenticationPrincipal User currentUser) {
+                                @AuthenticationPrincipal User currentUser,
+                                @org.springframework.web.bind.annotation.RequestHeader(value="X-Request-ID",required=false) java.util.UUID requestId) {
         // Inside the method (assuming userRepoRepository is injected):
         if (request.getRepoId() != null) {
             userRepoRepository.findByUserIdAndRepoId(currentUser.getId(), request.getRepoId())
                     .orElseThrow(() -> new RuntimeException("Access denied"));
         }
-        return debugService.streamAnalysis(request);
+        return activity.stream(requestId,currentUser.getId(),request.getRepoId(),"DEBUG",() -> debugService.streamAnalysis(request));
     }
 }

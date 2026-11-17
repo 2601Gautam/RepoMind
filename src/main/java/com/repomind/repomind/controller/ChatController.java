@@ -27,6 +27,7 @@ import java.util.UUID;
 @Slf4j
 public class ChatController {
     private final ChatService chatService;
+    private final com.repomind.repomind.service.ActivityService activity;
     private final ConversationMemoryService memoryService;
     private final UserRepoRepository userRepoRepository;
     @RateLimit(requests = 10, windowSeconds = 1800)
@@ -36,7 +37,8 @@ public class ChatController {
     // This is what makes the "typing" effect work
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> chat(@RequestBody ChatRequest request,
-    @AuthenticationPrincipal User currentUser){
+    @AuthenticationPrincipal User currentUser,
+    @RequestHeader(value="X-Request-ID", required=false) UUID requestId){
 
         // Basic validation — return 400 if required fields are missing
         if (request.getRepoId() == null || request.getMessage() == null || request.getMessage().isBlank()) {
@@ -48,12 +50,12 @@ public class ChatController {
         }
         log.debug("Chat request from user {} for repo {}", currentUser.getId(), request.getRepoId());
 
-        return chatService.streamChat(
+        return activity.stream(requestId, currentUser.getId(), request.getRepoId(), "CHAT", () -> chatService.streamChat(
                 request.getRepoId(),
                 request.getMessage(),
                 request.getConversationId(),
                 currentUser
-        );
+        ));
     }
 
     /**

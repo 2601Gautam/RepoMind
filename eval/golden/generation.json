@@ -1,0 +1,170 @@
+[
+  {
+    "id": "G01",
+    "feature": "chat",
+    "input": "What is the retry limit?",
+    "evidence": "MAX_RETRIES = 4",
+    "rubric": "4 attempts"
+  },
+  {
+    "id": "G02",
+    "feature": "chat",
+    "input": "After how many seconds does a quote expire?",
+    "evidence": "QUOTE_TTL_SECONDS = 90",
+    "rubric": "90 seconds"
+  },
+  {
+    "id": "G03",
+    "feature": "chat",
+    "input": "Which queue receives failed settlements?",
+    "evidence": "on_failure = \"settlement-review\"",
+    "rubric": "settlement-review"
+  },
+  {
+    "id": "G04",
+    "feature": "chat",
+    "input": "What is the default settlement currency?",
+    "evidence": "DEFAULT_CURRENCY = \"INR\"",
+    "rubric": "INR"
+  },
+  {
+    "id": "G05",
+    "feature": "chat",
+    "input": "What decimal precision does the fee use?",
+    "evidence": "Fee.java: scale = 3\nReceipt.java: displayScale = 2",
+    "rubric": "Fee uses 3, not receipt display 2"
+  },
+  {
+    "id": "G06",
+    "feature": "chat",
+    "input": "When does the job become ready?",
+    "evidence": "Indexer.java: if (indexed == expected && errors == 0) status = READY",
+    "rubric": "both complete count and no errors"
+  },
+  {
+    "id": "G07",
+    "feature": "chat",
+    "input": "How long does that one last?",
+    "evidence": "User asked about archive links, not login sessions.\nArchive.java: linkMinutes = 15\nLogin.java: sessionHours = 24",
+    "rubric": "15 minutes for archive link"
+  },
+  {
+    "id": "G08",
+    "feature": "chat",
+    "input": "Which value applies to the second region?",
+    "evidence": "The regions in order were west and east.\nwest_limit = 8\neast_limit = 3",
+    "rubric": "east limit 3"
+  },
+  {
+    "id": "G09",
+    "feature": "chat",
+    "input": "Which class sends the alert after parsing?",
+    "evidence": "Parser.java: AlertBus.publish(result)\nAlertBus.java: mail.send(result)",
+    "rubric": "AlertBus sends it, Parser hands off"
+  },
+  {
+    "id": "G10",
+    "feature": "chat",
+    "input": "Does the fallback overwrite the last good revision?",
+    "evidence": "onFailure() { keep(previousRevision); mark(RETRY); }",
+    "rubric": "no; keeps previous revision and marks retry"
+  },
+  {
+    "id": "G11",
+    "feature": "chat",
+    "input": "What interest rate applies to savings?",
+    "evidence": "Queue.java: int workers = 3;",
+    "rubric": "abstain, no invented rate"
+  },
+  {
+    "id": "G12",
+    "feature": "chat",
+    "input": "Which employee approved this deployment?",
+    "evidence": "Release.java: record(status, commit);",
+    "rubric": "abstain, no name"
+  },
+  {
+    "id": "G13",
+    "feature": "debug",
+    "input": "IllegalArgumentException: CurrencyCodec expected three letters, got EU",
+    "evidence": "CurrencyCodec: require(code.length() == 3)",
+    "rubric": "length check; supply three-letter currency; four sections"
+  },
+  {
+    "id": "G14",
+    "feature": "debug",
+    "input": "TimeoutException: local archive read exceeded 200 ms",
+    "evidence": "",
+    "rubric": "timeout observed; cause uncertain; no invented service; four sections"
+  },
+  {
+    "id": "G15",
+    "feature": "debug",
+    "input": "Missing configuration key TEST_DB_URL",
+    "evidence": "",
+    "rubric": "missing configuration key; set test URL; four sections"
+  },
+  {
+    "id": "G16",
+    "feature": "debug",
+    "input": "IndexOutOfBoundsException: index 4, size 4",
+    "evidence": "for (int i=0; i<=rows.size(); i++) rows.get(i);",
+    "rubric": "off-by-one; use <; four sections"
+  },
+  {
+    "id": "G17",
+    "feature": "debug",
+    "input": "Request failed; no stack trace or status available",
+    "evidence": "",
+    "rubric": "insufficient evidence; request trace/status; four sections"
+  },
+  {
+    "id": "G18",
+    "feature": "debug",
+    "input": "A job was delayed; only its submission timestamp is available",
+    "evidence": "",
+    "rubric": "latency cause unknown; ask for worker timings; four sections"
+  },
+  {
+    "id": "G19",
+    "feature": "interview",
+    "input": "BEGINNER",
+    "evidence": "Timer.java: tick() subtracts one from remaining. done() returns remaining <= 0.",
+    "rubric": "Five distinct BEGINNER questions with supported answers about Timer, no invented behavior."
+  },
+  {
+    "id": "G20",
+    "feature": "interview",
+    "input": "BEGINNER",
+    "evidence": "Ledger.java: total() sums booked entries. entries are appended by add(amount).",
+    "rubric": "Five distinct BEGINNER questions with supported answers about Ledger, no invented behavior."
+  },
+  {
+    "id": "G21",
+    "feature": "interview",
+    "input": "INTERMEDIATE",
+    "evidence": "Timer.java: tick() subtracts one from remaining. done() returns remaining <= 0.",
+    "rubric": "Five distinct INTERMEDIATE questions with supported answers about Timer, no invented behavior."
+  },
+  {
+    "id": "G22",
+    "feature": "interview",
+    "input": "INTERMEDIATE",
+    "evidence": "Ledger.java: total() sums booked entries. entries are appended by add(amount).",
+    "rubric": "Five distinct INTERMEDIATE questions with supported answers about Ledger, no invented behavior."
+  },
+  {
+    "id": "G23",
+    "feature": "interview",
+    "input": "ADVANCED",
+    "evidence": "Timer.java: tick() subtracts one from remaining. done() returns remaining <= 0.",
+    "rubric": "Five distinct ADVANCED questions with supported answers about Timer, no invented behavior."
+  },
+  {
+    "id": "G24",
+    "feature": "interview",
+    "input": "ADVANCED",
+    "evidence": "Ledger.java: total() sums booked entries. entries are appended by add(amount).",
+    "rubric": "Five distinct ADVANCED questions with supported answers about Ledger, no invented behavior."
+  }
+]
