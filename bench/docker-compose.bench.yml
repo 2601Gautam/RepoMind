@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: repomind_bench
+      POSTGRES_USER: repomind
+      POSTGRES_PASSWORD: repomind
+    ports:
+      - "55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U repomind -d repomind_bench"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "56379:6379"
+  localstack:
+    image: localstack/localstack:4
+    environment:
+      SERVICES: sqs,s3,ses
+      AWS_DEFAULT_REGION: ap-south-1
+      DEBUG: "0"
+    ports:
+      - "4566:4566"
+  ai-stub:
+    build:
+      context: ./ai-stub
+    environment:
+      STUB_SEED: "20261113"
+      EMBEDDING_LATENCY_MS: "0"
+      CHAT_LATENCY_MS: "0"
+      RATE_LIMIT_PERCENT: "0"
+      FAILURE_PERCENT: "0"
+    ports:
+      - "58080:8080"
