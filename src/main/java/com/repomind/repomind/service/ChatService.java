@@ -58,6 +58,10 @@ public class ChatService {
         //Step2: Get or create conversation (user-scoped)
         Conversation conversation = resolveConversation(conversationId, repo, currentUser);
         UUID conversationIdFinal = conversation.getId();
+        var socialReply = ChatScope.reply(userQuestion);
+        if (socialReply.isPresent()) {
+            return savedReply(conversation, userQuestion, socialReply.get());
+        }
         //step3 : Load conversationHistory from redis
         //this is what we gives to LLM "memory" of previous messages
         //without this, every Message is treated as as fresh conversation
@@ -77,10 +81,7 @@ public class ChatService {
 
         if(relevantChunks.isEmpty()){
             String answer = "No relevant code found for your question.";
-            return Flux.just(StreamJson.chat("start", conversationIdFinal.toString(), conversationIdFinal),
-                    StreamJson.chat("token", answer, conversationIdFinal),
-                    StreamJson.sources(List.of(), conversationIdFinal),
-                    StreamJson.chat("done", "", conversationIdFinal));
+            return savedReply(conversation, userQuestion, answer);
         }
 
         String codeContext = relevantChunks.stream()
@@ -137,7 +138,7 @@ public class ChatService {
                     memoryService.addMessage(conversationIdFinal,"Assistant",completeAnswer);
 
                     //Save both messages to data base for persistence
-                    saveMessageToDB(conversation,userQuestion,completeAnswer,sourcePaths);
+                    saveMessageToDB(conversation,userQuestion,completeAnswer,ChatSources.citedPaths(completeAnswer, sourcePaths));
 
                     log.debug("Chat streaming complete. Conversation: {}",conversationIdFinal);
                 })
@@ -150,9 +151,9 @@ public class ChatService {
                 StreamJson.chat("start",conversationIdFinal.toString(),conversationIdFinal)
         );
 
-        Flux<String> sourcesEvent = Flux.just(
-                StreamJson.sources(sourcePaths,conversationIdFinal)
-        );
+        Flux<String> sourcesEvent = Flux.defer(() -> Flux.just(
+                StreamJson.sources(ChatSources.citedPaths(fullResponse.get().toString(), sourcePaths),conversationIdFinal)
+        ));
 
         Flux<String> doneEvent = Flux.just(
                 StreamJson.chat("done","",conversationIdFinal)
@@ -164,6 +165,18 @@ public class ChatService {
                     log.error("Chat stream error: {}",e.getMessage());
                     return Flux.just(StreamJson.chat("error","Failed to get response. Please try again.",conversationIdFinal));
                 });
+    }
+
+    private Flux<String> savedReply(Conversation conversation, String question, String answer) {
+        return Flux.defer(() -> {
+            UUID id = conversation.getId();
+            memoryService.addMessage(id, "user", question);
+            memoryService.addMessage(id, "assistant", answer);
+            saveMessageToDB(conversation, question, answer, List.of());
+            return Flux.just(StreamJson.chat("start", id.toString(), id),
+                    StreamJson.chat("token", answer, id), StreamJson.sources(List.of(), id),
+                    StreamJson.chat("done", "", id));
+        });
     }
 
     private String buildRetrievalQuery(List<ConversationMemoryService.MemoryMessage> history, String userQuestion) {

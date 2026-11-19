@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../../assets/websiteLogo.png'
+import ActivityPanel from '../common/ActivityPanel'
 
 const navItems = [
     {
@@ -175,14 +176,9 @@ export default function Sidebar({ isOpen = true, onToggle }) {
                 ))}
             </nav>
 
-            {/* Bottom hint */}
-            {isOpen && (
-                <div className="px-5 py-4 border-t border-white/[0.04]">
-                    <p className="text-[10.5px] text-neutral-700 leading-relaxed">
-                        Ingest a repo on the dashboard first to unlock tools.
-                    </p>
-                </div>
-            )}
+            <div className={`shrink-0 border-t border-white/[0.04] py-4 ${isOpen ? 'px-5' : 'px-2'}`}>
+                <ActivityPanel compact={!isOpen} />
+            </div>
         </aside>
     )
 }

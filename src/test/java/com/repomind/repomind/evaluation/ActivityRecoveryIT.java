@@ -73,6 +73,78 @@ class ActivityRecoveryIT {
         assertEquals("INTERRUPTED", statusOf(id));
     }
 
+    String awaitStatus(UUID id, String wanted) throws InterruptedException {
+        String status = null;
+        for (int i = 0; i < 100; i++) {
+            status = statusOf(id);
+            if (wanted.equals(status)) return status;
+            Thread.sleep(50);
+        }
+        return status;
+    }
+    String token() { return "{\"type\":\"token\",\"content\":\"x\"}"; }
+
+    // ---- chat is detached from the browser connection: a page reload or closed tab must not lose the answer
+    @Test void detachedChatKeepsGeneratingAfterTheClientLeavesAndEndsCompleted() throws Exception {
+        UUID id = UUID.randomUUID(), conversation = UUID.randomUUID();
+        var produced = new java.util.concurrent.atomic.AtomicInteger();
+        var received = new ArrayList<String>();
+        activity.streamDetached(id, user, repo, "CHAT", () -> Flux.concat(
+                        Flux.interval(Duration.ofMillis(40)).take(6).map(i -> token()),
+                        Flux.just("{\"type\":\"done\",\"conversationId\":\"" + conversation + "\"}"))
+                        .doOnNext(e -> produced.incrementAndGet()))
+                .take(2).doOnNext(received::add).collectList().block();        // the client goes away after two events
+        assertEquals(2, received.size());
+        assertEquals("COMPLETED", awaitStatus(id, "COMPLETED"));                 // not INTERRUPTED
+        assertEquals(7, produced.get());                                         // the model ran to the end, so the answer could be saved
+        assertEquals(conversation, only().resultId());
+    }
+
+    @Test void detachedChatDeliversEveryEventToAClientThatStaysConnected() {
+        UUID id = UUID.randomUUID(), conversation = UUID.randomUUID();
+        var out = activity.streamDetached(id, user, repo, "CHAT", () -> Flux.just(token(), token(),
+                "{\"type\":\"done\",\"conversationId\":\"" + conversation + "\"}")).collectList().block();
+        assertEquals(3, out.size());
+        assertEquals("COMPLETED", statusOf(id));
+    }
+
+    @Test void detachedChatWithoutAFinalEventIsStillInterruptedNotCompleted() {
+        UUID id = UUID.randomUUID();
+        activity.streamDetached(id, user, repo, "CHAT", () -> Flux.just(token())).collectList().block();
+        assertEquals("INTERRUPTED", statusOf(id));
+    }
+
+    @Test void detachedProviderFailureReachesTheClientAndIsFailed() {
+        UUID error = UUID.randomUUID(), event = UUID.randomUUID();
+        var thrown = assertThrows(IllegalStateException.class, () -> activity.streamDetached(error, user, repo, "CHAT",
+                () -> Flux.<String>error(new IllegalStateException("provider down"))).collectList().block());
+        assertEquals("provider down", thrown.getMessage());
+        assertEquals("FAILED", statusOf(error));
+        activity.streamDetached(event, user, repo, "CHAT", () -> Flux.just("{\"type\":\"error\",\"content\":\"boom\"}")).collectList().block();
+        assertEquals("FAILED", statusOf(event));
+    }
+
+    @Test void detachedRequestIdReuseIsStillRejectedWithoutRunningTwice() {
+        UUID id = UUID.randomUUID();
+        int[] calls = {0};
+        activity.streamDetached(id, user, repo, "CHAT", () -> { calls[0]++; return Flux.just("{\"type\":\"done\"}"); }).collectList().block();
+        var error = assertThrows(ResponseStatusException.class, () ->
+                activity.streamDetached(id, user, repo, "CHAT", () -> { calls[0]++; return Flux.just("{\"type\":\"done\"}"); }).collectList().block());
+        assertEquals(409, error.getStatusCode().value());
+        assertEquals(1, calls[0]);
+    }
+
+    @Test void detachedProviderThatGoesSilentIsFailedInsteadOfRunningForever() throws Exception {
+        UUID id = UUID.randomUUID();
+        activity.silenceLimit(Duration.ofMillis(300));
+        try {
+            var error = assertThrows(RuntimeException.class, () -> activity.streamDetached(id, user, repo, "CHAT",
+                    () -> Flux.concat(Flux.just(token()), Flux.<String>never())).collectList().block(Duration.ofSeconds(10)));
+            assertInstanceOf(java.util.concurrent.TimeoutException.class, error.getCause() == null ? error : error.getCause());
+            assertEquals("FAILED", awaitStatus(id, "FAILED"));
+        } finally { activity.silenceLimit(Duration.ofMinutes(2)); }
+    }
+
     @Test void streamEndingWithoutDoneIsInterrupted() {
         UUID id = UUID.randomUUID();
         activity.stream(id, user, repo, "CHAT", () -> Flux.just("{\"type\":\"token\",\"content\":\"partial\"}")).collectList().block();

@@ -50,7 +50,8 @@ public class ChatController {
         }
         log.debug("Chat request from user {} for repo {}", currentUser.getId(), request.getRepoId());
 
-        return activity.stream(requestId, currentUser.getId(), request.getRepoId(), "CHAT", () -> chatService.streamChat(
+        // Detached: if the user reloads the page or closes the tab mid-answer, the answer is still finished and saved.
+        return activity.streamDetached(requestId, currentUser.getId(), request.getRepoId(), "CHAT", () -> chatService.streamChat(
                 request.getRepoId(),
                 request.getMessage(),
                 request.getConversationId(),

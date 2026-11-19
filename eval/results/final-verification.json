@@ -2,28 +2,29 @@
   "date": "2026-11-17",
   "environment": "Disposable PostgreSQL 16 / pgvector, Redis 7, LocalStack SQS; controlled clone, embeddings and model calls",
   "java": {
-    "tests": 124,
+    "tests": 132,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
     "excluded": "LocalGenerationIT (needs the 0.5B model server; its prompts are covered by PromptDriftTest)",
     "newSuites": {
-      "ActivityRecoveryIT": 12,
+      "ActivityRecoveryIT": 18,
       "PromptDriftTest": 1,
       "EmbeddingRetryPolicyTest": 13,
       "EmbeddingProviderIT": 8,
       "EmbeddingRateLimitBenchIT": 1,
       "RedisAvailabilityIT (now 4 cases)": 4,
       "GlobalExceptionHandlerTest": 3,
-      "ActivityResilienceTest": 4
+      "ActivityResilienceTest": 5,
+      "ChatControllerDetachTest": 1
     }
   },
   "frontend": {
-    "tests": 32,
-    "pass": 32,
-    "newSuite": "recovery.test.js (14 cases), snapshot.test.js (12 cases)",
+    "tests": 58,
+    "pass": 58,
+    "newSuite": "recovery.test.js (14), snapshot.test.js (12), liveStreams.test.js (26)",
     "buildPassed": true,
-    "lintErrors": 37,
+    "lintErrors": 34,
     "lintWarnings": 6,
     "lintBaselineErrors": 41,
     "lintBaselineWarnings": 9
@@ -67,9 +68,9 @@
     "generation": "re-run 17 Nov: prompts identical, answers identical for 14/24, strict pass 5/24; see generationRepeat"
   },
   "sourceSha256": {
-    "src/main/java/com/repomind/repomind/service/ActivityService.java": "76f4ff2b45372517a41e4c46cedd59c6e0e17ae7a3d3d865c4a0eabebc0e8e11",
+    "src/main/java/com/repomind/repomind/service/ActivityService.java": "6b8ecb41e46c7523cb9d10d26153c176fa115f48290ed612b4347be5ef89b256",
     "src/main/java/com/repomind/repomind/controller/ActivityController.java": "184363043102370c86fbdad8cc385b8bebc512e610618dea78c906fcf15822ad",
-    "src/main/java/com/repomind/repomind/controller/ChatController.java": "b6836bd693721c3dfab6b534a8378ac9f8c44985f9b07749b823bb177779459e",
+    "src/main/java/com/repomind/repomind/controller/ChatController.java": "072a40776fd68f90dfbdc7d58b46cc38f00a0cdefb1f89217eb4586cdfdad525",
     "src/main/java/com/repomind/repomind/controller/DebugController.java": "fe0ae2c73fd200a799416c641930a19a9aed70aa206c4d3f580c45fb540b655b",
     "src/main/java/com/repomind/repomind/controller/InterviewController.java": "f7161dcac5ac238ab18c4c1e8810f69210730ab1b0c1faa1ae88a394e6c5b54c",
     "src/main/java/com/repomind/repomind/service/PromptBuilder.java": "b5ff77b6ba3e5a2e05348bb410385a6c49aa32a4d45d19e31dbc8acbca82afde",
@@ -77,7 +78,7 @@
     "src/main/java/com/repomind/repomind/service/ingestion/IngestionService.java": "93a972cfdc1303ed0f3382fb22cfa6488eaea5580354017873e5aa08cb281c54",
     "src/main/java/com/repomind/repomind/service/ingestion/FullIngestionStore.java": "a603c44b91d47bd35b479ba149e507bba14a0965ec8514d6835a9939113d6e69",
     "src/main/java/com/repomind/repomind/service/queue/IngestionQueueConsumer.java": "81d9587c581b18e9b37da8349a2309cdc78042d71e587e648c0f4aa9ca4137b8",
-    "src/test/java/com/repomind/repomind/evaluation/ActivityRecoveryIT.java": "02d4b86b455ff3d42d68992062de24e3b579e670edfcf220e8fd0fe93e5e0271",
+    "src/test/java/com/repomind/repomind/evaluation/ActivityRecoveryIT.java": "7341f01a4dfd8ec6754c244f31e26055f7d9405dfe2c5238da01525a8b4b959c",
     "src/test/java/com/repomind/repomind/evaluation/PromptDriftTest.java": "2045a71159871faded826b827cce3f847dda69447adcb0ff99720f27318975cb",
     "migrations/20261117_add_ai_activity.sql": "7403ed5240f03ac081f12c20bdb88f9f811432a20fe405b29eb64c7fd848f652",
     "init.sql": "012664b623330871a4d84a441211e5de66a0c56b67888907d32c7868a1a384ba",
@@ -108,9 +109,14 @@
     "src/main/java/com/repomind/repomind/exception/GlobalExceptionHandler.java": "f37e66d9fb7bfbfa9bc46953137095721a345fbdde3272641bb4437a9da08eca",
     "src/test/java/com/repomind/repomind/exception/GlobalExceptionHandlerTest.java": "55fcb798a8d43f625b72da1506cc5894582e7c8d647570149f07f3ca3b5636d7",
     "frontend/src/state/recentRepos.js": "1d51a4e08501599bc6afc188f798e050e24ddb8778157b86a98cdf2e9ed5bf6a",
-    "frontend/src/pages/ChatPage.jsx": "56966e6b045a6c0c4d0d5f66c69c492c03e4f5a100fb898df497329018a100b2",
+    "frontend/src/pages/ChatPage.jsx": "87e9a220b2cd33c1dbd546b23df1dc22bee8abd9d29330dd86bec800e885ffb1",
     "frontend/test/snapshot.test.js": "a9837657c3523fb8c47c64366b7f589fd54ab6f5b9d67f1f25cac822d10f9f87",
-    "src/test/java/com/repomind/repomind/service/ActivityResilienceTest.java": "f9d567db018b5664d36ccbdd888415797c531a91d06557a5b53936294803d60f"
+    "src/test/java/com/repomind/repomind/service/ActivityResilienceTest.java": "6e12e1a966783ee7d4be8f7ff57e7f3a38a870d3fd60916c88cc944194491ada",
+    "frontend/src/state/liveStreams.js": "39a70f979d7f704dbe7938775586bff63535e5d32285487b0adc7d52c5022ff9",
+    "frontend/src/state/streams.js": "98c5f908318c052f705db180546b3a6ad77366c4bf18e971e75caa78d7e6c2ed",
+    "frontend/src/pages/DebugPage.jsx": "2cf77f598e622f60b967210a6160aa087b1ce611cb4160b997b599c1d2b0788f",
+    "frontend/test/liveStreams.test.js": "57185a90e3163c5c48a7305ab8ec512a28eea63984309e86d6ab26bf8d1b448d",
+    "src/test/java/com/repomind/repomind/controller/ChatControllerDetachTest.java": "598116d7a75c4412d4fd3e54116ba4c2bbb6f7d0543d22c97432f9c64eca018b"
   },
   "secondRepository": {
     "corpus": "InsightStox (Node/Express + React), 183 files, 413 chunks, no Git history; snapshot identified by sources.sha256.json",
@@ -220,7 +226,9 @@
     "GlobalExceptionHandler: exhausted embedding retries return HTTP 503 AI_SERVICE_UNAVAILABLE without provider text (was a 400 carrying the provider message)",
     "ActivityProvider read user.id but /api/auth/me returns userId, so repository status, progress and recovery never started (found by hand; fixed with userIdOf)",
     "Frontend falls back to /api/repos when /api/activity answers 404 or 5xx; backend snapshot and activity tracking are best-effort",
-    "Recent Chats shelf now written by ChatPage; running ingestions polled every 3 s"
+    "Recent Chats shelf now written by ChatPage; running ingestions polled every 3 s",
+    "Chat page no longer reloads behind a spinner after every answer (history re-read only for chats finished elsewhere)",
+    "Chat and debug streams live in a store outside the page and keep running when the page is left; chat endpoint uses ActivityService.streamDetached so a reload or closed tab still saves the answer"
   ],
   "generationRepeat": {
     "model": "Qwen2.5-0.5B-Instruct Q4_K_M, SHA-256 74a4da8c...a9db verified",

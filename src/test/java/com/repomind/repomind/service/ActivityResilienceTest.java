@@ -42,6 +42,21 @@ class ActivityResilienceTest {
         service.shutdown();
     }
 
+    @Test void aDetachedStreamStillDeliversItsEventsAndKeepsRunningWhenTrackingIsUnavailable() throws Exception {
+        var service = new ActivityService(brokenDatabase(), new ObjectMapper());
+        var produced = new java.util.concurrent.atomic.AtomicInteger();
+        var finished = new java.util.concurrent.CountDownLatch(1);
+        var events = service.streamDetached(UUID.randomUUID(), user, repo, "CHAT",
+                () -> Flux.concat(Flux.just("{\"type\":\"token\",\"content\":\"hi\"}"),
+                                Flux.just("{\"type\":\"done\"}").delayElements(java.time.Duration.ofMillis(150)))
+                        .doOnNext(e -> produced.incrementAndGet()).doOnComplete(finished::countDown))
+                .take(1).collectList().block();                       // client leaves after the first event
+        assertEquals(1, events.size());
+        assertTrue(finished.await(5, java.util.concurrent.TimeUnit.SECONDS));   // the work still ran to the end
+        assertEquals(2, produced.get());
+        service.shutdown();
+    }
+
     @Test void aFailingStreamStillSurfacesItsOwnErrorWhenTrackingIsUnavailable() {
         var service = new ActivityService(brokenDatabase(), new ObjectMapper());
         var error = assertThrows(IllegalStateException.class, () -> service.stream(UUID.randomUUID(), user, repo, "DEBUG",
