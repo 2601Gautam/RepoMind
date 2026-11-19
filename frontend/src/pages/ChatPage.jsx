@@ -1,8 +1,10 @@
-import { useState, useRef, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { streamChat, getRepoStatus, getChatHistory, clearChatConversation, RateLimitError } from '../api/client'
+import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from 'react'
+import { useParams } from 'react-router-dom'
+import { getRepoStatus, getChatHistory, clearChatConversation } from '../api/client'
+import { useAuth } from '../context/AuthContext'
 import { useActivity } from '../context/ActivityContext'
-import { useAiOperation } from '../hooks/useAiOperation'
+import { chatSessions } from '../state/streams.js'
+import { userIdOf } from '../state/recovery.js'
 import { rememberRecentRepo } from '../state/recentRepos.js'
 import RepositoryNotice from '../components/repo/RepositoryNotice'
 import NavBar from '../components/layout/NavBar'
@@ -31,20 +33,27 @@ function FollowupInfo() {
 
 // Inner component — all hooks run unconditionally here
 function ChatPageInner({ repoId }) {
-    const { tasks } = useActivity()
-    const operation = useAiOperation('CHAT',repoId)
+    const { user } = useAuth()
+    const { tasks, loading: activityLoading, begin, refresh } = useActivity()
+    // The conversation lives outside this page (see state/liveStreams.js), so an answer that is still streaming keeps
+    // running when the user opens another page and is waiting here when they come back.
+    const key = userIdOf(user) + ':' + repoId
+    const subscribe = useCallback(listener => chatSessions.subscribe(key, listener), [key])
+    const getSnapshot = useCallback(() => chatSessions.get(key), [key])
+    const session = useSyncExternalStore(subscribe, getSnapshot)
+    const { messages, conversationId, running: loading, rateLimitSeconds, loaded } = session
+    // Another device, another tab, or this page before a reload is generating an answer for the same repository.
+    const runningElsewhere = !loading && tasks.some(t => t.kind === 'CHAT' && t.repoId === repoId && t.status === 'RUNNING')
     const [restoreError,setRestoreError] = useState('')
-    const loadingRef = useRef(false)
-    const completed = tasks.filter(t=>t.repoId===repoId && t.kind==='CHAT' && t.status==='COMPLETED').map(t=>t.id).join(',')
     const [reload,setReload] = useState(0)
     const [repo, setRepo] = useState(null)
-    const [messages, setMessages] = useState([])
-    const [conversationId, setConversationId] = useState(null)
-    const [loading, setLoading] = useState(false)
-    const [historyLoading, setHistoryLoading] = useState(true)  // true until DB history is fetched
-    const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
     const [directValue, setDirectValue] = useState(null)
-    const messageIdRef = useRef(0)
+    const mounted = useRef(true)
+
+    useEffect(() => {
+        mounted.current = true
+        return () => { mounted.current = false }
+    }, [])
 
     useEffect(() => {
         let active = true
@@ -57,130 +66,47 @@ function ChatPageInner({ repoId }) {
         return () => { active = false }
     }, [repoId,reload])
 
+    // Reads the saved conversation. It never shows a full-page spinner (only the very first read does) and never
+    // replaces an answer that is still streaming.
+    const loadHistory = useCallback((completedIds = []) => chatSessions.restore(key, async () => {
+        const data = await getChatHistory(repoId)
+        return data ? {
+            conversationId: data.conversationId,
+            messages: data.messages.map(m => ({ role:m.role, content:m.content,
+                sources:m.sourcePaths ?? (m.sources ? m.sources.split(',').filter(Boolean) : []) }))
+        } : null
+    }, completedIds).then(() => {
+        if (mounted.current) setRestoreError('')
+    }).catch(e => { if (mounted.current) setRestoreError('Could not restore saved chat: ' + e.message) }), [repoId, key])
+
     useEffect(() => {
-        let active = true
-        async function restore() {
-            if (loadingRef.current) return
-            setHistoryLoading(true)
-            try {
-                const data = await getChatHistory(repoId)
-                if (!active || loadingRef.current) return
-                if (data) {
-                    setMessages(data.messages.map(m=>({ role:m.role, content:m.content,
-                        sources:m.sourcePaths ?? (m.sources ? m.sources.split(',').filter(Boolean) : []) })))
-                    setConversationId(data.conversationId)
-                }
-                setRestoreError('')
-            } catch (e) { if(active) setRestoreError('Could not restore saved chat: ' + e.message) }
-            finally { if(active) setHistoryLoading(false) }
-        }
-        restore()
-        window.addEventListener('online',restore)
-        return () => { active=false; window.removeEventListener('online',restore) }
-    }, [repoId,completed,reload])
+        const online = () => loadHistory()
+        window.addEventListener('online',online)
+        return () => window.removeEventListener('online',online)
+    }, [key,loadHistory])
 
-    async function handleSend(text) {
-        if (loading || operation.runningElsewhere || repo?.status !== 'READY') return
-        const attempt = operation.start()
-        if (!attempt) return
-        loadingRef.current = true
+    // Only reload for answers we have not received. Keep this bookkeeping in the session so returning to the page
+    // also recovers a chat that completed while disconnected, on another page, or on another device.
+    useEffect(() => {
+        if (activityLoading) return
+        const completed = tasks.filter(t => t.repoId === repoId && t.kind === 'CHAT' && t.status === 'COMPLETED').map(t => t.id)
+        if (chatSessions.needsHistory(key, completed)) loadHistory(completed)
+    }, [tasks, activityLoading, repoId, key, loadHistory, loading, loaded])
 
-        setMessages(prev => [...prev, { role: 'user', content: text }])
-        setLoading(true)
-
-        const streamId = ++messageIdRef.current
-        // Add placeholder with thinking dots (empty content + streaming flag)
-        setMessages(prev => [...prev, {
-            id: streamId,
-            role: 'assistant',
-            content: '',
-            sources: [],
-            streaming: true
-        }])
-
-        let resolvedConversationId = conversationId
-
-        await streamChat(
-            repoId,
-            text,
-            conversationId,
-            (event) => {
-                if (!attempt.live()) return
-                switch (event.type) {
-                    case 'start':
-                        if (event.content && !resolvedConversationId) {
-                            resolvedConversationId = event.content
-                            setConversationId(event.content)
-                        }
-                        break
-                    case 'token':
-                        setMessages(prev => prev.map(msg =>
-                            msg.id === streamId
-                                ? { ...msg, content: msg.content + event.content }
-                                : msg
-                        ))
-                        break
-                    case 'sources':
-                        // Current responses carry file paths as a structured array.
-                        const sourceStr = event.sources || event.content || ''
-                        const sourceList = Array.isArray(sourceStr) 
-                            ? sourceStr 
-                            : sourceStr.split(',').filter(Boolean)
-                            
-                        setMessages(prev => prev.map(msg =>
-                            msg.id === streamId
-                                ? { ...msg, sources: sourceList }
-                                : msg
-                        ))
-                        break
-                    case 'done':
-                        setMessages(prev => prev.map(msg =>
-                            msg.id === streamId
-                                ? { ...msg, streaming: false }
-                                : msg
-                        ))
-                        setLoading(false)
-                        break
-                    case 'error':
-                        setMessages(prev => prev.map(msg =>
-                            msg.id === streamId
-                                ? { ...msg, content: event.content || 'Something went wrong', streaming: false }
-                                : msg
-                        ))
-                        setLoading(false)
-                        break
-                }
-            },
-            (err) => {
-                if (!attempt.live()) return
-                if (err instanceof RateLimitError) {
-                    setRateLimitSeconds(err.retryAfterSeconds)
-                    setMessages(prev => prev.filter(msg => msg.id !== streamId))
-                } else {
-                    setMessages(prev => prev.map(msg =>
-                        msg.id === streamId
-                            ? { ...msg, content: msg.content + '\n\nResponse interrupted. ' + err.message + ' Check saved history before sending again.', streaming: false }
-                            : msg
-                    ))
-                }
-                setLoading(false)
-            },
-            attempt.options
-        )
-        if (attempt.live()) { loadingRef.current=false; setLoading(false) }
-        attempt.finish()
+    function handleSend(text) {
+        if (loading || runningElsewhere || repo?.status !== 'READY') return
+        const requestId = begin('CHAT',repoId)
+        void chatSessions.send(key, { repoId, text, requestId, onSettled: refresh })
     }
 
     // Show spinner while repo info or history is loading
-    if ((!repo || historyLoading) && !restoreError) {
+    if ((!repo || !loaded) && !restoreError) {
         return (
             <div className="min-h-screen bg-[#080809] flex items-center justify-center">
                 <LoadingSpinner size="lg" />
             </div>
         )
     }
-
-    const slug = repo?.githubUrl?.replace('https://github.com/', '') ?? ''
 
     return (
         <div className="flex flex-col h-screen bg-[#080809] text-white overflow-hidden">
@@ -196,7 +122,7 @@ function ChatPageInner({ repoId }) {
                 action={
                     messages.length > 0 && (
                         <button
-                            disabled={loading || operation.runningElsewhere}
+                            disabled={loading || runningElsewhere}
                             onClick={async () => {
                                 if (conversationId) {
                                     try {
@@ -205,8 +131,7 @@ function ChatPageInner({ repoId }) {
                                         setRestoreError('Could not clear saved conversation: ' + e.message); return
                                     }
                                 }
-                                setMessages([])
-                                setConversationId(null)
+                                chatSessions.clear(key)
                             }}
                             className="group cursor-pointer flex items-center gap-1.5 text-[11.5px] font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 active:bg-red-500/30 border border-red-500/20 hover:border-red-500/40 px-3 py-1.5 rounded-xl transition-all duration-200 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:shadow-[0_0_15px_rgba(239,68,68,0.25)] active:scale-95"
                             title="Clear chat history"
@@ -239,8 +164,8 @@ function ChatPageInner({ repoId }) {
                 }
             />
 
-            {restoreError && <p role="alert" className="px-8 py-3 text-amber-300">{restoreError} <button className="underline" onClick={()=>setReload(x=>x+1)}>Reload saved history</button></p>}
-            {operation.runningElsewhere && !loading && <p role="status" className="px-8 py-3 text-violet-200">A chat request is running. Saved history will refresh when it finishes.</p>}
+            {restoreError && <p role="alert" className="px-8 py-3 text-amber-300">{restoreError} <button className="underline" onClick={()=>{ setReload(x=>x+1); loadHistory() }}>Reload saved history</button></p>}
+            {runningElsewhere && <p role="status" className="px-8 py-3 text-violet-200">A chat request is running. Saved history will refresh when it finishes.</p>}
             {repo && repo.status !== 'READY' && <RepositoryNotice repo={repo} />}
             {/* ── Message area ─────────────────────────────────────── */}
             <div className="flex-1 overflow-hidden relative z-10">
@@ -260,12 +185,12 @@ function ChatPageInner({ repoId }) {
                     {rateLimitSeconds && (
                         <RateLimitBanner
                             seconds={rateLimitSeconds}
-                            onDismiss={() => setRateLimitSeconds(null)}
+                            onDismiss={() => chatSessions.dismissRateLimit(key)}
                         />
                     )}
                     <ChatInput
                         onSend={handleSend}
-                        disabled={loading || operation.runningElsewhere || historyLoading || !!restoreError || repo?.status !== 'READY' || !!rateLimitSeconds}
+                        disabled={loading || runningElsewhere || !loaded || !!restoreError || repo?.status !== 'READY' || !!rateLimitSeconds}
                         directValue={directValue}
                         onDirectConsumed={() => setDirectValue(null)}
                     />

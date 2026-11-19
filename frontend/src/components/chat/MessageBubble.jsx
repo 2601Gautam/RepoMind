@@ -29,11 +29,11 @@ function BotAvatar({ thinking }) {
 // Copy icon
 function IconCopy({ copied }) {
     return copied ? (
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+        <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
             <path d="M3 8l3 3 7-7" />
         </svg>
     ) : (
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+        <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
             <rect x="5" y="5" width="8" height="9" rx="1.5" />
             <path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v8A1.5 1.5 0 003.5 13H5" />
         </svg>
@@ -43,7 +43,7 @@ function IconCopy({ copied }) {
 // Direct / send-to-input icon
 function IconDirect() {
     return (
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+        <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
             <path d="M8 2v8M5 7l3 3 3-3" />
             <path d="M3 13h10" />
         </svg>
@@ -61,6 +61,7 @@ function ActionButtons({ content, onDirect, hovered, copied, onCopy, alignRight 
             <button
                 onClick={onCopy}
                 title={copied ? 'Copied!' : 'Copy'}
+                aria-label={copied ? 'Copied!' : 'Copy message'}
                 className={`w-6 h-6 flex items-center justify-center rounded-md border transition-all duration-200 cursor-pointer ${
                     copied
                         ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
@@ -72,6 +73,7 @@ function ActionButtons({ content, onDirect, hovered, copied, onCopy, alignRight 
             <button
                 onClick={() => onDirect?.(content)}
                 title="Send to input"
+                aria-label="Send to input"
                 className="w-6 h-6 flex items-center justify-center rounded-md border bg-white/[0.04] border-white/[0.08] text-neutral-400 hover:bg-violet-500/10 hover:text-violet-300 hover:border-violet-500/30 transition-all duration-200 cursor-pointer"
             >
                 <IconDirect />
@@ -266,7 +268,7 @@ export default function MessageBubble({ message, onDirect }) {
 
                 {/* Source files — only on completed assistant messages */}
                 {!message.streaming && message.sources?.length > 0 && (
-                    <SourceBadges sources={message.sources} />
+                    <SourceBadges sources={message.sources} content={message.content} />
                 )}
             </div>
         </div>

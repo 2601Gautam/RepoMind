@@ -11,7 +11,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 import reactor.core.publisher.SignalType;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.*;
@@ -23,6 +25,7 @@ public class ActivityService {
     private final JdbcTemplate db;
     private final ObjectMapper json;
     private final ScheduledExecutorService heartbeat = Executors.newScheduledThreadPool(2);
+    private volatile Duration silenceLimit = Duration.ofMinutes(2);
 
     public record Activity(UUID id, UUID repoId, String kind, String status, UUID resultId,
                            OffsetDateTime startedAt, OffsetDateTime updatedAt) {}
@@ -56,14 +59,38 @@ public class ActivityService {
         catch (RuntimeException e) { log.warn("Could not record final activity status for {}",id); }
     }
 
+    /** The request is cancelled when the client goes away: the record ends INTERRUPTED and the work stops. */
     public Flux<String> stream(UUID request, UUID user, UUID repo, String kind, Supplier<Flux<String>> work) {
+        return tracked(request,user,repo,kind,work,null);
+    }
+
+    /**
+     * Same record keeping, but the work is not tied to the client's connection. A reloaded page, a closed tab or a dropped
+     * connection only stops the delivery: the model keeps generating, the caller's own completion step (saving the answer)
+     * still runs, and the record ends COMPLETED, so the answer is waiting in the saved history when the user returns.
+     * A provider that goes silent for longer than the silence limit is failed rather than left running with nobody able to cancel it.
+     */
+    public Flux<String> streamDetached(UUID request, UUID user, UUID repo, String kind, Supplier<Flux<String>> work) {
+        return Flux.defer(() -> {
+            Sinks.Many<String> relay = Sinks.many().replay().all();
+            tracked(request,user,repo,kind,work,silenceLimit).subscribe(
+                    relay::tryEmitNext, relay::tryEmitError, relay::tryEmitComplete);
+            return relay.asFlux();
+        });
+    }
+
+    /** Test hook: shortens the silence limit of {@link #streamDetached}. */
+    public ActivityService silenceLimit(Duration limit) { this.silenceLimit = limit; return this; }
+
+    private Flux<String> tracked(UUID request, UUID user, UUID repo, String kind, Supplier<Flux<String>> work, Duration silence) {
         return Flux.defer(() -> {
             UUID id = begin(request,user,repo,kind);
             var renewal = id == null ? null : renew(id);
             var done = new AtomicBoolean();
             var failed = new AtomicBoolean();
             var result = new AtomicReference<UUID>();
-            return Flux.defer(work)
+            Flux<String> source = Flux.defer(work);
+            return (silence == null ? source : source.timeout(silence))
                     .doOnNext(event -> {
                         try {
                             var node = json.readTree(event);

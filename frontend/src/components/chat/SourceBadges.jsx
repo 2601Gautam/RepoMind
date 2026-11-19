@@ -1,13 +1,16 @@
-// Shown under completed assistant messages when sources are available
-export default function SourceBadges({ sources }) {
-    if (!sources?.length) return null
+import { citedSourcePaths } from '../../state/chatSources.js'
+
+// Show only citations, including when reopening conversations saved by an older backend.
+export default function SourceBadges({ sources, content }) {
+    const cited = citedSourcePaths(content, sources)
+    if (!cited.length) return null
 
     return (
         <div className="mt-0 flex flex-wrap gap-1.5">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-600 self-center mr-1">
                 Sources
             </span>
-            {sources.map((src, i) => {
+            {cited.map((src, i) => {
                 const filename = src.split('/').pop()
                 return (
                     <span

@@ -67,7 +67,7 @@ Run `python eval/score_queue.py eval/results/queue-speed.json` to audit the save
 `ActivityRecoveryIT` needs the Compose PostgreSQL service. The two commands below need no model server.
 
 ~~~powershell
-mvn '-Dspring.profiles.active=eval' '-Dtest=ActivityRecoveryIT,PromptDriftTest' test
+mvn '-Dspring.profiles.active=eval' '-Dtest=ActivityRecoveryIT,ActivityResilienceTest,ChatControllerDetachTest,PromptDriftTest' test
 npm --prefix frontend test
 ~~~
 

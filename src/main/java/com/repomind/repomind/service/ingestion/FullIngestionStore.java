@@ -25,10 +25,12 @@ public class FullIngestionStore {
 
     public static class LeaseBusy extends IllegalStateException {
         private final LocalDateTime until;
+
         LeaseBusy(LocalDateTime until) {
             super("An ingestion worker still owns this job");
             this.until = until;
         }
+
         public int retryAfterSeconds() {
             return (int) Math.max(1, Math.min(43200, Duration.between(LocalDateTime.now(), until).getSeconds() + 1));
         }

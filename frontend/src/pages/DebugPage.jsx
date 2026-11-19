@@ -1,7 +1,10 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useCallback, useSyncExternalStore } from 'react'
 import { useParams } from 'react-router-dom'
-import { streamDebug, getRepoStatus, RateLimitError } from '../api/client'
-import { useAiOperation } from '../hooks/useAiOperation'
+import { getRepoStatus } from '../api/client'
+import { useAuth } from '../context/AuthContext'
+import { useActivity } from '../context/ActivityContext'
+import { debugRuns } from '../state/streams.js'
+import { userIdOf } from '../state/recovery.js'
 import NavBar from '../components/layout/NavBar'
 import RateLimitBanner from '../components/common/RateLimitBanner'
 import LoadingSpinner from '../components/common/LoadingSpinner'
@@ -37,97 +40,34 @@ function parseSections(text) {
 
 export default function DebugPage() {
     const { repoId } = useParams() // undefined on /debug standalone route
+    const { user } = useAuth()
+    const { tasks, begin, refresh } = useActivity()
 
-    // Hooks defined first for React Rules of Hooks compliance
+    // The form and the analysis live outside this page (see state/liveStreams.js), so an analysis that is still
+    // streaming keeps running when the user opens another page and is complete when they come back.
+    const key = userIdOf(user) + ':' + repoId
+    const subscribe = useCallback(listener => debugRuns.subscribe(key, listener), [key])
+    const getSnapshot = useCallback(() => debugRuns.get(key), [key])
+    const { errorText, context, streamedText, sources, running: loading, error: runError, done, rateLimitSeconds } =
+        useSyncExternalStore(subscribe, getSnapshot)
+    const runningElsewhere = !loading && tasks.some(t => t.kind === 'DEBUG' && t.repoId === repoId && t.status === 'RUNNING')
+
     const [repo, setRepo] = useState(null)
-    const [errorText, setErrorText] = useState('')
-    const [context, setContext] = useState('')
-    const [streamedText, setStreamedText] = useState('')
-    const [sources , setSources] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
-    const [done, setDone] = useState(false)
-    const [rateLimitSeconds, setRateLimitSeconds] = useState(null)
-    const operation = useAiOperation('DEBUG',repoId)
-    const streamedRef = useRef('')  // Ref to accumulate without re-renders
+    const [statusError, setStatusError] = useState('')
+    const error = runError || statusError
 
     // Fetch repository metadata on mount / repoId change
     useEffect(() => {
         if (!repoId) return
         let active = true
-        getRepoStatus(repoId).then(data=>{ if(active) setRepo(data) }).catch(e=>{ if(active) setError(e.message) })
-        
-        // Reset state on repo change
-        setErrorText('')
-        setContext('')
-        setStreamedText('')
-        setSources([])
-        setError('')
-        setDone(false)
-        setRateLimitSeconds(null)
-        streamedRef.current = ''; setLoading(false)
+        getRepoStatus(repoId).then(data=>{ if(active) { setRepo(data); setStatusError('') } }).catch(e=>{ if(active) setStatusError(e.message) })
         return () => { active = false }
     }, [repoId])
 
-
-
-    async function handleAnalyze() {
-        if (!errorText.trim() || loading || operation.runningElsewhere) return
-        const attempt = operation.start()
-        if (!attempt) return
-                setLoading(true)
-                setError('')
-                setStreamedText('')
-                setSources([])
-                setDone(false)
-                setRateLimitSeconds(null)
-                streamedRef.current = ''
-        await streamDebug(
-            errorText,
-            repoId,
-            context || null,
-
-            // onEvent — called for each SSE event from DebugService
-            (event) => {
-                if (!attempt.live()) return
-                switch (event.type) {
-                    case 'token':
-                        // Accumulate in ref to avoid closure issues
-                        // Then set state to trigger re-render
-                        streamedRef.current += event.content
-                        setStreamedText(streamedRef.current)
-                        break
-
-                    case 'sources':
-                        // Debug SSE sends "files" key (not "sources") as a JSON array
-                        setSources(event.files || [])
-                        break
-
-                    case 'done':
-                        setLoading(false)
-                        setDone(true)
-                        break
-
-                    case 'error':
-                        setError(event.content || 'Analysis failed. Please try again.')
-                        setLoading(false)
-                        break
-                }
-            },
-             // onError — network-level failure
-            (err) => {
-                if (!attempt.live()) return
-                if (err instanceof RateLimitError) {
-                    setRateLimitSeconds(err.retryAfterSeconds)
-                } else {
-                    setError(err.message)
-                }
-                setLoading(false)
-            },
-            attempt.options
-        )
-        if (attempt.live()) setLoading(false)
-        attempt.finish()
+    function handleAnalyze() {
+        if (!errorText.trim() || loading || runningElsewhere) return
+        const requestId = begin('DEBUG',repoId)
+        void debugRuns.run(key, { repoId, requestId, onSettled: refresh })
     }
     const sections = parseSections(streamedText)
     const hasContent = streamedText.length > 0
@@ -161,7 +101,7 @@ export default function DebugPage() {
 
             <main className="max-w-3xl mx-auto px-6 py-8 space-y-6 relative z-10">
 
-                {operation.runningElsewhere && !loading && <p role="status" className="text-violet-200">Debug analysis is running. Results are only available in the original open page; check activity before starting another request.</p>}
+                {runningElsewhere && <p role="status" className="text-violet-200">Debug analysis is running. Results are only available in the original open page; check activity before starting another request.</p>}
                 {/* ─── TOOL HEADER ─── */}
                 <div className="flex items-center gap-3.5">
                     <div className="w-10 h-10 rounded-xl border border-rose-500/20 bg-rose-500/10 flex items-center justify-center text-rose-400 shrink-0">
@@ -195,7 +135,7 @@ export default function DebugPage() {
                         </label>
                         <textarea
                             value={errorText}
-                            onChange={e => setErrorText(e.target.value)}
+                            onChange={e => debugRuns.setInputs(key, { errorText: e.target.value })}
                             placeholder={"Paste your error here...\n\nExample:\nNullPointerException at AuthService.java:47\n  at UserController.login(UserController.java:23)"}
                             rows={8}
                             className="w-full bg-[#050507] border border-white/[0.07] rounded-xl px-4 py-3 text-white text-[13px] font-mono placeholder-neutral-600 focus:outline-none focus:border-violet-500/40 focus:ring-1 focus:ring-violet-500/20 transition-all resize-none"
@@ -208,7 +148,7 @@ export default function DebugPage() {
                         </label>
                         <input
                             value={context}
-                            onChange={e => setContext(e.target.value)}
+                            onChange={e => debugRuns.setInputs(key, { context: e.target.value })}
                             placeholder="e.g. This happens when user tries to log in with Google"
                             className="w-full bg-[#050507] border border-white/[0.07] rounded-xl px-4 py-2.5 text-white text-[13px] placeholder-neutral-600 focus:outline-none focus:border-violet-500/40 focus:ring-1 focus:ring-violet-500/20 transition-all"
                         />
@@ -216,7 +156,7 @@ export default function DebugPage() {
 
                     <button
                         onClick={handleAnalyze}
-                        disabled={loading || operation.runningElsewhere || !errorText.trim() || !!rateLimitSeconds}
+                        disabled={loading || runningElsewhere || !errorText.trim() || !!rateLimitSeconds}
                         className="relative z-10 w-full bg-white/[0.06] border border-white/[0.1] text-white/80 hover:bg-white/[0.1] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-semibold py-2.5 rounded-xl transition-all cursor-pointer text-[13px] flex items-center justify-center gap-2"
                     >
                         {loading && <LoadingSpinner size="sm" />}
@@ -236,7 +176,7 @@ export default function DebugPage() {
                         <div className="relative z-10">
                             <RateLimitBanner
                                 seconds={rateLimitSeconds}
-                                onDismiss={() => setRateLimitSeconds(null)}
+                                onDismiss={() => debugRuns.dismissRateLimit(key)}
                             />
                         </div>
                     )}
@@ -326,11 +266,7 @@ export default function DebugPage() {
                             {/* Retry button after analysis completes */}
                             {done && (
                                 <button
-                                    onClick={() => {
-                                        setStreamedText('')
-                                        setSources([])
-                                        setDone(false)
-                                    }}
+                                    onClick={() => debugRuns.reset(key)}
                                     className="cursor-pointer w-full text-[12.5px] font-medium text-neutral-400 hover:text-white border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.03] py-2.5 rounded-xl transition-all mt-4"
                                 >
                                     Analyze Again
